@@ -1,0 +1,2 @@
+#!/bin/bash
+set -a && source ../../back.env && set +a && go get -u ./... && go mod tidy && go run main.go

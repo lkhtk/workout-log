@@ -1,0 +1,242 @@
+[
+    {
+      "date": "02.10.2024",
+      "user": "user 1",
+      "workout": {
+        "name": "leg day",
+        "exercises": [
+          {
+            "name": "squat",
+            "description": "description of squat",
+            "category": "legs",
+            "sets": [
+              {
+                "reps": 10,
+                "weight": 80
+              },
+              {
+                "reps": 5,
+                "weight": 90
+              },
+              {
+                "reps": 5,
+                "weight": 100
+              }
+            ]
+          },
+          {
+            "name": "push-ups",
+            "description": "description of push-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          },
+          {
+            "name": "pull-ups",
+            "description": "description of pull-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "date": "03.10.2024",
+      "user": "user 2",
+      "workout": {
+        "name": "leg day",
+        "exercises": [
+          {
+            "name": "squat",
+            "description": "description of squat",
+            "category": "legs",
+            "sets": [
+              {
+                "reps": 10,
+                "weight": 80
+              },
+              {
+                "reps": 5,
+                "weight": 90
+              },
+              {
+                "reps": 5,
+                "weight": 100
+              }
+            ]
+          },
+          {
+            "name": "push-ups",
+            "description": "description of push-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          },
+          {
+            "name": "pull-ups",
+            "description": "description of pull-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "date": "04.10.2024",
+      "user": "user 4",
+      "workout": {
+        "name": "back day",
+        "exercises": [
+          {
+            "name": "squat",
+            "description": "description of squat",
+            "category": "legs",
+            "sets": [
+              {
+                "reps": 10,
+                "weight": 80
+              },
+              {
+                "reps": 5,
+                "weight": 90
+              },
+              {
+                "reps": 5,
+                "weight": 100
+              }
+            ]
+          },
+          {
+            "name": "push-ups",
+            "description": "description of push-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          },
+          {
+            "name": "pull-ups",
+            "description": "description of pull-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "date": "05.10.2024",
+      "user": "user 1",
+      "workout": {
+        "name": "front day",
+        "exercises": [
+          {
+            "name": "squat",
+            "description": "description of squat",
+            "category": "legs",
+            "sets": [
+              {
+                "reps": 10,
+                "weight": 80
+              },
+              {
+                "reps": 5,
+                "weight": 90
+              },
+              {
+                "reps": 5,
+                "weight": 100
+              }
+            ]
+          },
+          {
+            "name": "push-ups",
+            "description": "description of push-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          },
+          {
+            "name": "pull-ups",
+            "description": "description of pull-ups",
+            "category": "brest",
+            "sets": [
+              {
+                "reps": 15
+              },
+              {
+                "reps": 10
+              },
+              {
+                "reps": 8
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
