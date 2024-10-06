@@ -8,6 +8,7 @@ import (
 
 	handlers "github.com/lkhtk/workout-log/handlers"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -28,7 +29,7 @@ func init() {
 	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	collection := client.Database(os.Getenv("MONGO_DATSBASE")).Collection("workouts")
+	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("workouts")
 	workoutsHandler = handlers.NewWorkoutsHandler(ctx, collection)
 }
 func main() {
@@ -38,7 +39,14 @@ func main() {
 	router.POST("/workouts", workoutsHandler.NewWorkout)
 	router.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)
 	router.DELETE("/workouts/:id", workoutsHandler.DeleteWorkout)
-	router.Run("localhost:8000")
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*://localhost:*/*"}
+	config.AllowHeaders = []string{"Access-Control-Allow-Headers", "X-Requested-With,content-type"}
+	config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"}
+
+	config.AllowCredentials = true
+	router.Use(cors.New(config))
+	router.Run("0.0.0.0:8000")
 }
 
 func health(c *gin.Context) {

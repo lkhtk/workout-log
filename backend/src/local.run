@@ -1,2 +1,4 @@
 #!/bin/bash
-set -a && source ../../back.env && set +a && go get -u ./... && go mod tidy && go run main.go
+set -a && source ../../back.env && set +a && go get -u ./... && go mod tidy
+export MONGO_URI="mongodb://root:example@localhost:27017/workouts?authSource=admin"
+go run main.go

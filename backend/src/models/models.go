@@ -11,15 +11,21 @@ type Workout struct {
 	PublishedAt time.Time          `json:"publishedAt" bson:"publishedAt"`
 	User        string             `json:"user"`
 	Workout     struct {
-		Name      string `json:"name"`
-		Exercises []struct {
-			Name        string `json:"name"`
-			Description string `json:"description"`
-			Category    string `json:"category"`
-			Sets        []struct {
+		MuscleGroup string `json:"muscle_group"`
+		SetsCount   int    `json:"sets_count"`
+		Exercises   []struct {
+			Name string `json:"name"`
+			Sets []struct {
 				Reps   int `json:"reps"`
 				Weight int `json:"weight"`
 			} `json:"sets"`
 		} `json:"exercises"`
+		Cardio []struct {
+			Type     string  `json:"type"`
+			Speed    int     `json:"speed"`
+			Distance float64 `json:"distance"`
+			Time     int     `json:"time"`
+			Calories int     `json:"calories"`
+		} `json:"cardio"`
 	} `json:"workout"`
 }

@@ -33,10 +33,19 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 	defer cur.Close(handler.ctx)
 	workouts := make([]models.Workout, 0)
 	for cur.Next(handler.ctx) {
-		var recipe models.Workout
-		cur.Decode(&recipe)
-		workouts = append(workouts, recipe)
+		var workout models.Workout
+		cur.Decode(&workout)
+		workouts = append(workouts, workout)
 	}
+	for i, wrk := range workouts {
+		for _, ex := range wrk.Workout.Exercises {
+			if workouts[i].Workout.SetsCount < len(ex.Sets) {
+				workouts[i].Workout.SetsCount = len(ex.Sets)
+			}
+
+		}
+	}
+
 	c.JSON(http.StatusOK, workouts)
 }
 
@@ -51,7 +60,7 @@ func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {
 	workout.PublishedAt = time.Now()
 	_, err := handler.collection.InsertOne(handler.ctx, workout)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting a new recipe"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting a new workout"})
 		return
 	}
 	c.JSON(http.StatusCreated, workout)
@@ -70,11 +79,12 @@ func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
 		bson.D{
 			{"$set",
 				bson.D{
-					{"User", workout.User},
-					{"Workout",
+					{"user", workout.User},
+					{"workout",
 						bson.D{
-							{"name", workout.Workout.Name},
-							{"Exercises", workout.Workout.Exercises},
+							{"muscle_group", workout.Workout.MuscleGroup},
+							{"exercises", workout.Workout.Exercises},
+							{"cardio", workout.Workout.Cardio},
 						},
 					},
 				},
