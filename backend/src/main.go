@@ -39,13 +39,15 @@ func main() {
 	router.POST("/workouts", workoutsHandler.NewWorkout)
 	router.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)
 	router.DELETE("/workouts/:id", workoutsHandler.DeleteWorkout)
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*://localhost:*/*"}
-	config.AllowHeaders = []string{"Access-Control-Allow-Headers", "X-Requested-With,content-type"}
-	config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"}
+	router.Use(cors.Default())
+	// config := cors.DefaultConfig()
+	// config.AllowOrigins = []string{"*://localhost:*/*"}
+	// config.AllowHeaders = []string{"Access-Control-Allow-Headers", "X-Requested-With,content-type"}
+	// config.AllowHeaders = []string{"Origin"}
+	// config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"}
 
-	config.AllowCredentials = true
-	router.Use(cors.New(config))
+	// config.AllowCredentials = true
+	// router.Use(cors.New(config))
 	router.Run("0.0.0.0:8000")
 }
 

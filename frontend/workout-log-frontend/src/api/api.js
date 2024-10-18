@@ -1,7 +1,6 @@
 import api from '@/lib/libAxios';
 
 const base = '/api';
-// const base = 'http://localhost:8000';
 export function getAllWorkouts() {
   return api.get(`${base}/workouts`);
 }
