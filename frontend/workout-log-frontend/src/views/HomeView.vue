@@ -1,31 +1,51 @@
 <template>
-    <div v-for="workout in data.data" v-bind:key="workout">
-      <WorkoutTable :data="workout" />
-    </div>
+  <div id="app">
+    <component :is="component" @change-component="changeComponent"/>
+  </div>
 </template>
 
 <script>
-import * as api from '@/api/api';
-import WorkoutTable from '@/components/WorkoutTable.vue';
+import Create from '@/components/create.vue';
+import View from '@/components/view.vue';
+import List from '@/components/list.vue';
+import Update from '@/components/update.vue';
 
 export default {
   name: 'HomeView',
-  components: {
-    WorkoutTable,
-  },
   data: () => ({
-    data: 1,
+    componentIs: 'list',
+    userId: 0,
   }),
-  async beforeMount() {
-    try {
-      this.loadUserInfo();
-    } catch (e) {
-      console.error(e);
-    }
+  provide() {
+    const base = {};
+
+    Object.defineProperty(base, 'userId', {
+      enumerable: true,
+      get: () => Number(this.userId),
+    });
+
+    return base;
+  },
+  computed: {
+    component() {
+      switch (this.componentIs) {
+        case 'list':
+          return List;
+        case 'create':
+          return Create;
+        case 'view':
+          return View;
+        case 'edit':
+          return Update;
+        default:
+          return undefined;
+      }
+    },
   },
   methods: {
-    async loadUserInfo() {
-      this.data = await api.getAllWorkouts();
+    changeComponent(payload) {
+      this.componentIs = payload.component;
+      this.userId = Number(payload.userId);
     },
   },
 };
