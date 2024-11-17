@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <component :is="component" @change-component="changeComponent"/>
+    <component :is="component" :workoutId="id" @change-component="changeComponent"/>
   </div>
 </template>
 
@@ -14,13 +14,12 @@ export default {
   name: 'HomeView',
   data: () => ({
     componentId: 'list',
-    workoutId: '',
+    id: '',
   }),
   provide() {
-    console.log('provide:', this.workoutId);
     const base = {};
     Object.defineProperty(base, 'workoutId', {
-      value: this.workoutId,
+      value: this.id,
     });
     return base;
   },
@@ -42,9 +41,8 @@ export default {
   },
   methods: {
     changeComponent(payload) {
-      console.log('payload --->', payload);
       this.componentId = payload.component;
-      this.workoutId = payload.workoutId;
+      this.id = payload.workoutId;
     },
   },
 };

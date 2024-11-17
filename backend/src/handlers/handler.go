@@ -74,6 +74,12 @@ func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
 		return
 	}
 
+	for _, ex := range workout.Workout.Exercises {
+		if workout.Workout.SetsCount < len(ex.Sets) {
+			workout.Workout.SetsCount = len(ex.Sets)
+		}
+	}
+
 	objectId, _ := primitive.ObjectIDFromHex(id)
 	_, err := handler.collection.UpdateOne(handler.ctx, bson.M{"_id": objectId},
 		bson.D{
@@ -113,6 +119,12 @@ func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	for _, ex := range workout.Workout.Exercises {
+		if workout.Workout.SetsCount < len(ex.Sets) {
+			workout.Workout.SetsCount = len(ex.Sets)
+		}
 	}
 
 	c.JSON(http.StatusOK, workout)
