@@ -27,7 +27,7 @@ export default {
           ...this.userData,
         },
       });
-      this.changeComponent('list', 0);
+      this.changeComponent('list', '');
     },
   },
 };

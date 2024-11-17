@@ -1,16 +1,19 @@
 <template>
-VIEW
+  {{ workoutId }} ==
+  user: {{userData}}
+   <div class="container-lg  p-3 mb-5 bg-body-tertiary rounded">
+    <h1 class="display-5">View workout</h1>
+    <button type="button" class="btn btn-primary" @click="changeComponent('list', '')">Back</button>
+  </div>
 </template>
 <script>
 import changeComponent from '../mixin/changeComponent';
-import { addWorkout } from '../api/api';
+import { getWorkout } from '../api/api';
 
 export default {
-  name: 'WievUser',
+  name: 'ViewWorkout',
   mixins: [changeComponent],
-  // components: {
-  //   userForm,
-  // },
+  inject: ['workoutId'],
   data: () => ({
     userData: {
       name: '',
@@ -20,14 +23,15 @@ export default {
       phone: '',
     },
   }),
+  async beforeMount() {
+    console.log(this.workoutId);
+    await this.getWorkoutById();
+  },
   methods: {
-    async createUser() {
-      await addWorkout(`${window.location.href}api/users`, {
-        data: {
-          ...this.userData,
-        },
-      });
-      this.changeComponent('list', 0);
+    async getWorkoutById() {
+      console.log('this.workoutId ==>', this.workoutId);
+      const { data } = await getWorkout(this.workoutId);
+      this.userData = data;
     },
   },
 };

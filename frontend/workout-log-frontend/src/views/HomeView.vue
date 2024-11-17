@@ -13,22 +13,20 @@ import Update from '@/components/update.vue';
 export default {
   name: 'HomeView',
   data: () => ({
-    componentIs: 'list',
-    userId: 0,
+    componentId: 'list',
+    workoutId: '',
   }),
   provide() {
+    console.log('provide:', this.workoutId);
     const base = {};
-
-    Object.defineProperty(base, 'userId', {
-      enumerable: true,
-      get: () => Number(this.userId),
+    Object.defineProperty(base, 'workoutId', {
+      value: this.workoutId,
     });
-
     return base;
   },
   computed: {
     component() {
-      switch (this.componentIs) {
+      switch (this.componentId) {
         case 'list':
           return List;
         case 'create':
@@ -44,8 +42,9 @@ export default {
   },
   methods: {
     changeComponent(payload) {
-      this.componentIs = payload.component;
-      this.userId = Number(payload.userId);
+      console.log('payload --->', payload);
+      this.componentId = payload.component;
+      this.workoutId = payload.workoutId;
     },
   },
 };

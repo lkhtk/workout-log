@@ -5,7 +5,8 @@ export function getAllWorkouts() {
   return api.get(`${base}/workouts`);
 }
 
-export function getAllWorkout(id) {
+export function getWorkout(id) {
+  console.log('/api:', id);
   return api.get(`${base}/workouts/${id}`);
 }
 
