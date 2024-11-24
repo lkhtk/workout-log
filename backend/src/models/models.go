@@ -8,8 +8,8 @@ import (
 
 type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
-	PublishedAt time.Time          `json:"publishedAt" bson:"publishedAt"`
-	User        string             `json:"user"`
+	PublishedAt time.Time
+	User        string `json:"user"`
 	Workout     struct {
 		MuscleGroup string `json:"muscle_group"`
 		SetsCount   int    `json:"sets_count"`

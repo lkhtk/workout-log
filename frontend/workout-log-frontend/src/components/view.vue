@@ -1,7 +1,7 @@
 <template>
    <div class="container-lg  p-3 mb-5 bg-body-tertiary rounded">
     <h1 class="display-5">Edit workout</h1>
-      <workoutComponent :workoutData="userData" v-if="userData"/>
+      <workoutComponent :workoutData="userData" v-if="userData" :edit='true'/>
     <button type="button" class="btn btn-primary" @click="changeComponent('list', '')">Back</button>
   </div>
 </template>
