@@ -5,6 +5,15 @@
         @click="changeComponent('create', '')">create</button>
       <button type="button" class="btn btn-primary" @click="changeComponent('list', '')">
         back</button>
+        <div class="btn-group" v-if="edit"
+      role="group" aria-label="Basic mixed styles example">
+      <button type="button" class="btn btn-success"
+      @click="saveWorkout()">Update</button>
+      <button type="button" class="btn btn-danger"
+        @click="deleteWorkoutById(workoutData.id)">Delete</button>
+      <button type="button" class="btn btn-success"
+        @click="saveWorkout()">Cancel</button>
+    </div>
   </div>
 </template>
 <script>

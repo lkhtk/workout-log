@@ -13,15 +13,9 @@ export function addWorkout(workoutData) {
   return api.post(`${base}/workouts`, workoutData);
 }
 
-export function updateWorkout(workoutData) {
-  const payload = {
-    ID: workoutData.ID,
-    name: workoutData.newName,
-    description: workoutData.description,
-    visible: workoutData.visible,
-    tags: workoutData.tags,
-  };
-  return api.put(`${base}/workouts`, payload);
+export async function updateWorkout(workoutData) {
+  const payload = JSON.parse(JSON.stringify(workoutData));
+  return api.put(`${base}/workouts/${payload.id}`, payload);
 }
 
 export function deleteWorkout(id) {

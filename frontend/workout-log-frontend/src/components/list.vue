@@ -6,8 +6,6 @@
       <div class="d-flex flex-row-reverse">
         <div class="btn-group"
           role="group" aria-label="Basic mixed styles example">
-          <button type="button" class="btn btn-danger"
-            @click="deleteWorkoutById(workoutItem.id)">Delete</button>
           <button type="button" class="btn btn-warning"
             @click="changeComponent('view', workoutItem.id)">Edit</button>
           <button type="button" class="btn btn-success"
@@ -26,10 +24,7 @@
 </template>
 
 <script>
-import {
-  getAllWorkouts,
-  deleteWorkout,
-} from '@/api/api';
+import { getAllWorkouts } from '@/api/api';
 import changeComponent from '@/mixin/changeComponent';
 import workoutComponent from './workout.vue';
 
@@ -49,10 +44,6 @@ export default {
     async getAllWorkouts() {
       const { data } = await getAllWorkouts();
       this.workoutsList = data;
-    },
-    async deleteWorkoutById(id) {
-      await deleteWorkout(id);
-      await this.getAllWorkouts();
     },
   },
 };

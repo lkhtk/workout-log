@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="display-3">{{ formatDate(localWorkoutData.PublishedAt) }}</h1>
-    <h1 class="display-5">{{ localWorkoutData.workout.muscle_group }}</h1>
+    <h1 class="display-5">{{ localWorkoutData.muscle_group }}</h1>
     <table class="table table-hover align-middle table-bordered" v-if="localWorkoutData">
       <thead class="table-dark">
         <tr>
@@ -68,6 +68,35 @@
         </tr>
       </tbody>
     </table>
+
+    <table class="table table-hover align-middle table-bordered" v-if="workoutData.workout.cardio">
+    <thead>
+        <tr>
+            <th>Cardio</th>
+            <th>Speed/Level</th>
+            <th>Distance</th>
+            <th>Time</th>
+            <th>Calories</th>
+        </tr>
+    </thead>
+    <tbody v-for="cardio in workoutData.workout.cardio" v-bind:key="cardio">
+        <tr>
+            <td >{{cardio.type}}</td>
+            <td >{{cardio.speed}}</td>
+            <td >{{cardio.distance}}</td>
+            <td >{{cardio.time}}</td>
+            <td >{{cardio.calories}}</td>
+        </tr>
+        <tr v-if="edit">
+          <td >
+            <button class="btn btn-sm btn-success" @click="addExercise()">Add Cardio</button>
+          </td>
+        </tr>
+    </tbody>
+    <caption>
+        <p class="font-monospace">{{ workoutData.id }}</p>
+    </caption>
+  </table>
   </div>
 </template>
 
@@ -95,7 +124,11 @@ export default {
     formatDate(dateString) {
       return dayjs(dateString).format('YYYY-MM-DD hh:mm:ss');
     },
+
     addSet() {
+      if (!Array.isArray(this.localWorkoutData.workout.sets_count)) {
+        this.localWorkoutData.workout.sets_count = [];
+      }
       this.localWorkoutData.workout.exercises.forEach((exercise) => {
         exercise.sets.push({ weight: 0, reps: 0 });
       });
@@ -104,6 +137,7 @@ export default {
       );
       this.syncData();
     },
+
     addExercise() {
       this.localWorkoutData.workout.exercises.push({
         name: 'New Exercise',
@@ -119,6 +153,7 @@ export default {
       this.$emit('update:workoutData', this.localWorkoutData);
     },
   },
+
   watch: {
     workoutData: {
       deep: true,

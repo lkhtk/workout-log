@@ -86,9 +86,9 @@ func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
 			{"$set",
 				bson.D{
 					{"user", workout.User},
+					{"muscle_group", workout.MuscleGroup},
 					{"workout",
 						bson.D{
-							{"muscle_group", workout.Workout.MuscleGroup},
 							{"exercises", workout.Workout.Exercises},
 							{"cardio", workout.Workout.Cardio},
 						},
@@ -102,7 +102,7 @@ func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Workout has been updated"})
+	c.JSON(http.StatusOK, workout)
 }
 func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
 	id := c.Param("id")

@@ -10,10 +10,10 @@ type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	PublishedAt time.Time
 	User        string `json:"user"`
+	MuscleGroup string `json:"muscle_group"`
 	Workout     struct {
-		MuscleGroup string `json:"muscle_group"`
-		SetsCount   int    `json:"sets_count"`
-		Exercises   []struct {
+		SetsCount int `json:"sets_count"`
+		Exercises []struct {
 			Name string `json:"name"`
 			Sets []struct {
 				Reps   int `json:"reps"`
