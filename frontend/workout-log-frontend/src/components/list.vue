@@ -7,11 +7,16 @@
         <div class="btn-group"
           role="group" aria-label="Basic mixed styles example">
           <button type="button" class="btn btn-warning"
-            @click="changeComponent('view', workoutItem.id)">Edit</button>
+            @click="changeComponent('view', workoutItem.id)">
+            <font-awesome-icon icon="fa-solid fa-file-pen" />
+          </button>
           <button type="button" class="btn btn-success"
-            @click="changeComponent('create', '')">Add</button>
+            @click="changeComponent('create', '')">
+            <font-awesome-icon icon="fa-solid fa-calendar-plus" />
+          </button>
         </div>
       </div>
+      <hr>
     </div>
   </div>
   <div v-else>

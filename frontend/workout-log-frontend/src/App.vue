@@ -1,7 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Workout log</a>
+    <a class="navbar-brand" href="#"><font-awesome-icon icon="fa-solid fa-dumbbell" />
+      Workout log
+    </a>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="#">

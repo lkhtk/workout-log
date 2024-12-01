@@ -8,9 +8,6 @@ import { addWorkout } from '../api/api';
 export default {
   name: 'UpdateUser',
   mixins: [changeComponent],
-  // components: {
-  //   userForm,
-  // },
   data: () => ({
     userData: {
       name: '',
