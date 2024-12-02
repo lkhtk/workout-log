@@ -9,7 +9,7 @@ export function getWorkout(id) {
   return api.get(`${base}/workouts/${id}`);
 }
 
-export function addWorkout(workoutData) {
+export function createWorkout(workoutData) {
   return api.post(`${base}/workouts`, workoutData);
 }
 

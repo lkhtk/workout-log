@@ -8,7 +8,6 @@
 import Create from '@/components/create.vue';
 import View from '@/components/view.vue';
 import List from '@/components/list.vue';
-import Update from '@/components/update.vue';
 
 export default {
   name: 'HomeView',
@@ -32,8 +31,6 @@ export default {
           return Create;
         case 'view':
           return View;
-        case 'edit':
-          return Update;
         default:
           return undefined;
       }

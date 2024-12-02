@@ -1,49 +1,55 @@
 <template>
  <div class="container-lg p-3 mb-5 bg-body-tertiary rounded">
-  <h1 class="display-1">Add a new workout log </h1>
-      <button type="button" class="btn btn-success"
-        @click="changeComponent('create', '')">create</button>
-      <button type="button" class="btn btn-primary" @click="changeComponent('list', '')">
-        back</button>
-        <div class="btn-group" v-if="edit"
-      role="group" aria-label="Basic mixed styles example">
-      <button type="button" class="btn btn-success"
-      @click="saveWorkout()">Update</button>
-      <button type="button" class="btn btn-danger"
-        @click="deleteWorkoutById(workoutData.id)">Delete</button>
-      <button type="button" class="btn btn-success"
-        @click="saveWorkout()">Cancel</button>
-    </div>
+    <workoutComponent :edit="true" :isNew="true" :workoutData="newWorkout" />
+    <button type="button" class="btn btn-primary"
+      @click="changeComponent('list', '')">
+    <font-awesome-icon icon="fa-solid fa-angles-left" />
+  </button>
   </div>
 </template>
 <script>
 import changeComponent from '../mixin/changeComponent';
-import { addWorkout } from '../api/api';
+import workoutComponent from './workout.vue';
 
 export default {
   name: 'CreateUser',
   mixins: [changeComponent],
-  // components: {
-  //   userForm,
-  // },
+  components: {
+    workoutComponent,
+  },
   data: () => ({
-    userData: {
-      name: '',
-      email: '',
-      birthday: '',
-      country: '',
-      phone: '',
+    newWorkout: {
+      sets_count: 3,
+      muscle_group: 'Legs',
+      workout: {
+        cardio: [{
+          type: 'run',
+          speed: 10,
+          distance: 2.5,
+          time: 60,
+          calories: 200,
+        }],
+        exercises: [{
+          name: 'squad',
+          sets: [
+            {
+              reps: 0,
+              weight: 0,
+            },
+            {
+              reps: 0,
+              weight: 0,
+            },
+            {
+              reps: 0,
+              weight: 0,
+            },
+          ],
+        },
+        ],
+      },
     },
   }),
-  methods: {
-    async createUser() {
-      await addWorkout(`${window.location.href}api/users`, {
-        data: {
-          ...this.userData,
-        },
-      });
-      this.changeComponent('list', '');
-    },
-  },
+
 };
 </script>
