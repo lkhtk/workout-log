@@ -1,6 +1,6 @@
 <template>
  <div class="container-lg p-3 mb-5 bg-body-tertiary rounded">
-    <workoutComponent :edit="true" :isNew="true" :workoutData="newWorkout" />
+    <workoutComponent :edit="true" :workoutData="newWorkout" />
     <button type="button" class="btn btn-primary"
       @click="changeComponent('list', '')">
     <font-awesome-icon icon="fa-solid fa-angles-left" />
@@ -19,30 +19,30 @@ export default {
   },
   data: () => ({
     newWorkout: {
-      sets_count: 3,
-      muscle_group: 'Legs',
+      muscle_group: 'Leg day',
       workout: {
+        sets_count: 3,
         cardio: [{
-          type: 'run',
+          type: 'Jogging',
           speed: 10,
           distance: 2.5,
-          time: 60,
+          time: 20,
           calories: 200,
         }],
         exercises: [{
-          name: 'squad',
+          name: 'Bulgarian Split Squat',
           sets: [
             {
-              reps: 0,
-              weight: 0,
+              reps: 15,
+              weight: 32,
             },
             {
-              reps: 0,
-              weight: 0,
+              reps: 15,
+              weight: 32,
             },
             {
-              reps: 0,
-              weight: 0,
+              reps: 15,
+              weight: 32,
             },
           ],
         },

@@ -3,6 +3,8 @@ services:
   mongo:
     image: mongo
     restart: always
+    volumes:
+      - ./db:/data/db 
     env_file:
       - mongo.env
     ports:

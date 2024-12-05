@@ -6,9 +6,9 @@
       <div class="d-flex flex-row-reverse">
         <div class="btn-group"
           role="group" aria-label="Basic mixed styles example">
-          <button type="button" class="btn btn-warning"
+          <button type="button" class="btn btn-primary"
             @click="changeComponent('view', workoutItem.id)">
-            <font-awesome-icon icon="fa-solid fa-file-pen" />
+            <font-awesome-icon inverse icon="fa-solid fa-file-pen" />
           </button>
           <button type="button" class="btn btn-success"
             @click="changeComponent('create', '')">

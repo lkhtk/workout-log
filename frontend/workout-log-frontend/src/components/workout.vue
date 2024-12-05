@@ -1,109 +1,128 @@
 <template>
-  <p v-if="localWorkoutData.id" class="font-monospace">
+  <p v-if="localWorkoutData.id && edit" class="font-monospace">
     <font-awesome-icon icon="fa-solid fa-fingerprint"/>
     {{ localWorkoutData.id }}
   </p>
   <div>
-  <h1 class="display-3">
-    <font-awesome-icon icon="fa-solid fa-person-swimming" />
-    {{ formatDate(localWorkoutData.PublishedAt) }}
-  </h1>
-  <label v-if="edit" for="inputAddress" class="form-label">Name of workout
-    <input type="text" class="form-control" id="inputAddress"
-      v-model="localWorkoutData.muscle_group"
-      placeholder="Legs day">
-  </label>
-  <h1 v-else class="display-5">{{ localWorkoutData.muscle_group }}</h1>
-  <table class="table table-hover align-middle table-bordered"
-    v-if="localWorkoutData.workout.exercises || edit">
-    <thead class="table-dark">
-      <tr>
-        <th colspan="3"><font-awesome-icon icon="fa-solid fa-medal" /> Exercise</th>
-        <th v-for="(item, index) in localWorkoutData.workout.sets_count" :key="index">
-          SET {{ index + 1 }}
-        </th>
-        <th v-if="edit">
-          <button type="button" class="btn btn-success" @click="addSet()">
-            <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
-          </button>
-        </th>
-      </tr>
-    </thead>
-    <tbody v-for="(ex, exIndex) in localWorkoutData.workout.exercises" :key="exIndex">
-      <tr>
-        <td rowspan="2">
-          <button v-if="edit" type="button" class="btn-close"
-          data-bs-dismiss="alert" aria-label="Close" @click="removeExercise(exIndex)"></button>
-          <p v-else>
-            {{ exIndex + 1 }}
-          </p>
-        </td>
-        <td rowspan="2">
-          <template v-if="edit">
-            <input v-model="ex.name" class="form-control" />
-          </template>
-          <template v-else>
-            {{ ex.name }}
-          </template>
-        </td>
-        <td><font-awesome-icon icon="fa-solid fa-weight-hanging" /></td>
-        <td v-for="(set, setIndex) in ex.sets" :key="'weight-' + setIndex">
-          <template v-if="edit">
-            <label for="weight">
-              <input
-                id="weight"
-                v-model="set.weight"
-                class="form-control"
-                type="number"
-                min="0"
-              />
-            </label>
-          </template>
-          <template v-else>
-            {{ set.weight }}
-          </template>
-        </td>
-      </tr>
-      <tr>
-        <td><font-awesome-icon icon="fa-solid fa-repeat" /></td>
-        <td v-for="(set, setIndex) in ex.sets" :key="'reps-' + setIndex">
-          <template v-if="edit">
-          <label for="ssa"><input
-              v-model="set.reps"
-              class="form-control"
-              type="number"
-              min="0"
-            /></label>
-          </template>
-          <template v-else>
-            {{ set.reps }}
-          </template>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div v-if="edit">
-    <button type="button" class="btn btn-success" @click="addExercise()">
-      <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
-    </button>
-  </div>
-  <h1 class="display-5"><font-awesome-icon icon="fa-solid fa-person-running" />Cardio</h1>
-  <table
-    class="table table-hover align-middle table-bordered"
-    v-if="localWorkoutData.workout.cardio">
-    <thead>
-      <tr>
-          <th><font-awesome-icon icon="fa-solid fa-heart-pulse" /> Type</th>
-          <th><font-awesome-icon icon="fa-solid fa-gauge-high" /> Speed/Level</th>
-          <th><font-awesome-icon icon="fa-solid fa-infinity" /> Distance</th>
-          <th><font-awesome-icon icon="fa-solid fa-stopwatch-20" /> Time</th>
-          <th><font-awesome-icon icon="fa-solid fa-fire" /> Calories</th>
-      </tr>
-    </thead>
-    <tbody v-for="cardio in localWorkoutData.workout.cardio" v-bind:key="cardio">
-        <tr>
+    <label v-if="edit" for="muscleGroup" class="form-label">Muscle group or name of workout
+      <input type="text" class="form-control" id="muscleGroup"
+        maxlength="250"
+        v-model="localWorkoutData.muscle_group"
+        placeholder="Legs day">
+    </label>
+    <h1 v-else class="display-3">
+      <font-awesome-icon icon="fa-solid fa-hand-fist" />
+      {{ localWorkoutData.muscle_group }}
+    </h1>
+    <p class="lead">
+      {{ formatDate(localWorkoutData.PublishedAt) }}
+    </p>
+    <div v-if="localWorkoutData.workout.sets_count>0 || edit">
+      <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-dumbbell" />Strength </h1>
+      <table class="table table-hover align-middle table-bordered table-striped table-light">
+        <thead >
+          <tr>
+            <th scope="row" colspan="3"><font-awesome-icon icon="fa-solid fa-medal" />Exercise</th>
+            <th scope="col" v-for="(item, index) in localWorkoutData.workout.sets_count"
+              :key="index">
+              <font-awesome-icon icon="fa-solid fa-fire-flame-curved" /> Set {{ index + 1 }}
+              <button v-if="edit" type="button" class="btn-close"
+              aria-label="Close" @click="removeSet(index)"></button>
+            </th>
+            <th v-if="edit">
+              <button
+                type="button"
+                class="btn btn-success"
+                @click="addSet()">
+                <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="(ex, exIndex) in localWorkoutData.workout.exercises" :key="exIndex">
+          <tr>
+            <td rowspan="2">
+              <button v-if="edit" type="button" class="btn-close"
+              aria-label="Close" @click="removeExercise(exIndex)"></button>
+              <p v-else>
+                {{ exIndex + 1 }}
+              </p>
+            </td>
+            <td rowspan="2">
+              <template v-if="edit">
+                <input v-model="ex.name" class="form-control" maxlength="250"/>
+              </template>
+              <template v-else>
+                {{ ex.name }}
+              </template>
+            </td>
+            <td><font-awesome-icon icon="fa-solid fa-weight-hanging" /></td>
+            <td v-for="(set, setIndex) in ex.sets" :key="'weight-' + setIndex">
+              <template v-if="edit">
+                <label for="weight">
+                  <input
+                    id="weight"
+                    v-model="set.weight"
+                    class="form-control"
+                    type="number"
+                    min="0"
+                  />
+                </label>
+              </template>
+              <template v-else>
+                {{ set.weight }}
+              </template>
+            </td>
+          </tr>
+          <tr>
+            <td><font-awesome-icon icon="fa-solid fa-repeat" /></td>
+            <td v-for="(set, setIndex) in ex.sets" :key="'reps-' + setIndex">
+              <template v-if="edit">
+              <label for="reps"><input
+                  v-model="set.reps"
+                  class="form-control"
+                  type="number"
+                  min="0"
+                /></label>
+              </template>
+              <template v-else>
+                {{ set.reps }}
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="edit">
+        <button type="button" class="btn btn-success" @click="addExercise()">
+          <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/> new exercise
+        </button>
+      </div>
+    </div>
+    <div v-if="(typeof localWorkoutData.workout.cardio !== 'undefined'
+      && localWorkoutData.workout.cardio.length > 0) || edit">
+      <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-heart-pulse" />Cardio</h1>
+      <table class="table table-hover align-middle table-bordered table-light">
+        <thead>
+          <tr>
+              <th>#</th>
+              <th><font-awesome-icon icon="fa-solid fa-solid fa-person-swimming" /> Activity</th>
+              <th><font-awesome-icon icon="fa-solid fa-gauge-high" /> Speed/Level</th>
+              <th><font-awesome-icon icon="fa-solid fa-infinity" /> Distance</th>
+              <th><font-awesome-icon icon="fa-solid fa-stopwatch-20" /> Time</th>
+              <th><font-awesome-icon icon="fa-solid fa-fire" /> Calories</th>
+          </tr>
+        </thead>
+        <tbody v-for="cardio in localWorkoutData.workout.cardio" v-bind:key="cardio">
+          <tr>
+            <td v-if="edit">
+              <button v-if="edit" type="button" class="btn-close"
+              aria-label="Close" @click="removeCardio(exIndex)"></button>
+            </td>
+            <td v-else>1</td>
             <td >
-              <label for="weight"><input v-if="edit"
+              <label for="type">
+                <input v-if="edit"
+                maxlength="250"
                 v-model="cardio.type"
                 class="form-control"
                 />
@@ -126,11 +145,11 @@
                 </p>
               </label>
             </td>
-            <td >
-              <label for="speed">
+            <td>
+              <label for="distance">
                 <input v-if="edit"
                   v-model="cardio.distance"
-                  id="speed"
+                  id="distance"
                   class="form-control"
                   min="0"
                 />
@@ -165,35 +184,45 @@
                 </p>
               </label>
             </td>
-        </tr>
-    </tbody>
-  </table>
-  <div v-if="edit">
-      <button type="button" class="btn btn-success" @click="addCardio()">
-        <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
-      </button>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="edit">
+          <button type="button" class="btn btn-success" @click="addCardio()">
+            <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/> new cardio
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="alert alert-info mx-auto p-2 m-2" role="alert" v-if="alertData.msg">
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-    @click="hideAlert()"></button>
-    {{ alertData.msg }}
-  </div>
-  <div class="container mx-auto p-2" style="width: 200px;">
-    <div class="btn-group" v-if="edit"
-      role="group" aria-label="Basic mixed styles example">
-      <button type="button" class="btn btn-success" @click="saveWorkout()">
-        <font-awesome-icon icon="fa-solid fa-floppy-disk" inverse />
-      </button>
-      <button type="button" class="btn btn-danger" @click="deleteWorkoutById(localWorkoutData.id)">
-        <font-awesome-icon icon="fa-solid fa-trash-can" inverse />
-      </button>
+    <div class="container mx-auto p-2" style="width: 200px;">
+      <div class="btn-group" v-if="edit"
+        role="group" aria-label="Basic mixed styles example">
+        <button type="button" class="btn btn-success" @click="saveWorkout()">
+          <font-awesome-icon icon="fa-solid fa-floppy-disk" inverse />
+        </button>
+        <button type="button" class="btn btn-danger"
+          @click="deleteWorkoutById(localWorkoutData.id)">
+          <font-awesome-icon icon="fa-solid fa-trash-can" inverse />
+        </button>
+      </div>
     </div>
-  </div>
+    <!-- Toast container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div class="toast" role="alert" aria-live="assertive"
+        aria-atomic="true" ref="toast">
+        <div class="toast-header">
+          <strong class="me-auto">{{ toastTitle }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" />
+        </div>
+        <div class="toast-body">{{ toastMessage }}</div>
+      </div>
+    </div>
 </template>
 
 <script>
 import dayjs from 'dayjs';
+import { Toast } from 'bootstrap';
+import { ref } from 'vue';
 import { updateWorkout, deleteWorkout, createWorkout } from '../api/api';
 
 export default {
@@ -217,26 +246,52 @@ export default {
       locationData = {};
     }
     return {
+      isAddButtonDisabled: ref(false),
       localWorkoutData: locationData,
-      alertData: { code: '', msg: '' },
+      toastInstance: null,
+      toastTitle: 'Default Title',
+      toastMessage: 'Default Message',
+      toastTime: '',
     };
+  },
+  mounted() {
+    const toastEl = this.$refs.toast;
+    this.toastInstance = new Toast(toastEl, {
+      autohide: true,
+      delay: 3000,
+    });
   },
   methods: {
     formatDate(dateString) {
-      return dayjs(dateString).format('YYYY-MM-DD hh:mm');
+      return dayjs(dateString).format('DD.MM.YYYY hh:mm');
     },
 
     addSet() {
-      this.localWorkoutData.workout.sets_count += 1;
+      if (this.localWorkoutData.workout.sets_count >= 10) {
+        this.showToast('limit of sets', 'info');
+        return;
+      }
       this.localWorkoutData.workout.exercises.forEach((exercise) => {
         exercise.sets.push({ weight: 0, reps: 0 });
       });
+      this.localWorkoutData.workout.sets_count += 1;
       this.syncData();
     },
-
+    showToast(message, title = 'Notification') {
+      this.toastTitle = title;
+      this.toastMessage = message;
+      this.toastInstance.show();
+    },
     addExercise() {
+      if (this.localWorkoutData.workout.exercises.length >= 10) {
+        this.showToast('limit of exercises', 'info');
+        return;
+      }
       const emptySets = [];
-      for (let i = 0; i <= this.localWorkoutData.workout.sets_count; i += 1) {
+      if (this.localWorkoutData.workout.sets_count === 0) {
+        this.localWorkoutData.workout.sets_count += 1;
+      }
+      for (let i = 0; i < this.localWorkoutData.workout.sets_count; i += 1) {
         emptySets.push({ weight: 0, reps: 0 });
       }
       this.localWorkoutData.workout.exercises.push({
@@ -247,6 +302,11 @@ export default {
     },
 
     addCardio() {
+      if (this.localWorkoutData.workout.cardio.length >= 10) {
+        this.showToast('limit of cardio', 'info');
+
+        return;
+      }
       this.localWorkoutData.workout.cardio.push({
         type: 'New Cardio Exercise',
         speed: 0,
@@ -257,16 +317,34 @@ export default {
       this.syncData();
     },
 
+    removeCardio(index) {
+      this.localWorkoutData.workout.cardio.splice(index, 1);
+      this.syncData();
+    },
+
     removeExercise(index) {
       this.localWorkoutData.workout.exercises.splice(index, 1);
       this.syncData();
     },
 
+    removeSet(index) {
+      if (this.localWorkoutData.workout.sets_count > 1) {
+        this.localWorkoutData.workout.exercises.forEach((exercise) => {
+          if (exercise.sets && index < exercise.sets.length) {
+            exercise.sets.splice(index, 1);
+          }
+        });
+        if (Array.isArray(this.localWorkoutData.workout.sets_count)) {
+          this.localWorkoutData.workout.sets_count.splice(index, 1);
+        } else if (typeof this.localWorkoutData.workout.sets_count === 'number') {
+          this.localWorkoutData.workout.sets_count -= 1;
+        }
+        this.syncData();
+      }
+    },
+
     syncData() {
       this.$emit('update:workoutData', this.localWorkoutData);
-    },
-    hideAlert() {
-      this.alertData = {};
     },
     async saveWorkout() {
       this.localWorkoutData.workout.cardio.forEach((exercise, index) => {
@@ -277,17 +355,17 @@ export default {
       });
       if (this.localWorkoutData.id) {
         await updateWorkout(this.localWorkoutData);
-        this.alertData.msg = 'saved';
+        this.showToast('Saved', 'Success');
       } else {
         await createWorkout(this.localWorkoutData);
-        this.alertData.msg = 'Created';
+        this.showToast('Created');
         window.location.reload();
       }
     },
 
     async deleteWorkoutById(id) {
       await deleteWorkout(id);
-      this.alertData.msg = 'Deleted!';
+      this.showToast('Deleted');
       this.localWorkoutData.workout = {};
       window.location.reload();
     },
@@ -304,3 +382,8 @@ export default {
   },
 };
 </script>
+<style>
+.toast-container {
+  z-index: 1050; /* Make sure it appears above other elements */
+}
+</style>
