@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-import changeComponent from '../mixin/changeComponent';
+import changeComponent from '../../mixin/changeComponent';
 import workoutComponent from './workout.vue';
 
 export default {

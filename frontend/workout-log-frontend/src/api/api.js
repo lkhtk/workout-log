@@ -21,3 +21,12 @@ export async function updateWorkout(workoutData) {
 export function deleteWorkout(id) {
   return api.delete(`${base}/workouts/${id}`);
 }
+
+export async function checkToken(data) {
+  const payload = JSON.stringify({ token: data });
+  return api.post(`${base}/auth/google/sigin`, payload);
+}
+
+export async function logOut() {
+  return api.get(`${base}/auth/google/sigout`);
+}

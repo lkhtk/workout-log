@@ -28,10 +28,14 @@ const routes = [
     component: () => import('../views/FaqView.vue'),
   },
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/LoginPage.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('../views/NotFound.vue'),
   },
-
 ];
 
 const router = createRouter({

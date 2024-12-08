@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import Create from '@/components/create.vue';
-import View from '@/components/view.vue';
-import List from '@/components/list.vue';
+import Create from '@/components/workout/create.vue';
+import View from '@/components/workout/view.vue';
+import List from '@/components/workout/list.vue';
 
 export default {
   name: 'HomeView',

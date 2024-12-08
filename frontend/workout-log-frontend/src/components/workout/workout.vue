@@ -223,7 +223,7 @@
 import dayjs from 'dayjs';
 import { Toast } from 'bootstrap';
 import { ref } from 'vue';
-import { updateWorkout, deleteWorkout, createWorkout } from '../api/api';
+import { updateWorkout, deleteWorkout, createWorkout } from '../../api/api';
 
 export default {
   name: 'WorkoutComponent',

@@ -8,8 +8,8 @@
   </button>
 </template>
 <script>
-import changeComponent from '../mixin/changeComponent';
-import { getWorkout } from '../api/api';
+import changeComponent from '../../mixin/changeComponent';
+import { getWorkout } from '../../api/api';
 import workoutComponent from './workout.vue';
 
 export default {
