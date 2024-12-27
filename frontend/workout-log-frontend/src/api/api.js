@@ -24,9 +24,9 @@ export function deleteWorkout(id) {
 
 export async function checkToken(data) {
   const payload = JSON.stringify({ token: data });
-  return api.post(`${base}/auth/google/sigin`, payload);
+  return api.post('/auth/google/sigin', payload);
 }
 
 export async function logOut() {
-  return api.get(`${base}/auth/google/sigout`);
+  return api.get('/auth/google/sigout');
 }

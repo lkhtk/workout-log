@@ -49,14 +49,25 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	}
 	payload, err := verifyGoogleToken(token.Token)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Authentication failed"})
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
 	sessionToken := xid.New().String()
 	session := sessions.Default(c)
 	session.Set("token", sessionToken)
-	session.Save()
-	c.JSON(http.StatusOK, gin.H{"message": "User authenticated successfully", "User": payload})
+	session.Options(sessions.Options{
+		Path:     "/",
+		MaxAge:   3600,
+		HttpOnly: false,
+		Secure:   false,
+	})
+
+	if err := session.Save(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "User authenticated successfully", "User": payload, "token": session.Get("token")})
 }
 
 func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {
@@ -70,9 +81,8 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		sessionToken := session.Get("token")
-		log.Panic(sessionToken)
 		if sessionToken == nil {
-			c.JSON(http.StatusForbidden, gin.H{"message": "Unauthorized"})
+			c.AbortWithStatus(http.StatusUnauthorized)
 			c.Abort()
 		}
 		c.Next()

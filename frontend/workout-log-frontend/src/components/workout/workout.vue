@@ -354,15 +354,21 @@ export default {
         this.localWorkoutData.workout.cardio[index].calories = parseFloat(exercise.calories);
       });
       if (this.localWorkoutData.id) {
-        await updateWorkout(this.localWorkoutData);
-        this.showToast('Saved', 'Success');
+        await updateWorkout(this.localWorkoutData).then(() => {
+          this.showToast('Saved', 'Success');
+        }).catch((error) => {
+          if (error.response.status === 401) {
+            this.$router.push('/login');
+          } else {
+            this.showToast(error.code, error.message);
+          }
+        });
       } else {
         await createWorkout(this.localWorkoutData);
         this.showToast('Created');
         window.location.reload();
       }
     },
-
     async deleteWorkoutById(id) {
       await deleteWorkout(id);
       this.showToast('Deleted');

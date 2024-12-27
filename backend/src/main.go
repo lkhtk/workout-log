@@ -22,6 +22,7 @@ var err error
 var client *mongo.Client
 var workoutsHandler *handlers.WorkoutsHandler
 var authHandler *handlers.AuthHandler
+var server *gin.Engine
 
 func init() {
 	ctx = context.Background()
@@ -38,33 +39,36 @@ func init() {
 
 }
 func main() {
-	router := gin.Default()
-	store := cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("mysession", store))
+	server = gin.Default()
+	store := cookie.NewStore([]byte("4roiHJKLnmz,xJJ((2-____))"))
 
-	authorized := router.Group("/")
-	authorized.Use(authHandler.AuthMiddleware())
-	{
-		router.GET("/workouts", workoutsHandler.ListWorkouts)
-		router.GET("/workouts/:id", workoutsHandler.GetOneWorkout)
-		router.POST("/workouts", workoutsHandler.NewWorkout)
-		router.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)
-		router.DELETE("/workouts/:id", workoutsHandler.DeleteWorkout)
+	server.Use(sessions.Sessions("client_session", store))
+	server.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
+	if os.Getenv("STAND") == "prod" {
+		store.Options(sessions.Options{HttpOnly: true, SameSite: 4, Secure: true})
+	} else {
+		store.Options(sessions.Options{HttpOnly: false})
 	}
-
+	router := server.Group("/")
 	router.POST("/auth/google/sigin", authHandler.GoogleAuthHandler)
 	router.GET("/auth/google/sigout", authHandler.DestroyUserSession)
 	router.GET("/health", health)
-	router.Use(cors.Default())
-	// config := cors.DefaultConfig()
-	// config.AllowOrigins = []string{"*://localhost:*/*"}
-	// config.AllowHeaders = []string{"Access-Control-Allow-Headers", "X-Requested-With,content-type"}
-	// config.AllowHeaders = []string{"Origin"}
-	// config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"}
-
-	// config.AllowCredentials = true
-	// router.Use(cors.New(config))
-	router.Run("0.0.0.0:8000")
+	authorized := router.Group("/api")
+	authorized.Use(authHandler.AuthMiddleware())
+	{
+		authorized.GET("/workouts", workoutsHandler.ListWorkouts)
+		authorized.GET("/workouts/:id", workoutsHandler.GetOneWorkout)
+		authorized.POST("/workouts", workoutsHandler.NewWorkout)
+		authorized.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)
+		authorized.DELETE("/workouts/:id", workoutsHandler.DeleteWorkout)
+	}
+	server.Use(cors.Default())
+	server.Run("0.0.0.0:8000")
 }
 
 func health(c *gin.Context) {

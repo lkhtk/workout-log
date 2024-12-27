@@ -20,7 +20,10 @@
     </div>
   </div>
   <div v-else>
-    <div class="container-lg p-3 mb-5 bg-body-tertiary rounded">
+    <div class="alert alert-danger" role="alert" v-if="errorData.msg">
+      {{ errorData.msg}}
+    </div>
+    <div v-else class="container-lg p-3 mb-5 bg-body-tertiary rounded">
       <h1 class="display-1">There are no workouts yet :(</h1>
       <button type="button" class="btn btn-success"
       @click="changeComponent('create', '')">Add your first workout</button>
@@ -40,15 +43,31 @@ export default {
     workoutComponent,
   },
   async beforeMount() {
-    await this.getAllWorkouts();
+    this.loadAllWorkouts();
   },
   data: () => ({
     workoutsList: [],
+    errorData: {
+      code: '',
+      msg: '',
+    },
   }),
   methods: {
-    async getAllWorkouts() {
-      const { data } = await getAllWorkouts();
-      this.workoutsList = data;
+    async loadAllWorkouts() {
+      await getAllWorkouts()
+        .then((data) => {
+          this.workoutsList = data.data;
+          this.errorData = {};
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status === 401) {
+            this.errorData.msg = 'Login first';
+          } else {
+            this.errorData.code = error.code;
+            this.errorData.msg = error.message;
+          }
+        });
     },
   },
 };
