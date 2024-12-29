@@ -6,7 +6,6 @@ import GoogleSignInPlugin from 'vue3-google-signin';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
-
 import 'bootstrap/dist/css/bootstrap.css';
 
 library.add(fas);

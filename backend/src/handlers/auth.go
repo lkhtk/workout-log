@@ -55,6 +55,10 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	}
 	sessionToken := xid.New().String()
 	session := sessions.Default(c)
+	session.Options(sessions.Options{
+		Path:     "/",
+		HttpOnly: true,
+	})
 	session.Set("token", sessionToken)
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -66,6 +70,9 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
+	session.Options(sessions.Options{
+		MaxAge: -1,
+	})
 	session.Save()
 	c.JSON(http.StatusOK, gin.H{"message": "you have successfully logged out"})
 }

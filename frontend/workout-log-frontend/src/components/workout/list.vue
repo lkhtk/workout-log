@@ -61,7 +61,7 @@ export default {
         })
         .catch((error) => {
           if (error.response.status === 401) {
-            this.errorData.msg = 'Login first';
+            this.$router.push('/about');
           } else {
             this.errorData.code = error.code;
             this.errorData.msg = error.message;

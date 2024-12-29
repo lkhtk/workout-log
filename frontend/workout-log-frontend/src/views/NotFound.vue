@@ -1,6 +1,9 @@
 <template>
-   <div class="container-lg p-3 mb-5 bg-body-tertiary rounded">
-    <h1 class="display-1">404</h1>
-    <a href="/" class="btn btn-primary"><font-awesome-icon icon="fa-solid fa-house" />Home page</a>
+  <div class="d-flex h-100 text-center">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <main class="px-3">
+        <h1 class="display-1">404</h1>
+      </main>
+    </div>
   </div>
 </template>

@@ -357,11 +357,7 @@ export default {
         await updateWorkout(this.localWorkoutData).then(() => {
           this.showToast('Saved', 'Success');
         }).catch((error) => {
-          if (error.response.status === 401) {
-            this.$router.push('/login');
-          } else {
-            this.showToast(error.code, error.message);
-          }
+          this.showToast(error.code, error.message);
         });
       } else {
         await createWorkout(this.localWorkoutData).then(() => {
@@ -371,12 +367,7 @@ export default {
           window.location.reload();
         })
           .catch((error) => {
-            console.log(error);
-            if (error.response.status === 401) {
-              this.showToast('Unauthorized', 'Error');
-            } else {
-              this.showToast(error.message, error.code);
-            }
+            this.showToast(error.message, error.code);
           });
       }
     },
@@ -388,12 +379,7 @@ export default {
         window.location.reload();
       })
         .catch((error) => {
-          console.log(error);
-          if (error.response.status === 401) {
-            this.showToast('Unauthorized', 'Error');
-          } else {
-            this.showToast(error.message, error.code);
-          }
+          this.showToast(error.message, error.code);
         });
     },
   },
