@@ -364,16 +364,37 @@ export default {
           }
         });
       } else {
-        await createWorkout(this.localWorkoutData);
-        this.showToast('Created');
-        window.location.reload();
+        await createWorkout(this.localWorkoutData).then(() => {
+          this.showToast('Created');
+          this.errorData = {};
+          this.localWorkoutData.workout = {};
+          window.location.reload();
+        })
+          .catch((error) => {
+            console.log(error);
+            if (error.response.status === 401) {
+              this.showToast('Unauthorized', 'Error');
+            } else {
+              this.showToast(error.message, error.code);
+            }
+          });
       }
     },
     async deleteWorkoutById(id) {
-      await deleteWorkout(id);
-      this.showToast('Deleted');
-      this.localWorkoutData.workout = {};
-      window.location.reload();
+      await deleteWorkout(id).then(() => {
+        this.showToast('Deleted', 'Info');
+        this.errorData = {};
+        this.localWorkoutData.workout = {};
+        window.location.reload();
+      })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status === 401) {
+            this.showToast('Unauthorized', 'Error');
+          } else {
+            this.showToast(error.message, error.code);
+          }
+        });
     },
   },
 
@@ -390,6 +411,6 @@ export default {
 </script>
 <style>
 .toast-container {
-  z-index: 1050; /* Make sure it appears above other elements */
+  z-index: 1050;
 }
 </style>

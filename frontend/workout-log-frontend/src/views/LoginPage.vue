@@ -29,7 +29,7 @@ import { useUserStore } from '../stores/userStore';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
-
+console.log(userStore);
 const { isReady, login } = useOneTap({
   disableAutomaticPrompt: true,
   onSuccess: async (response) => {
@@ -47,6 +47,7 @@ const { isReady, login } = useOneTap({
         picture: decodedCredential.picture,
       };
       userStore.setUser(userData);
+      console.log('userStore saved');
     } catch (error) {
       console.error('Error in One Tap Login:', error.message);
     }
@@ -54,10 +55,15 @@ const { isReady, login } = useOneTap({
   onError: () => console.error('Error with One Tap Login'),
 });
 
-const revoke = (id) => {
+const revoke = async (id) => {
   idRevoke(id, () => {
     userStore.clearUser();
   });
-  logOut();
+
+  const result = await logOut();
+  console.log(result);
+  if (result.status !== 200) {
+    throw new Error('Logout failed');
+  }
 };
 </script>

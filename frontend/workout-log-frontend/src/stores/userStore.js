@@ -3,14 +3,16 @@ import { defineStore, mapStores } from 'pinia';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
   }),
   actions: {
     setUser(userData) {
       this.user = userData;
+      localStorage.setItem('user', JSON.stringify(userData));
     },
     clearUser() {
       this.user = null;
+      localStorage.removeItem('user');
     },
   },
 });

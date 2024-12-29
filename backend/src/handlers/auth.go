@@ -56,13 +56,6 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	sessionToken := xid.New().String()
 	session := sessions.Default(c)
 	session.Set("token", sessionToken)
-	session.Options(sessions.Options{
-		Path:     "/",
-		MaxAge:   3600,
-		HttpOnly: false,
-		Secure:   false,
-	})
-
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
