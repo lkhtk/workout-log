@@ -1,40 +1,79 @@
 <template>
-  <div v-if="!user">
-    <div class="card-body">
-      <h5 class="card-title">Unauthorise</h5>
-    </div>
-  </div>
-  <div v-else class="card" style="width: 18rem;">
-    <img :src="user.picture" alt="avatar" class="card-img-top">
-    <div class="card-body">
-      <h5 class="card-title">{{ user.name }}</h5>
-      <p class="card-text">{{ user.email }}</p>
-      <button class="btn btn-danger" @click="revoke(user.id)">Sign Out</button>
+  <div class="d-flex h-100 text-center">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <h1 class="display-1">User profile</h1>
+      </div>
+      <main>
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center justify-content-around">
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <img
+                  :src="user?.picture || defaultUser.picture"
+                  alt="avatar"
+                  class="card-img-top"
+                >
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">
+                  {{ user?.name || defaultUser.name }}
+                </h1>
+                <h6 class="card-subtitle mb-2 text-body-secondary">
+                    {{ user?.email || defaultUser.email }}
+                </h6>
+                <button
+                  class="btn w-100 btn-lg btn-outline-danger"
+                  v-if="user"
+                  @click="revoke(user.id)"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import {
-  idRevoke,
-} from 'vue3-google-signin';
-
-import {
-  logOut,
-} from '../api/api';
-
+import { idRevoke } from 'vue3-google-signin';
+import { logOut } from '../api/api';
 import { useUserStore } from '../stores/userStore';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+
+const defaultUser = {
+  id: 0,
+  name: 'Chad',
+  picture: 'https://upload.wikimedia.org/wikipedia/ru/9/94/%D0%93%D0%B8%D0%B3%D0%B0%D1%87%D0%B0%D0%B4.jpg',
+  email: 'root@localhost',
+};
+
 const revoke = async (id) => {
-  idRevoke(id, () => {
+  try {
+    await new Promise((resolve, reject) => {
+      idRevoke(id, (done) => {
+        if (done.error) {
+          console.error('Error during revoke:', done.error);
+          reject(new Error(done.error));
+        } else {
+          resolve();
+        }
+      });
+    });
+    const result = await logOut();
+    if (result.status !== 200) {
+      throw new Error('Server logout failed');
+    }
     userStore.clearUser();
-  });
-  const result = await logOut();
-  if (result.status !== 200) {
-    throw new Error('Logout failed');
+    console.log('User logged out successfully');
+  } catch (error) {
+    console.error('Logout error:', error.message);
   }
 };
 </script>

@@ -9,12 +9,12 @@ import (
 type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	PublishedAt time.Time
-	User        string `json:"user"`
-	MuscleGroup string `json:"muscle_group"`
+	User        string `json:"user" bson:"user"`
+	MuscleGroup string `json:"muscle_group" bson:"muscle_group"`
 	Workout     struct {
-		SetsCount int `json:"sets_count"`
+		SetsCount int `json:"sets_count" bson:"sets_count"`
 		Exercises []struct {
-			Name string `json:"name"`
+			Name string `json:"name" bson:"name"`
 			Sets []struct {
 				Reps   int `json:"reps"`
 				Weight int `json:"weight"`

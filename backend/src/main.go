@@ -56,7 +56,7 @@ func main() {
 	}
 	router := server.Group("/")
 	router.POST("/auth/google/sigin", authHandler.GoogleAuthHandler)
-	router.GET("/auth/google/sigout", authHandler.DestroyUserSession)
+	router.POST("/auth/google/sigout", authHandler.DestroyUserSession)
 	router.GET("/health", health)
 	authorized := router.Group("/api")
 	authorized.Use(authHandler.AuthMiddleware())

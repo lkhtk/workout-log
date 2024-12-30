@@ -26,7 +26,7 @@
           <ul class="navbar-nav d-flex" v-if="!user">
             <li class="nav-item d-flex">
               <button class="btn btn-outline-primary" :disabled="!isReady" @click="() => login()">
-                Login
+                Log in
               </button>
             </li>
           </ul>
@@ -49,8 +49,10 @@
       </div>
     </nav>
   </header>
-  <div class="container-lg shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-    <router-view/>
+  <div class="shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+    <div class="container">
+      <router-view/>
+    </div>
   </div>
   <footer class="container d-flex flex-wrap justify-content-between align-items-center
     py-3 my-4 border-top">
@@ -119,12 +121,25 @@ const { isReady, login } = useOneTap({
 });
 
 const revoke = async (id) => {
-  idRevoke(id, () => {
+  try {
+    await new Promise((resolve, reject) => {
+      idRevoke(id, (done) => {
+        if (done.error) {
+          console.error('Error during revoke:', done.error);
+          reject(new Error(done.error));
+        } else {
+          resolve();
+        }
+      });
+    });
+    const result = await logOut();
+    if (result.status !== 200) {
+      throw new Error('Server logout failed');
+    }
     userStore.clearUser();
-  });
-  const result = await logOut();
-  if (result.status !== 200) {
-    throw new Error('Logout failed');
+    console.log('User logged out successfully');
+  } catch (error) {
+    console.error('Logout error:', error.message);
   }
 };
 </script>

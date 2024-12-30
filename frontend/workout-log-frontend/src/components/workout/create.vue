@@ -12,7 +12,7 @@ import changeComponent from '../../mixin/changeComponent';
 import workoutComponent from './workout.vue';
 
 export default {
-  name: 'CreateUser',
+  name: 'CreateWorkout',
   mixins: [changeComponent],
   components: {
     workoutComponent,

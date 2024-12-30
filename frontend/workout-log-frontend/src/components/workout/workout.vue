@@ -18,7 +18,7 @@
       {{ formatDate(localWorkoutData.PublishedAt) }}
     </p>
     <div v-if="localWorkoutData.workout.sets_count>0 || edit">
-      <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-dumbbell" />Strength </h1>
+      <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-dumbbell" />Strength training </h1>
       <table class="table table-hover align-middle table-bordered table-striped table-light">
         <thead >
           <tr>

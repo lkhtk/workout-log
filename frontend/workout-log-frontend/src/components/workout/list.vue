@@ -1,32 +1,37 @@
 <template>
-  <div v-if="workoutsList.length>0">
-    <div class="container-lg p-3 mb-5 bg-body-tertiary rounded"
-      v-for="workoutItem in workoutsList" v-bind:key="workoutItem">
-        <workoutComponent :workoutData="workoutItem"/>
-      <div class="d-flex flex-row-reverse">
-        <div class="btn-group"
-          role="group" aria-label="Basic mixed styles example">
-          <button type="button" class="btn btn-primary"
-            @click="changeComponent('view', workoutItem.id)">
-            <font-awesome-icon inverse icon="fa-solid fa-file-pen" />
-          </button>
-          <button type="button" class="btn btn-success"
-            @click="changeComponent('create', '')">
-            <font-awesome-icon icon="fa-solid fa-calendar-plus" />
-          </button>
-        </div>
-      </div>
-      <hr>
-    </div>
+  <div class="spinner-border align-items-center" role="status" v-if="loading">
+    <span class="visually-hidden align-items-center">Loading...</span>
   </div>
   <div v-else>
-    <div class="alert alert-danger" role="alert" v-if="errorData.msg">
-      {{ errorData.msg}}
+    <div v-if="workoutsList.length>0">
+      <div class="container-lg p-3 mb-5 bg-body-tertiary rounded"
+        v-for="workoutItem in workoutsList" v-bind:key="workoutItem">
+          <workoutComponent :workoutData="workoutItem"/>
+        <div class="d-flex flex-row-reverse">
+          <div class="btn-group"
+            role="group" aria-label="Basic mixed styles example">
+            <button type="button" class="btn btn-primary"
+              @click="changeComponent('view', workoutItem.id)">
+              <font-awesome-icon inverse icon="fa-solid fa-file-pen" />
+            </button>
+            <button type="button" class="btn btn-success"
+              @click="changeComponent('create', '')">
+              <font-awesome-icon icon="fa-solid fa-calendar-plus" />
+            </button>
+          </div>
+        </div>
+        <hr>
+      </div>
     </div>
-    <div v-else class="container-lg p-3 mb-5 bg-body-tertiary rounded">
-      <h1 class="display-1">There are no workouts yet :(</h1>
-      <button type="button" class="btn btn-success"
-      @click="changeComponent('create', '')">Add your first workout</button>
+    <div v-else>
+      <div class="alert alert-danger" role="alert" v-if="errorData.msg">
+        {{ errorData.msg}}
+      </div>
+      <div v-else class="container-lg p-3 mb-5 bg-body-tertiary rounded">
+        <h1 class="display-1">There are no workouts yet 😞</h1>
+        <button type="button" class="btn btn-success"
+        @click="changeComponent('create', '')">Add your first workout</button>
+      </div>
     </div>
   </div>
 </template>
@@ -46,6 +51,7 @@ export default {
     this.loadAllWorkouts();
   },
   data: () => ({
+    loading: false,
     workoutsList: [],
     errorData: {
       code: '',
@@ -54,6 +60,7 @@ export default {
   }),
   methods: {
     async loadAllWorkouts() {
+      this.loading = true;
       await getAllWorkouts()
         .then((data) => {
           this.workoutsList = data.data;
@@ -67,6 +74,7 @@ export default {
             this.errorData.msg = error.message;
           }
         });
+      this.loading = !this.loading;
     },
   },
 };

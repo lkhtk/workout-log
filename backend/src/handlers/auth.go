@@ -60,6 +60,7 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 		HttpOnly: true,
 	})
 	session.Set("token", sessionToken)
+	session.Set("email", payload["email"].(string))
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -81,7 +82,8 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		sessionToken := session.Get("token")
-		if sessionToken == nil {
+		email := session.Get("email")
+		if sessionToken == nil || email == nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			c.Abort()
 		}

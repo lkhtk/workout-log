@@ -28,5 +28,5 @@ export async function checkToken(data) {
 }
 
 export async function logOut() {
-  return api.get('/auth/google/sigout');
+  return api.post('/auth/google/sigout');
 }

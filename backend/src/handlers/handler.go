@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	models "github.com/lkhtk/workout-log/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,7 +26,7 @@ func NewWorkoutsHandler(ctx context.Context, collection *mongo.Collection) *Work
 }
 
 func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
-	cur, err := handler.collection.Find(handler.ctx, bson.M{})
+	cur, err := handler.collection.Find(handler.ctx, getFilter(c))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,14 +50,28 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 	c.JSON(http.StatusOK, workouts)
 }
 
+func getFilter(c *gin.Context) bson.M {
+	session := sessions.Default(c)
+	email := session.Get("email")
+	userId := email.(string)
+	if userId != "" {
+		return bson.M{"user": userId}
+	}
+	return bson.M{}
+}
+
 func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {
 	var workout models.Workout
 	if err := c.ShouldBindJSON(&workout); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	session := sessions.Default(c)
+	email := session.Get("email")
+	//todo search user id by email
+	userId := email.(string)
 	workout.ID = primitive.NewObjectID()
+	workout.User = userId
 	workout.PublishedAt = time.Now()
 	_, err := handler.collection.InsertOne(handler.ctx, workout)
 	if err != nil {
