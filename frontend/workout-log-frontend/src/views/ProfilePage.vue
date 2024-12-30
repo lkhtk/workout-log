@@ -1,13 +1,15 @@
 <template>
   <div v-if="!user">
-    Unauthorized
+    <div class="card-body">
+      <h5 class="card-title">Unauthorise</h5>
+    </div>
   </div>
   <div v-else class="card" style="width: 18rem;">
     <img :src="user.picture" alt="avatar" class="card-img-top">
     <div class="card-body">
       <h5 class="card-title">{{ user.name }}</h5>
       <p class="card-text">{{ user.email }}</p>
-      <button class="btn btn-danger" @click="revoke(user.id)">Logout</button>
+      <button class="btn btn-danger" @click="revoke(user.id)">Sign Out</button>
     </div>
   </div>
 </template>

@@ -40,7 +40,7 @@ func init() {
 }
 func main() {
 	server = gin.Default()
-	store := cookie.NewStore([]byte("secret"))
+	store := cookie.NewStore([]byte(os.Getenv("SESSION_SECRET")))
 	store.Options(sessions.Options{Path: "/", Domain: "localhost"})
 	server.Use(sessions.Sessions("client_session", store))
 	server.Use(cors.New(cors.Config{
