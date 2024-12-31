@@ -2,7 +2,8 @@
   <div class="d-flex h-100 text-center">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <h1 class="display-1">User profile</h1>
+        <h1 class="display-1">
+          User profile</h1>
       </div>
       <main>
         <div class="row row-cols-1 row-cols-md-3 mb-3 text-center justify-content-around">
@@ -17,17 +18,20 @@
               </div>
               <div class="card-body">
                 <h1 class="card-title pricing-card-title">
+                  <font-awesome-icon icon="fa-solid fa-circle-user" />
                   {{ user?.name || defaultUser.name }}
                 </h1>
                 <h6 class="card-subtitle mb-2 text-body-secondary">
-                    {{ user?.email || defaultUser.email }}
+                  <font-awesome-icon icon="fa-solid fa-at" />
+                  {{ user?.email || defaultUser.email }}
                 </h6>
                 <button
                   class="btn w-100 btn-lg btn-outline-danger"
                   v-if="user"
                   @click="revoke(user.id)"
                 >
-                  Sign Out
+                <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+                Sign Out
                 </button>
               </div>
             </div>

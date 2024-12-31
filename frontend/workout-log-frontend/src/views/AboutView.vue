@@ -11,9 +11,14 @@
         the opportunity to make your workouts even more effective and interesting!</p>
       <div class="d-grid gap-2 d-md-flex justify-content-md-start">
         <button type="button" class="btn btn-primary btn-lg px-4 me-md-2"
-        @click="this.$router.push('/pricing')">Pricing</button>
+        @click="this.$router.push('/pricing')">
+          <font-awesome-icon icon="fa-solid fa-money-check-dollar" />
+          Pricing
+        </button>
         <button type="button" class="btn btn-outline-secondary btn-lg px-4"
-        @click="this.$router.push('/features')">Features</button>
+        @click="this.$router.push('/features')">
+          <font-awesome-icon icon="fa-solid fa-user-ninja" />
+        Features</button>
       </div>
     </div>
   </div>

@@ -10,7 +10,10 @@
             <h2 class="fw-bold text-body-emphasis">A dead simple</h2>
             <p class="text-body-secondary">gym journal for anyone and everyone</p>
             <a href="#" class="btn btn-primary btn-lg"
-            @click="this.$router.push('/profile')">Sign In</a>
+              @click="this.$router.push('/profile')">
+              <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
+              Sign In
+            </a>
           </div>
           <div class="col">
             <div class="row row-cols-1 row-cols-sm-2 g-4">
@@ -35,18 +38,20 @@
             <div class="col d-flex flex-column gap-2">
               <div class="feature-icon-small d-inline-flex align-items-center
               justify-content-center fs-4 rounded-3">
-                <font-awesome-icon icon="fa-solid fa-ban" />
+                <font-awesome-icon icon="fa-solid fa-child-reaching" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">No adverds</h4>
-              <p class="text-body-secondary">Made just for fun, not for money</p>
+              <h4 class="fw-semibold mb-0 text-body-emphasis">It's simple</h4>
+              <p class="text-body-secondary">Easy to use!
+                Quick and easy recording of training sessions</p>
             </div>
             <div class="col d-flex flex-column gap-2">
               <div class="feature-icon-small d-inline-flex align-items-center
               justify-content-center fs-4 rounded-3">
-                <font-awesome-icon icon="fa-solid fa-globe" />
+              <font-awesome-icon icon="fa-solid fa-ban" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">No corporate bullshit</h4>
-              <p class="text-body-secondary">Without the control and influence of companies</p>
+              <h4 class="fw-semibold mb-0 text-body-emphasis">No bullshit</h4>
+              <p class="text-body-secondary">No adverds, No cookies opt-out, No pop-up, No chatbots,
+                No clickbaits (okay, just a little bit)</p>
               </div>
             </div>
           </div>

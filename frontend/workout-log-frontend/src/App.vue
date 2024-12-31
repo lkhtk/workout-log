@@ -26,6 +26,7 @@
           <ul class="navbar-nav d-flex" v-if="!user">
             <li class="nav-item d-flex">
               <button class="btn btn-outline-primary" :disabled="!isReady" @click="() => login()">
+                <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
                 Log in
               </button>
             </li>
@@ -38,11 +39,17 @@
           </a>
           <ul class="dropdown-menu" style="">
             <li>
-              <router-link class="dropdown-item" to="/profile">Profile</router-link>
+              <router-link class="dropdown-item" to="/profile">
+                <font-awesome-icon icon="fa-solid fa-address-card" />
+                Profile
+              </router-link>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <button class="dropdown-item" @click="revoke(user.id)">Sign out</button>
+              <button class="dropdown-item" @click="revoke(user.id)">
+                <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+                Sign out
+              </button>
             </li>
           </ul>
         </div>
