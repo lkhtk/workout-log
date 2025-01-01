@@ -1,7 +1,9 @@
-name: Build and Push Docker Images
+name: Conditional Build and Push Docker Images
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'frontend/**'
       - 'backend/**'
@@ -9,10 +11,10 @@ on:
 jobs:
   # Backend Job
   build-backend:
-    if: ${{ contains(format('{0}', github.event.head_commit.modified), 'backend/') }}
+    if: ${{ github.event.paths && startsWith(github.event.paths[0], 'backend/') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Log in to GitHub Container Registry
@@ -33,10 +35,10 @@ jobs:
 
   # Frontend Job
   build-frontend:
-    if: ${{ contains(format('{0}', github.event.head_commit.modified), 'frontend/') }}
+    if: ${{ github.event.paths && startsWith(github.event.paths[0], 'frontend/') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Log in to GitHub Container Registry
