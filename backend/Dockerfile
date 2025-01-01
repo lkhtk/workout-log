@@ -1,7 +1,7 @@
 FROM golang:1.23.4 AS build-env
 WORKDIR /go/src/app/src/
 COPY ./src/ ./
-RUN go mod download && go get -d -v ./... &&\ 
+RUN go mod download && go get -v ./... &&\ 
     CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /opt/backend.bin ./
 USER nonroot
 FROM scratch
