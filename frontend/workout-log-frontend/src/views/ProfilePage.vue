@@ -22,7 +22,7 @@
                   {{ user?.name || defaultUser.name }}
                 </h1>
                 <h6 class="card-subtitle mb-2 text-body-secondary">
-                  <font-awesome-icon icon="fa-solid fa-at" />
+                  <font-awesome-icon icon="fa-solid fa-envelope" />
                   {{ user?.email || defaultUser.email }}
                 </h6>
                 <button
