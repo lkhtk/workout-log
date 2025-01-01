@@ -63,7 +63,7 @@
   </div>
   <footer class="container d-flex flex-wrap justify-content-between align-items-center
     py-3 my-4 border-top">
-    <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 Company, Inc</p>
+    <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025</p>
     <nav style="--bs-breadcrumb-divider: '';" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item" v-if="user">
