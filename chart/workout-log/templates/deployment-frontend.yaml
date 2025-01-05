@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.front.name }}
+  labels:
+    app: {{ .Values.front.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.front.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.front.name }}
+    spec:
+      containers:
+      - name: {{ .Values.front.name }}
+        image: "{{ .Values.front.image }}:{{ .Values.front.tag }}"
+        ports:
+        - containerPort: {{ .Values.front.service.port }}
+        resources:
+          {{- toYaml .Values.back.resources | nindent 10 }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-{{ .Values.front.name }}
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1

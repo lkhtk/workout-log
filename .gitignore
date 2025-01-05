@@ -26,3 +26,4 @@ go.work.sum
 *.ini
 db/*
 params.json
+values.prod.yaml

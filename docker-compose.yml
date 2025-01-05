@@ -9,9 +9,11 @@ services:
     ports:
       - "27017:27017"
   frontend:
-    build: ./frontend
-    env_file:
-      - front.env
+    build: 
+      context: ./frontend
+      args:
+      - NODE_ENV=${NODE_ENV}
+      - VUE_APP_GOOGLE_CLIENT_ID=${VUE_APP_GOOGLE_CLIENT_ID}
     ports:
       - "8080:8080"
     restart: always

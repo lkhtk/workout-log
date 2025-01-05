@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.back.image }}:{{ .Values.back.tag }}"
+        ports:
+        - containerPort: {{ .Values.back.service.port }}
+        resources:
+          {{- toYaml .Values.back.resources | nindent 10 }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-{{ .Values.back.name }}
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1

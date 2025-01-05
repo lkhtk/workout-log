@@ -1,0 +1,53 @@
+replicaCount: 1
+imageCredentials:
+  registry: ghcr.io
+  username: XXX
+  password: XXXXXX
+front:
+  ingress:
+    enabled: true
+    host: log.local.lkhtk.me
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: lets-encrypt
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    tls:
+      enabled: true
+      secretName: frontend-tls-secret
+  name: frontend
+  image: ghcr.io/lkhtk/frontend
+  tag: latest
+  port: 8080
+  envs:
+    node_env: development
+  service:
+    type: ClusterIP
+    port: 80
+back:
+  port: 8000
+  image: ghcr.io/lkhtk/backend
+  tag: latest
+  name: backend 
+  envs:
+    google_client_id: XXX.apps.googleusercontent.com
+    stand: test
+    MONGO_URI: "mongodb://admin:supersecurepassword@mongodb:27017/workouts?authSource=admin"
+    MONGO_DATABASE: "workoutsdb"
+    SESSION_SECRET: "XXXX"
+  service:
+    type: ClusterIP
+    port: 8000
+mongodb:
+  username: admin
+  password: supersecurepassword
+  image:
+    repository: mongo
+    tag: 6.0
+  service:
+    type: ClusterIP
+    port: 27017
+  persistentVolume:
+    enabled: true
+    size: 5Gi
+  resources: {}

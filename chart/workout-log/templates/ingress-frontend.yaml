@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: {{ .Values.front.name }}-ingress
+ annotations:
+   cert-manager.io/cluster-issuer: lets-encrypt
+spec:
+ tls:
+ - hosts:
+   - {{ .Values.front.ingress.host }}
+   secretName: {{ .Values.front.name }}-ingress-tls
+ rules:
+ - host: {{ .Values.front.ingress.host }}
+   http:
+    paths:
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: {{ .Values.front.name }}
+          port:
+            number: {{ .Values.front.service.port }}
