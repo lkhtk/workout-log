@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-contrib/sessions/mongo/mongodriver"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -40,7 +40,9 @@ func init() {
 }
 func main() {
 	server = gin.Default()
-	store := cookie.NewStore([]byte(os.Getenv("SESSION_SECRET")))
+	c := client.Database(os.Getenv("MONGO_DATABASE")).Collection("sessions")
+
+	store := mongodriver.NewStore(c, 3600, true, []byte(os.Getenv("SESSION_SECRET")))
 	store.Options(sessions.Options{Path: "/", Domain: "localhost"})
 	server.Use(sessions.Sessions("client_session", store))
 	server.Use(cors.New(cors.Config{

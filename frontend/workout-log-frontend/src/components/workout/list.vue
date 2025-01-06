@@ -28,7 +28,8 @@
         {{ errorData.msg}}
       </div>
       <div v-else class="container-lg p-3 mb-5 bg-body-tertiary rounded">
-        <h1 class="display-1">There are no workouts yet 😞</h1>
+        <h1 class="display-1 text-center">There are no workouts yet</h1>
+        <h2 class="display-1 text-center">😞</h2>
         <button type="button" class="btn btn-success"
         @click="changeComponent('create', '')">Add your first workout</button>
       </div>
