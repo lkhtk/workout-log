@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"math"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -11,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type WorkoutsHandler struct {
@@ -26,7 +29,18 @@ func NewWorkoutsHandler(ctx context.Context, collection *mongo.Collection) *Work
 }
 
 func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
-	cur, err := handler.collection.Find(handler.ctx, getFilter(c))
+	findOpt := options.Find()
+	page, _ := strconv.Atoi(c.Query("page"))
+	var perPage int64 = 3
+	if page <= 0 {
+		page = 1
+	}
+	filter := getFilter(c)
+	total, _ := handler.collection.CountDocuments(handler.ctx, filter)
+
+	findOpt.SetSkip((int64(page) - 1) * perPage)
+	findOpt.SetLimit(perPage)
+	cur, err := handler.collection.Find(handler.ctx, filter, findOpt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -47,17 +61,56 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, workouts)
+	c.JSON(http.StatusOK, gin.H{"data": workouts, "total": total, "page": page, "last_page": math.Ceil(float64(total / perPage))})
 }
-
 func getFilter(c *gin.Context) bson.M {
+	filter := bson.M{}
 	session := sessions.Default(c)
-	email := session.Get("email")
-	userId := email.(string)
-	if userId != "" {
-		return bson.M{"user": userId}
+	email, exists := session.Get("email").(string)
+	if !exists || email == "" {
+		return filter
 	}
-	return bson.M{}
+	filter["user"] = email
+	searchDate := c.Query("date")
+	period := c.Query("period")
+	location := time.Now().Location()
+
+	if searchDate == "" {
+		searchDate = time.Now().String()
+	}
+	if period == "" {
+		period = "month"
+	}
+	if searchDate != "" && period != "" {
+		parsedDate, err := time.Parse("2006-01-02", searchDate)
+		if err == nil {
+			switch period {
+			case "day":
+				startOfDay := time.Date(parsedDate.Year(), parsedDate.Month(), parsedDate.Day(), 0, 0, 0, 0, location)
+				endOfDay := startOfDay.AddDate(0, 0, 1)
+				filter["publishedat"] = bson.M{
+					"$gte": startOfDay,
+					"$lt":  endOfDay,
+				}
+			case "month":
+				startOfMonth := time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, location)
+				endOfMonth := startOfMonth.AddDate(0, 1, 0)
+				filter["publishedat"] = bson.M{
+					"$gte": startOfMonth,
+					"$lt":  endOfMonth,
+				}
+			case "year":
+				startOfYear := time.Date(parsedDate.Year(), time.January, 1, 0, 0, 0, 0, location)
+				endOfYear := startOfYear.AddDate(1, 0, 0)
+				filter["publishedat"] = bson.M{
+					"$gte": startOfYear,
+					"$lt":  endOfYear,
+				}
+			}
+		}
+	}
+
+	return filter
 }
 
 func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {

@@ -1,8 +1,12 @@
 import api from '@/lib/libAxios';
 
 const base = '/api';
-export function getAllWorkouts() {
-  return api.get(`${base}/workouts`);
+export function getAllWorkouts(page) {
+  let url = `${base}/workouts`;
+  if (page !== undefined && page > 0) {
+    url += `?page=${page}`;
+  }
+  return api.get(url);
 }
 
 export function getWorkout(id) {

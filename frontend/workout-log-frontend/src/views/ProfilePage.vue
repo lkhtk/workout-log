@@ -75,6 +75,7 @@ const revoke = async (id) => {
       throw new Error('Server logout failed');
     }
     userStore.clearUser();
+    window.location.reload();
   } catch (error) {
     throw new Error('Logout error:', error.message);
   }

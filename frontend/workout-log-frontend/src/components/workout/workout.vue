@@ -357,6 +357,10 @@ export default {
         await updateWorkout(this.localWorkoutData).then(() => {
           this.showToast('Saved', 'Success');
         }).catch((error) => {
+          if (error.response?.status === 401) {
+            localStorage.removeItem('user');
+            this.$router.push('/about');
+          }
           this.showToast(error.code, error.message);
         });
       } else {
@@ -367,6 +371,10 @@ export default {
           window.location.reload();
         })
           .catch((error) => {
+            if (error.response?.status === 401) {
+              localStorage.removeItem('user');
+              this.$router.push('/about');
+            }
             this.showToast(error.message, error.code);
           });
       }
@@ -379,6 +387,10 @@ export default {
         window.location.reload();
       })
         .catch((error) => {
+          if (error.response?.status === 401) {
+            localStorage.removeItem('user');
+            this.$router.push('/about');
+          }
           this.showToast(error.message, error.code);
         });
     },
