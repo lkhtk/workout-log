@@ -8,12 +8,12 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/rs/xid v1.6.0
 	go.mongodb.org/mongo-driver v1.17.2
-	google.golang.org/api v0.215.0
+	google.golang.org/api v0.216.0
 )
 
 require (
-	cloud.google.com/go/auth v0.13.0 // indirect
-	cloud.google.com/go/auth/oauth2adapt v0.2.6 // indirect
+	cloud.google.com/go/auth v0.14.0 // indirect
+	cloud.google.com/go/auth/oauth2adapt v0.2.7 // indirect
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	github.com/bos-hieu/mongostore v0.0.3 // indirect
 	github.com/bytedance/sonic v1.12.7 // indirect

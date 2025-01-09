@@ -40,6 +40,7 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 
 	findOpt.SetSkip((int64(page) - 1) * perPage)
 	findOpt.SetLimit(perPage)
+	findOpt.SetSort(bson.D{{"publishedat", -1}})
 	cur, err := handler.collection.Find(handler.ctx, filter, findOpt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -61,7 +62,7 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": workouts, "total": total, "page": page, "last_page": math.Ceil(float64(total / perPage))})
+	c.JSON(http.StatusOK, gin.H{"data": workouts, "total": total, "page": page, "last_page": math.Ceil(float64(total/perPage) + 1)})
 }
 func getFilter(c *gin.Context) bson.M {
 	filter := bson.M{}
