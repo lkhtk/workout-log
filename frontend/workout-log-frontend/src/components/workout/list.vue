@@ -3,6 +3,7 @@
     <span class="visually-hidden align-items-center">Loading...</span>
   </div>
   <div v-else>
+    <CreateButton label="Add workout" @action="changeComponent('create', '')" />
     <div v-if="workoutsList.length > 0">
       <div class="container-lg p-3 mb-5 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
@@ -11,17 +12,13 @@
           <div class="btn-group" role="group" aria-label="Basic mixed styles example">
             <button type="button" class="btn btn-primary"
               @click="changeComponent('view', workoutItem.id)">
-              <font-awesome-icon inverse icon="fa-solid fa-file-pen" />
-            </button>
-            <button type="button" class="btn btn-success"
-              @click="changeComponent('create', '')">
-              <font-awesome-icon icon="fa-solid fa-calendar-plus" />
+              <font-awesome-icon inverse icon="fa-solid fa-sliders" />
             </button>
           </div>
         </div>
         <hr>
       </div>
-      <nav aria-label="Page navigation" v-if="pagination.total > 0">
+      <nav aria-label="Page navigation" v-if="pagination.page > 1">
         <ul class="pagination justify-content-center">
           <li
             class="page-item"
@@ -30,7 +27,7 @@
               class="page-link"
               @click="goToPage(pagination.current - 1)"
               :disabled="pagination.current === 1">
-              Previous
+              <span aria-hidden="true">&laquo;</span>
             </button>
           </li>
           <li
@@ -51,7 +48,7 @@
               class="page-link"
               @click="goToPage(pagination.current + 1)"
               :disabled="pagination.current === pagination.last">
-              Next
+              <span aria-hidden="true">&raquo;</span>
             </button>
           </li>
         </ul>
@@ -64,8 +61,6 @@
       <div v-else class="container-lg p-3 mb-5 bg-body-tertiary rounded text-center">
         <h1 class="display-1">There are no workouts yet</h1>
         <h2 class="display-1">😞</h2>
-        <button type="button" class="btn btn-success"
-          @click="changeComponent('create', '')">Add your first workout</button>
       </div>
     </div>
   </div>
@@ -75,12 +70,14 @@
 import { getAllWorkouts } from '@/api/api';
 import changeComponent from '@/mixin/changeComponent';
 import workoutComponent from './workout.vue';
+import CreateButton from '../common/addWorkoutButton.vue';
 
 export default {
   name: 'ListWorkouts',
   mixins: [changeComponent],
   components: {
     workoutComponent,
+    CreateButton,
   },
   async beforeMount() {
     this.loadAllWorkouts(1);
