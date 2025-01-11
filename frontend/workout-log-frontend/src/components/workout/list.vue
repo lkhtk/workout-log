@@ -18,7 +18,7 @@
         </div>
         <hr>
       </div>
-      <nav aria-label="Page navigation" v-if="pagination.page > 1">
+      <nav aria-label="Page navigation" v-if="pagination.last > 1">
         <ul class="pagination justify-content-center">
           <li
             class="page-item"
