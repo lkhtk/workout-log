@@ -101,6 +101,7 @@ import {
 
 import { useUserStore } from './stores/userStore';
 
+document.title = 'Workout Log';
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const { isReady, login } = useOneTap({

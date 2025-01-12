@@ -9,11 +9,11 @@ import (
 type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	PublishedAt time.Time
-	User        string `json:"user" bson:"user"`
+	// UserID      primitive.ObjectID `bson:"user_id"`
+	UserID      string `json:"user" bson:"user"`
 	MuscleGroup string `json:"muscle_group" bson:"muscle_group"`
 	Coach       bool   `json:"coach" bson:"coach"`
 	Workout     struct {
-		SetsCount int `json:"sets_count" bson:"sets_count"`
 		Exercises []struct {
 			Name string `json:"name" bson:"name"`
 			Sets []struct {
@@ -29,4 +29,13 @@ type Workout struct {
 			Calories int     `json:"calories"`
 		} `json:"cardio"`
 	} `json:"workout"`
+}
+
+type User struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	Name      string             `bson:"name"`
+	Email     string             `bson:"email"`
+	Picture   string             `bson:"picture"`
+	CreatedAt time.Time          `bson:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at"`
 }

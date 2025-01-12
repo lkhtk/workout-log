@@ -21,7 +21,6 @@ export default {
     newWorkout: {
       muscle_group: 'Leg day',
       workout: {
-        sets_count: 3,
         cardio: [{
           type: 'Jogging',
           speed: 10,

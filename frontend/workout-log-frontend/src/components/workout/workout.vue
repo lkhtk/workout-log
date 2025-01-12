@@ -33,7 +33,7 @@
       Training with an instructor
     </label>
     </div>
-    <div v-if="localWorkoutData.workout.sets_count>0 || edit">
+    <div v-if="localWorkoutData.workout || edit">
       <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-dumbbell" />
         Strength training</h1>
       <table class="table table-hover align-middle table-bordered table-striped table-light">
@@ -42,30 +42,39 @@
             <th scope="row" colspan="3">
               <font-awesome-icon icon="fa-solid fa-medal" />
               Exercise</th>
-            <th scope="col-7" v-for="(item, index) in localWorkoutData.workout.sets_count"
-              :key="index">
+              <th
+                scope="col"
+                v-for="(set, index) in getMaxSets(localWorkoutData.workout.exercises)"
+                :key="'set-' + index"
+              >
               <font-awesome-icon icon="fa-solid fa-fire-flame-curved" />
               Set {{ index + 1 }}
-              <button v-if="edit" type="button" class="btn-close"
-              aria-label="Close" @click="removeSet(index)" tabindex="-1"></button>
-            </th>
-            <th v-if="edit">
-              <button
-                tabindex="-1"
-                type="button"
-                class="btn btn-success"
-                @click="addSet()">
-                <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
-                Set
-              </button>
             </th>
           </tr>
         </thead>
         <tbody v-for="(ex, exIndex) in localWorkoutData.workout.exercises" :key="exIndex">
           <tr>
             <td rowspan="2">
-              <button v-if="edit" type="button" class="btn-close"
-              aria-label="Close" @click="removeExercise(exIndex)" tabindex="-1"></button>
+              <div v-if="edit" style="border: 0px solid #ccc; width: 50px;"
+                class="d-flex flex-column align-items-center">
+                <font-awesome-icon icon="fa-solid fa-trash"
+                  style="color: #dc3545; cursor: pointer;"
+                  class="mb-2"
+                  @keydown.enter="removeExercise(exIndex)"
+                  @click="removeExercise(exIndex)"
+                  />
+                <font-awesome-icon icon="fa-solid fa-circle-plus"
+                  style="color: #198754; cursor: pointer;"
+                  class="mb-2"
+                  @keydown.enter="addSet(exIndex)"
+                  @click="addSet(exIndex)"
+                  />
+                <font-awesome-icon icon="fa-solid fa-circle-minus"
+                  style="color: #fd7e14; cursor: pointer;"
+                  @keydown.enter="removeSet(exIndex)"
+                  @click="removeSet(exIndex)"
+                  />
+              </div>
               <p v-else>
                 {{ exIndex + 1 }}
               </p>
@@ -282,6 +291,13 @@ export default {
       default: false,
     },
   },
+  computed: {
+    maxSets() {
+      return this.localWorkoutData?.workout?.exercises
+        ? this.getMaxSets(this.localWorkoutData.workout.exercises)
+        : 0;
+    },
+  },
   data() {
     let locationData;
     try {
@@ -298,6 +314,18 @@ export default {
     };
   },
   methods: {
+    getMaxSets(exercises) {
+      if (!exercises || !Array.isArray(exercises)) {
+        return 0;
+      }
+
+      return exercises.reduce((max, exercise) => {
+        if (exercise.sets && Array.isArray(exercise.sets)) {
+          return Math.max(max, exercise.sets.length);
+        }
+        return max;
+      }, 0);
+    },
     showError(title, message) {
       this.toastTitle = title;
       this.toastMessage = message;
@@ -310,15 +338,23 @@ export default {
       return dayjs(dateString).format('DD.MM.YYYY hh:mm');
     },
 
-    addSet() {
-      if (this.localWorkoutData.workout.sets_count >= 10) {
+    addSet(exerciseIndex) {
+      const exercise = this.localWorkoutData.workout.exercises[exerciseIndex];
+      if (!exercise) {
+        console.error(`Exercise at index ${exerciseIndex} not found.`);
+        return;
+      }
+      if (!exercise.sets) {
+        exercise.sets = [];
+      }
+      if (exercise.sets.length >= 10) {
         this.showError('Info', 'Maximum number of sets = 10');
         return;
       }
-      this.localWorkoutData.workout.exercises.forEach((exercise) => {
-        exercise.sets.push({ weight: 0, reps: 0 });
+      exercise.sets.push({
+        reps: 0,
+        weight: 0,
       });
-      this.localWorkoutData.workout.sets_count += 1;
       this.syncData();
     },
     addExercise() {
@@ -327,10 +363,7 @@ export default {
         return;
       }
       const emptySets = [];
-      if (this.localWorkoutData.workout.sets_count === 0) {
-        this.localWorkoutData.workout.sets_count += 1;
-      }
-      for (let i = 0; i < this.localWorkoutData.workout.sets_count; i += 1) {
+      for (let i = 0; i <= 2; i += 1) {
         emptySets.push({ weight: 10, reps: 12 });
       }
       this.localWorkoutData.workout.exercises.push({
@@ -343,7 +376,6 @@ export default {
     addCardio() {
       if (this.localWorkoutData.workout.cardio.length >= 10) {
         this.showError('Info', 'Maximum number of cardio = 10');
-
         return;
       }
       this.localWorkoutData.workout.cardio.push({
@@ -366,20 +398,17 @@ export default {
       this.syncData();
     },
 
-    removeSet(index) {
-      if (this.localWorkoutData.workout.sets_count > 1) {
-        this.localWorkoutData.workout.exercises.forEach((exercise) => {
-          if (exercise.sets && index < exercise.sets.length) {
-            exercise.sets.splice(index, 1);
-          }
-        });
-        if (Array.isArray(this.localWorkoutData.workout.sets_count)) {
-          this.localWorkoutData.workout.sets_count.splice(index, 1);
-        } else if (typeof this.localWorkoutData.workout.sets_count === 'number') {
-          this.localWorkoutData.workout.sets_count -= 1;
-        }
-        this.syncData();
+    removeSet(exerciseIndex) {
+      const exercise = this.localWorkoutData.workout.exercises[exerciseIndex];
+      if (!exercise) {
+        console.error(`Exercise at index ${exerciseIndex} not found.`);
+        return;
       }
+      if (exercise.sets.length <= 1) {
+        return;
+      }
+      exercise.sets.splice(exercise.sets.length - 1, 1);
+      this.syncData();
     },
 
     syncData() {

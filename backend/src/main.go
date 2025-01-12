@@ -33,9 +33,10 @@ func init() {
 	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("workouts")
-	workoutsHandler = handlers.NewWorkoutsHandler(ctx, collection)
-	authHandler = handlers.NewAuthHandler(ctx, collection)
+	workoutCollection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("workouts")
+	usersCollection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("users")
+	workoutsHandler = handlers.NewWorkoutsHandler(ctx, workoutCollection)
+	authHandler = handlers.NewAuthHandler(ctx, usersCollection)
 
 }
 func main() {

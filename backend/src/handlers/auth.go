@@ -6,10 +6,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	models "github.com/lkhtk/workout-log/models"
 	"github.com/rs/xid"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/api/idtoken"
 )
@@ -53,19 +56,36 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
-	sessionToken := xid.New().String()
+	var existingUser models.User
+	err = handler.collection.FindOne(context.TODO(), bson.M{"email": payload["email"].(string)}).Decode(&existingUser)
+	if err == mongo.ErrNoDocuments {
+		user := models.User{
+			Name:      payload["name"].(string),
+			Email:     payload["email"].(string),
+			Picture:   payload["picture"].(string),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+
+		_, err = handler.collection.InsertOne(context.TODO(), user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
 	session := sessions.Default(c)
 	session.Options(sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
 	})
+	sessionToken := xid.New().String()
 	session.Set("token", sessionToken)
 	session.Set("email", payload["email"].(string))
-	if err := session.Save(); err != nil {
+	if err = session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "User authenticated successfully", "User": payload, "token": session.Get("token")})
+	c.JSON(http.StatusOK, gin.H{"message": "User authenticated successfully", "User": payload})
 }
 
 func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {

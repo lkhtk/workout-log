@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"errors"
-	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -18,7 +17,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const maxLengthOfFileld = 150
+const maxFieldLength = 150
+const perPage int64 = 3
 
 type WorkoutsHandler struct {
 	collection *mongo.Collection
@@ -32,250 +32,239 @@ func NewWorkoutsHandler(ctx context.Context, collection *mongo.Collection) *Work
 	}
 }
 
-func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
-	findOpt := options.Find()
-	page, _ := strconv.Atoi(c.Query("page"))
-	var perPage int64 = 3
-	filter := getFilter(c)
-	total, _ := handler.collection.CountDocuments(handler.ctx, filter)
+func getCurrentUser(c *gin.Context) (string, error) {
+	session := sessions.Default(c)
+	email, ok := session.Get("email").(string)
+	if !ok || email == "" {
+		return "", errors.New("user is not authenticated")
+	}
+	return email, nil
+}
 
-	findOpt.SetSkip((int64(page) - 1) * perPage)
-	findOpt.SetLimit(perPage)
-	findOpt.SetSort(bson.D{{"publishedat", -1}})
-	cur, err := handler.collection.Find(handler.ctx, filter, findOpt)
-	if err != nil {
+func handleDBError(c *gin.Context, err error, notFoundMessage string) {
+	if err == mongo.ErrNoDocuments {
+		c.JSON(http.StatusNotFound, gin.H{"error": notFoundMessage})
+	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+}
+
+func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
+	email, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	page, _ := strconv.Atoi(c.Query("page"))
+	if page <= 0 {
+		page = 1
+	}
+	filter := getFilter(c, email)
+	total, err := handler.collection.CountDocuments(handler.ctx, filter)
+	if err != nil {
+		handleDBError(c, err, "error counting documents")
+		return
+	}
+
+	findOptions := options.Find().
+		SetSkip((int64(page) - 1) * perPage).
+		SetLimit(perPage).
+		SetSort(bson.D{{"publishedat", -1}})
+
+	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
+	if err != nil {
+		handleDBError(c, err, "error fetching workouts")
 		return
 	}
 	defer cur.Close(handler.ctx)
-	workouts := make([]models.Workout, 0)
-	for cur.Next(handler.ctx) {
-		var workout models.Workout
-		cur.Decode(&workout)
-		workouts = append(workouts, workout)
-	}
-	for i, wrk := range workouts {
-		for _, ex := range wrk.Workout.Exercises {
-			if workouts[i].Workout.SetsCount < len(ex.Sets) {
-				workouts[i].Workout.SetsCount = len(ex.Sets)
-			}
 
-		}
+	var workouts []models.Workout
+	if err := cur.All(handler.ctx, &workouts); err != nil {
+		handleDBError(c, err, "error decoding workouts")
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": workouts, "total": total, "page": page, "last_page": math.Ceil(float64(total/perPage) + 1)})
+	c.JSON(http.StatusOK, gin.H{
+		"data":      workouts,
+		"total":     total,
+		"page":      page,
+		"last_page": math.Ceil(float64(total) / float64(perPage)),
+	})
 }
 
-func getFilter(c *gin.Context) bson.M {
-	filter := bson.M{}
-	session := sessions.Default(c)
-	email, exists := session.Get("email").(string)
-	if !exists || email == "" {
-		return filter
-	}
-	filter["user"] = email
+func getFilter(c *gin.Context, email string) bson.M {
+	filter := bson.M{"user": email}
 	searchDate := c.Query("date")
 	period := c.Query("period")
-	location := time.Now().Location()
 
 	if searchDate == "" {
-		searchDate = time.Now().String()
+		searchDate = time.Now().Format("2006-01-02")
 	}
 	if period == "" {
 		period = "month"
 	}
-	if searchDate != "" && period != "" {
-		parsedDate, err := time.Parse("2006-01-02", searchDate)
-		if err == nil {
-			switch period {
-			case "day":
-				startOfDay := time.Date(parsedDate.Year(), parsedDate.Month(), parsedDate.Day(), 0, 0, 0, 0, location)
-				endOfDay := startOfDay.AddDate(0, 0, 1)
-				filter["publishedat"] = bson.M{
-					"$gte": startOfDay,
-					"$lt":  endOfDay,
-				}
-			case "month":
-				startOfMonth := time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, location)
-				endOfMonth := startOfMonth.AddDate(0, 1, 0)
-				filter["publishedat"] = bson.M{
-					"$gte": startOfMonth,
-					"$lt":  endOfMonth,
-				}
-			case "year":
-				startOfYear := time.Date(parsedDate.Year(), time.January, 1, 0, 0, 0, 0, location)
-				endOfYear := startOfYear.AddDate(1, 0, 0)
-				filter["publishedat"] = bson.M{
-					"$gte": startOfYear,
-					"$lt":  endOfYear,
-				}
+	parsedDate, err := time.Parse("2006-01-02", searchDate)
+	if err == nil {
+		switch period {
+		case "day":
+			start := parsedDate
+			end := start.AddDate(0, 0, 1)
+			filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+		case "month":
+			start := time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, time.UTC)
+			end := start.AddDate(0, 1, 0)
+			filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+		case "year":
+			start := time.Date(parsedDate.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
+			end := start.AddDate(1, 0, 0)
+			filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+		}
+	}
+	return filter
+}
+
+func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
+	var workout models.Workout
+	if err := c.ShouldBindJSON(&workout); err != nil {
+		return workout, errors.New("invalid workout data")
+	}
+	email, err := getCurrentUser(c)
+	if err != nil {
+		return workout, err
+	}
+	workout.UserID = email
+	for _, ex := range workout.Workout.Exercises {
+		if len(ex.Name) > maxFieldLength {
+			return workout, errors.New("exercise name too long")
+		}
+		for _, set := range ex.Sets {
+			if set.Reps != nil && *set.Reps == 0 {
+				set.Reps = nil
 			}
 		}
 	}
 
-	return filter
+	return workout, nil
 }
 
 func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {
-
-	workout, err := validateUserData(c)
+	workout, err := validateAndPrepareWorkout(c)
 	if err != nil {
-		log.Println(http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	removeEmptyRepsSets(&workout)
 	workout.ID = primitive.NewObjectID()
 	workout.PublishedAt = time.Now()
 	_, err = handler.collection.InsertOne(handler.ctx, workout)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting a new workout"})
+		handleDBError(c, err, "error inserting workout")
 		return
 	}
 	c.JSON(http.StatusCreated, workout)
 }
 
-func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
-	id := c.Param("id")
-	workout, err := validateUserData(c)
-	if err != nil {
-		log.Println(http.StatusBadRequest)
-		return
-	}
-	removeEmptyRepsSets(&workout)
-
-	for _, ex := range workout.Workout.Exercises {
-		if workout.Workout.SetsCount < len(ex.Sets) {
-			workout.Workout.SetsCount = len(ex.Sets)
-		}
-	}
-
-	objectId, _ := primitive.ObjectIDFromHex(id)
-	_, err = handler.collection.UpdateOne(handler.ctx, bson.M{"_id": objectId},
-		bson.D{
-			{"$set",
-				bson.D{
-					{"user", workout.User},
-					{"muscle_group", workout.MuscleGroup},
-					{"coach", workout.Coach},
-					{"workout",
-						bson.D{
-							{"exercises", workout.Workout.Exercises},
-							{"cardio", workout.Workout.Cardio},
-						},
-					},
-				},
-			},
-		},
-	)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, workout)
-}
-
-func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
-	id := c.Param("id")
-	objectId, _ := primitive.ObjectIDFromHex(id)
-	cur := handler.collection.FindOne(handler.ctx, bson.M{
-		"_id": objectId,
-	})
-	var workout models.Workout
-	err := cur.Decode(&workout)
-	if err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "no documents found"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	for _, ex := range workout.Workout.Exercises {
-		if workout.Workout.SetsCount < len(ex.Sets) {
-			workout.Workout.SetsCount = len(ex.Sets)
-		}
-	}
-
-	c.JSON(http.StatusOK, workout)
-}
-
 func (handler *WorkoutsHandler) DeleteWorkout(c *gin.Context) {
 	id := c.Param("id")
-	objectId, _ := primitive.ObjectIDFromHex(id)
-	_, err := handler.collection.DeleteOne(handler.ctx, bson.M{
-		"_id": objectId,
-	})
+	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Workout has been deleted"})
+	email, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	result := handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user": email})
+	if err := result.Err(); err != nil {
+		handleDBError(c, err, "workout not found")
+		return
+	}
+
+	_, err = handler.collection.DeleteOne(handler.ctx, bson.M{"_id": objectId})
+	if err != nil {
+		handleDBError(c, err, "error deleting workout")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Workout deleted successfully"})
 }
 
-func validateUserData(c *gin.Context) (models.Workout, error) {
+// Получение одной тренировки
+func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
+	id := c.Param("id")
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+		return
+	}
+
+	email, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Поиск тренировки
 	var workout models.Workout
-	if err := c.ShouldBindJSON(&workout); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return workout, err
-	}
-	tooLargeMessage := "User data too large"
-	for _, ex := range workout.Workout.Exercises {
-		if len(ex.Name) > maxLengthOfFileld {
-			c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": tooLargeMessage})
-			return workout, errors.New(tooLargeMessage)
-		}
-	}
-	for _, cardio := range workout.Workout.Cardio {
-		if len(cardio.Type) > maxLengthOfFileld {
-			c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": tooLargeMessage})
-			return workout, errors.New(tooLargeMessage)
-		}
+	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user": email}).Decode(&workout)
+	if err != nil {
+		handleDBError(c, err, "workout not found")
+		return
 	}
 
-	if len(workout.MuscleGroup) > maxLengthOfFileld {
-		c.JSON(http.StatusRequestEntityTooLarge, gin.H{"error": tooLargeMessage})
-		return workout, errors.New(tooLargeMessage)
-	}
-
-	session := sessions.Default(c)
-	email := session.Get("email")
-	userId := email.(string)
-	userErr := "User undefined"
-
-	if userId == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": userErr})
-		return workout, errors.New(userErr)
-	}
-	workout.User = userId
-	return workout, nil
+	c.JSON(http.StatusOK, workout)
 }
 
-func removeEmptyRepsSets(workout *models.Workout) {
-	filteredExercises := make([]struct {
-		Name string `json:"name" bson:"name"`
-		Sets []struct {
-			Reps   *int     `json:"reps"`
-			Weight *float32 `json:"weight"`
-		} `json:"sets"`
-	}, 0)
-
-	for _, exercise := range workout.Workout.Exercises {
-		filteredSets := make([]struct {
-			Reps   *int     `json:"reps"`
-			Weight *float32 `json:"weight"`
-		}, 0)
-		for _, set := range exercise.Sets {
-			if set.Reps != nil && *set.Reps != 0 {
-				filteredSets = append(filteredSets, set)
-			}
-		}
-
-		if len(filteredSets) > 0 {
-			exercise.Sets = filteredSets
-			filteredExercises = append(filteredExercises, exercise)
-		}
+// Обновление тренировки
+func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
+	id := c.Param("id")
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+		return
 	}
-	workout.Workout.Exercises = filteredExercises
+
+	email, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Проверка существования тренировки
+	var oldWorkout models.Workout
+	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user": email}).Decode(&oldWorkout)
+	if err != nil {
+		handleDBError(c, err, "workout not found")
+		return
+	}
+
+	// Валидация и подготовка новых данных
+	newWorkout, err := validateAndPrepareWorkout(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Обновление документа
+	update := bson.M{
+		"$set": bson.M{
+			"user":         newWorkout.UserID,
+			"muscle_group": newWorkout.MuscleGroup,
+			"coach":        newWorkout.Coach,
+			"workout": bson.M{
+				"exercises": newWorkout.Workout.Exercises,
+				"cardio":    newWorkout.Workout.Cardio,
+			},
+		},
+	}
+	_, err = handler.collection.UpdateOne(handler.ctx, bson.M{"_id": objectId}, update)
+	if err != nil {
+		handleDBError(c, err, "error updating workout")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Workout updated successfully", "workout": newWorkout})
 }
