@@ -95,31 +95,25 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 
 func getFilter(c *gin.Context, email string) bson.M {
 	filter := bson.M{"user": email}
-	searchDate := c.Query("date")
 	period := c.Query("period")
-
-	if searchDate == "" {
-		searchDate = time.Now().Format("2006-01-02")
-	}
+	currentDate, _ := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
 	if period == "" {
-		period = "month"
+		period = "all"
 	}
-	parsedDate, err := time.Parse("2006-01-02", searchDate)
-	if err == nil {
-		switch period {
-		case "day":
-			start := parsedDate
-			end := start.AddDate(0, 0, 1)
-			filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
-		case "month":
-			start := time.Date(parsedDate.Year(), parsedDate.Month(), 1, 0, 0, 0, 0, time.UTC)
-			end := start.AddDate(0, 1, 0)
-			filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
-		case "year":
-			start := time.Date(parsedDate.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
-			end := start.AddDate(1, 0, 0)
-			filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
-		}
+
+	switch period {
+	case "day":
+		end := currentDate.AddDate(0, 0, 1)
+		filter["publishedat"] = bson.M{"$gte": currentDate, "$lt": end}
+	case "month":
+		start := time.Date(currentDate.Year(), currentDate.Month(), 1, 0, 0, 0, 0, time.UTC)
+		end := start.AddDate(0, 1, 0)
+		filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+	case "year":
+		start := time.Date(currentDate.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
+		end := start.AddDate(1, 0, 0)
+		filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+	case "all":
 	}
 	return filter
 }

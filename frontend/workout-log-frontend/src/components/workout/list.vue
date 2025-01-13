@@ -4,7 +4,7 @@
   </div>
   <div v-else>
     <CreateButton label="Add workout" @action="changeComponent('create', '')" />
-    <div v-if="workoutsList.length > 0">
+    <div v-if="workoutsList">
       <div class="container-lg p-3 mb-5 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
         <workoutComponent :workoutData="workoutItem" />
