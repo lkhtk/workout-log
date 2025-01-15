@@ -34,11 +34,11 @@ func NewWorkoutsHandler(ctx context.Context, collection *mongo.Collection) *Work
 
 func getCurrentUser(c *gin.Context) (string, error) {
 	session := sessions.Default(c)
-	email, ok := session.Get("email").(string)
-	if !ok || email == "" {
+	user_id, ok := session.Get("user_id").(string)
+	if !ok || user_id == "" {
 		return "", errors.New("user is not authenticated")
 	}
-	return email, nil
+	return user_id, nil
 }
 
 func handleDBError(c *gin.Context, err error, notFoundMessage string) {
@@ -50,7 +50,7 @@ func handleDBError(c *gin.Context, err error, notFoundMessage string) {
 }
 
 func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
-	email, err := getCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -60,7 +60,7 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 	if page <= 0 {
 		page = 1
 	}
-	filter := getFilter(c, email)
+	filter := getFilter(c, userID)
 	total, err := handler.collection.CountDocuments(handler.ctx, filter)
 	if err != nil {
 		handleDBError(c, err, "error counting documents")
@@ -93,10 +93,16 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 	})
 }
 
-func getFilter(c *gin.Context, email string) bson.M {
-	filter := bson.M{"user": email}
+func getFilter(c *gin.Context, userId string) bson.M {
+	objectId, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		return bson.M{}
+	}
+	filter := bson.M{
+		"user_id": objectId,
+	}
 	period := c.Query("period")
-	currentDate, _ := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
+	currentDate := time.Now().Truncate(24 * time.Hour)
 	if period == "" {
 		period = "all"
 	}
@@ -104,15 +110,24 @@ func getFilter(c *gin.Context, email string) bson.M {
 	switch period {
 	case "day":
 		end := currentDate.AddDate(0, 0, 1)
-		filter["publishedat"] = bson.M{"$gte": currentDate, "$lt": end}
+		filter["publishedat"] = bson.M{
+			"$gte": currentDate,
+			"$lt":  end,
+		}
 	case "month":
 		start := time.Date(currentDate.Year(), currentDate.Month(), 1, 0, 0, 0, 0, time.UTC)
 		end := start.AddDate(0, 1, 0)
-		filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+		filter["publishedat"] = bson.M{
+			"$gte": start,
+			"$lt":  end,
+		}
 	case "year":
 		start := time.Date(currentDate.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
 		end := start.AddDate(1, 0, 0)
-		filter["publishedat"] = bson.M{"$gte": start, "$lt": end}
+		filter["publishedat"] = bson.M{
+			"$gte": start,
+			"$lt":  end,
+		}
 	case "all":
 	}
 	return filter
@@ -123,11 +138,17 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 	if err := c.ShouldBindJSON(&workout); err != nil {
 		return workout, errors.New("invalid workout data")
 	}
-	email, err := getCurrentUser(c)
+	workout.ID = primitive.NewObjectID()
+	workout.PublishedAt = time.Now()
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		return workout, err
 	}
-	workout.UserID = email
+	uid, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return workout, err
+	}
+	workout.UserID = uid
 	for _, ex := range workout.Workout.Exercises {
 		if len(ex.Name) > maxFieldLength {
 			return workout, errors.New("exercise name too long")
@@ -138,7 +159,6 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 			}
 		}
 	}
-
 	return workout, nil
 }
 
@@ -148,8 +168,6 @@ func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	workout.ID = primitive.NewObjectID()
-	workout.PublishedAt = time.Now()
 	_, err = handler.collection.InsertOne(handler.ctx, workout)
 	if err != nil {
 		handleDBError(c, err, "error inserting workout")
@@ -165,13 +183,17 @@ func (handler *WorkoutsHandler) DeleteWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	email, err := getCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
-	result := handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user": email})
+	userObject, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	result := handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userObject})
 	if err := result.Err(); err != nil {
 		handleDBError(c, err, "workout not found")
 		return
@@ -186,7 +208,6 @@ func (handler *WorkoutsHandler) DeleteWorkout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Workout deleted successfully"})
 }
 
-// Получение одной тренировки
 func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
 	id := c.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
@@ -194,25 +215,26 @@ func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-
-	email, err := getCurrentUser(c)
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	userObject, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Поиск тренировки
 	var workout models.Workout
-	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user": email}).Decode(&workout)
+	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userObject}).Decode(&workout)
 	if err != nil {
 		handleDBError(c, err, "workout not found")
 		return
 	}
-
 	c.JSON(http.StatusOK, workout)
 }
 
-// Обновление тренировки
 func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
 	id := c.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
@@ -220,29 +242,28 @@ func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-
-	email, err := getCurrentUser(c)
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	userObject, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Проверка существования тренировки
 	var oldWorkout models.Workout
-	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user": email}).Decode(&oldWorkout)
+	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userObject}).Decode(&oldWorkout)
 	if err != nil {
 		handleDBError(c, err, "workout not found")
 		return
 	}
-
-	// Валидация и подготовка новых данных
 	newWorkout, err := validateAndPrepareWorkout(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Обновление документа
 	update := bson.M{
 		"$set": bson.M{
 			"user":         newWorkout.UserID,

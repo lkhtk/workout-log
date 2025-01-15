@@ -33,7 +33,7 @@
       Training with an instructor
     </label>
     </div>
-    <div v-if="localWorkoutData.workout || edit">
+    <div v-if="localWorkoutData.workout.exercises.length > 0 || edit">
       <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-dumbbell" />
         Strength training</h1>
       <table class="table table-hover align-middle table-bordered table-striped table-light">

@@ -56,6 +56,7 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
+	var userId string
 	var existingUser models.User
 	err = handler.collection.FindOne(context.TODO(), bson.M{"email": payload["email"].(string)}).Decode(&existingUser)
 	if err == mongo.ErrNoDocuments {
@@ -67,11 +68,14 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 			UpdatedAt: time.Now(),
 		}
 
-		_, err = handler.collection.InsertOne(context.TODO(), user)
+		res, err := handler.collection.InsertOne(context.TODO(), user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+		userId = res.InsertedID.(string)
+	} else {
+		userId = existingUser.ID.Hex()
 	}
 	session := sessions.Default(c)
 	session.Options(sessions.Options{
@@ -81,6 +85,7 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	sessionToken := xid.New().String()
 	session.Set("token", sessionToken)
 	session.Set("email", payload["email"].(string))
+	session.Set("user_id", userId)
 	if err = session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

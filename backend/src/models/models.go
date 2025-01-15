@@ -9,10 +9,9 @@ import (
 type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	PublishedAt time.Time
-	// UserID      primitive.ObjectID `bson:"user_id"`
-	UserID      string `json:"user" bson:"user"`
-	MuscleGroup string `json:"muscle_group" bson:"muscle_group"`
-	Coach       bool   `json:"coach" bson:"coach"`
+	UserID      primitive.ObjectID `bson:"user_id"`
+	MuscleGroup string             `json:"muscle_group" bson:"muscle_group"`
+	Coach       bool               `json:"coach" bson:"coach"`
 	Workout     struct {
 		Exercises []struct {
 			Name string `json:"name" bson:"name"`
