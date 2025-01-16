@@ -13,6 +13,7 @@
             <button type="button" class="btn btn-primary"
               @click="changeComponent('view', workoutItem.id)">
               <font-awesome-icon inverse icon="fa-solid fa-sliders" />
+              Edit
             </button>
           </div>
         </div>

@@ -25,14 +25,7 @@
                   <font-awesome-icon icon="fa-solid fa-envelope" />
                   {{ user?.email || defaultUser.email }}
                 </h6>
-                <button
-                  class="btn w-100 btn-lg btn-outline-danger"
-                  v-if="user"
-                  @click="revoke(user.id)"
-                >
-                <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
-                Sign Out
-                </button>
+                <auth-button />
               </div>
             </div>
           </div>
@@ -44,9 +37,8 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { idRevoke } from 'vue3-google-signin';
-import { logOut } from '../api/api';
 import { useUserStore } from '../stores/userStore';
+import AuthButton from '../components/common/AuthButton.vue';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -56,28 +48,5 @@ const defaultUser = {
   name: 'Chad',
   picture: 'https://upload.wikimedia.org/wikipedia/ru/9/94/%D0%93%D0%B8%D0%B3%D0%B0%D1%87%D0%B0%D0%B4.jpg',
   email: 'root@localhost',
-};
-
-const revoke = async (id) => {
-  try {
-    await new Promise((resolve, reject) => {
-      idRevoke(id, (done) => {
-        if (done.error) {
-          console.error('Error during revoke:', done.error);
-          reject(new Error(done.error));
-        } else {
-          resolve();
-        }
-      });
-    });
-    const result = await logOut();
-    if (result.status !== 200) {
-      throw new Error('Server logout failed');
-    }
-    userStore.clearUser();
-    window.location.reload();
-  } catch (error) {
-    throw new Error('Logout error:', error.message);
-  }
 };
 </script>

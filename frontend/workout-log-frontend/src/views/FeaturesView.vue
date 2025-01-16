@@ -9,11 +9,16 @@
           <div class="col d-flex flex-column align-items-start gap-2">
             <h2 class="fw-bold text-body-emphasis">A dead simple</h2>
             <p class="text-body-secondary">gym journal for anyone and everyone</p>
-            <a href="#" class="btn btn-primary btn-lg"
-              @click="this.$router.push('/profile')">
-              <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
-              Sign In
-            </a>
+            <div v-if="!user">
+              <auth-button />
+            </div>
+            <div v-else>
+              <a href="#" class="btn btn-primary btn-lg"
+                @click="this.$router.push('/')">
+                <font-awesome-icon icon="fa-solid fa-dumbbell" />
+                let's go!
+              </a>
+            </div>
           </div>
           <div class="col">
             <div class="row row-cols-1 row-cols-sm-2 g-4">
@@ -60,3 +65,13 @@
     </div>
   </div>
 </template>
+<script setup>
+import { storeToRefs } from 'pinia';
+
+import { useUserStore } from '../stores/userStore';
+import AuthButton from '../components/common/AuthButton.vue';
+
+document.title = 'Workout Log';
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+</script>

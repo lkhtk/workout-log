@@ -23,10 +23,16 @@
                   <li>No guarantees! <font-awesome-icon icon="fa-solid fa-check" /></li>
                   <li>No gamification! <font-awesome-icon icon="fa-solid fa-check" /></li>
                 </ul>
-                <button type="button"
-                class="w-100 btn btn-lg btn-outline-primary"
-                @click="this.$router.push('/profile')">
-                  Sounds great, I'm in!</button>
+                <div v-if="!user">
+                  <auth-button />
+                </div>
+                <div v-else>
+                  <a href="#" class="btn btn-primary btn-lg"
+                    @click="this.$router.push('/')">
+                    <font-awesome-icon icon="fa-solid fa-dumbbell" />
+                    let's go!
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -35,3 +41,13 @@
     </div>
   </div>
 </template>
+<script setup>
+import { storeToRefs } from 'pinia';
+
+import { useUserStore } from '../stores/userStore';
+import AuthButton from '../components/common/AuthButton.vue';
+
+document.title = 'Workout Log';
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+</script>

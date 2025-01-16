@@ -4,11 +4,11 @@
     style="z-index: 1050;">
     <div
       ref="toast"
-      class="toast"
+      class="toast align-items-center text-bg-primary border-0"
       role="alert"
       aria-live="assertive"
       aria-atomic="true">
-      <div class="toast-header">
+      <div class="toast-header" v-if="header">
         <strong class="me-auto">{{ header }}</strong>
         <button
           type="button"

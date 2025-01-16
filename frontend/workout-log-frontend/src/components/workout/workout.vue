@@ -19,10 +19,19 @@
       </div>
     </div>
     <div v-else>
-      <h1 class="display-5">
-        <font-awesome-icon icon="fa-solid fa-hand-fist" />
-        {{ localWorkoutData.muscle_group }} {{ formatDate(localWorkoutData.PublishedAt) }}
-      </h1>
+      <div class="grid text-center">
+        <div class="g-col-3">
+          <h1 class="display-2">
+            <font-awesome-icon icon="fa-solid fa-dumbbell" />
+            {{ localWorkoutData.muscle_group }}
+          </h1>
+        </div>
+        <div class="g-col-4">
+          <h1 class="display-6">
+            {{ formatDate(localWorkoutData.PublishedAt) }}
+          </h1>
+        </div>
+      </div>
     </div>
     <div class="form-check form-switch">
       <label class="form-check-label" for="flexSwitchCheckChecked">
@@ -34,7 +43,7 @@
     </label>
     </div>
     <div v-if="localWorkoutData.workout.exercises.length > 0 || edit">
-      <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-dumbbell" />
+      <h1 class="display-6">
         Strength training</h1>
       <table class="table table-hover align-middle table-bordered table-striped table-light">
         <thead >
@@ -243,13 +252,14 @@
       </table>
       <div v-if="edit">
           <button type="button" class="btn btn-success" @click="addCardio()">
-            <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/> new cardio
+            <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
+            New cardio
           </button>
         </div>
       </div>
     </div>
-    <div class="container mx-auto p-2" style="width: 200px;">
-      <div class="btn-group" v-if="edit"
+    <div class="container mx-auto p-2" style="width: 200px;" v-if="edit">
+      <div class="btn-group"
         role="group" aria-label="Basic mixed styles example">
         <button type="button" class="btn btn-success" @click="saveWorkout()">
           <font-awesome-icon icon="fa-solid fa-floppy-disk" inverse />
@@ -262,7 +272,7 @@
     </div>
     <!-- Toast container -->
     <ToastComponent
-      v-if="toastTitle"
+      v-if="toastMessage"
       :header="toastTitle"
       :body="toastMessage"
       @close-toast="clearToast"
@@ -348,7 +358,7 @@ export default {
         exercise.sets = [];
       }
       if (exercise.sets.length >= 10) {
-        this.showError('Info', 'Maximum number of sets = 10');
+        this.showError('', 'Maximum number of sets = 10');
         return;
       }
       exercise.sets.push({
@@ -359,7 +369,7 @@ export default {
     },
     addExercise() {
       if (this.localWorkoutData.workout.exercises.length >= 10) {
-        this.showError('Info', 'Maximum number of exercises = 10');
+        this.showError('', 'Maximum number of exercises = 10');
         return;
       }
       const emptySets = [];
@@ -375,7 +385,7 @@ export default {
 
     addCardio() {
       if (this.localWorkoutData.workout.cardio.length >= 10) {
-        this.showError('Info', 'Maximum number of cardio = 10');
+        this.showError('', 'Maximum number of cardio = 10');
         return;
       }
       this.localWorkoutData.workout.cardio.push({
@@ -423,17 +433,17 @@ export default {
       });
       if (this.localWorkoutData.id) {
         await updateWorkout(this.localWorkoutData).then(() => {
-          this.showError('Success', 'The training has been updated!');
+          this.showError('', 'The training has been updated!');
         }).catch((error) => {
           if (error.response?.status === 401) {
             localStorage.removeItem('user');
-            window.location.reload();
+            this.$router.push('/about');
           }
           this.showError(error.code, error.message);
         });
       } else {
         await createWorkout(this.localWorkoutData).then(() => {
-          this.showError('Success', 'The training has been added!');
+          this.showError('', 'The training has been added!');
           this.errorData = {};
           this.localWorkoutData.workout = {};
           window.location.reload();
@@ -441,7 +451,7 @@ export default {
           .catch((error) => {
             if (error.response?.status === 401) {
               localStorage.removeItem('user');
-              window.location.reload();
+              this.$router.push('/about');
             }
             this.showError(error.message, error.code);
           });
@@ -449,15 +459,14 @@ export default {
     },
     async deleteWorkoutById(id) {
       await deleteWorkout(id).then(() => {
-        this.showError('Success', 'The training has been deleted');
+        this.showError('', 'The training has been deleted');
         this.errorData = {};
         this.localWorkoutData.workout = {};
         window.location.reload();
       })
         .catch((error) => {
           if (error.response?.status === 401) {
-            localStorage.removeItem('user');
-            window.location.reload();
+            this.$router.push('/about');
           }
           this.showError(error.message, error.code);
         });

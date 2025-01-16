@@ -23,12 +23,9 @@
               </a>
             </li>
           </ul>
-          <ul class="navbar-nav d-flex" v-if="!user">
+          <ul class="navbar-nav d-flex">
             <li class="nav-item d-flex">
-              <button class="btn btn-outline-primary" :disabled="!isReady" @click="() => login()">
-                <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
-                Log in
-              </button>
+              <auth-button />
             </li>
           </ul>
         </div>
@@ -46,10 +43,7 @@
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <button class="dropdown-item" @click="revoke(user.id)">
-                <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
-                Sign out
-              </button>
+              <auth-button />
             </li>
           </ul>
         </div>
@@ -88,66 +82,11 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import {
-  useOneTap,
-  decodeCredential,
-  idRevoke,
-} from 'vue3-google-signin';
-
-import {
-  checkToken,
-  logOut,
-} from './api/api';
 
 import { useUserStore } from './stores/userStore';
+import AuthButton from './components/common/AuthButton.vue';
 
 document.title = 'Workout Log';
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
-const { isReady, login } = useOneTap({
-  disableAutomaticPrompt: true,
-  onSuccess: async (response) => {
-    try {
-      const { credential } = response;
-      const result = await checkToken(credential);
-      if (result.status !== 200) {
-        throw new Error('Server validation failed');
-      }
-      const decodedCredential = decodeCredential(credential);
-      const userData = {
-        id: decodedCredential.id,
-        name: decodedCredential.name,
-        email: decodedCredential.email,
-        picture: decodedCredential.picture,
-      };
-      userStore.setUser(userData);
-    } catch (error) {
-      console.error('Error in One Tap Login:', error.message);
-    }
-  },
-  onError: () => console.error('Error with One Tap Login'),
-});
-
-const revoke = async (id) => {
-  try {
-    await new Promise((resolve, reject) => {
-      idRevoke(id, (done) => {
-        if (done.error) {
-          console.error('Error during revoke:', done.error);
-          reject(new Error(done.error));
-        } else {
-          resolve();
-        }
-      });
-    });
-    const result = await logOut();
-    if (result.status !== 200) {
-      throw new Error('Server logout failed');
-    }
-    userStore.clearUser();
-    console.log('User logged out successfully');
-  } catch (error) {
-    console.error('Logout error:', error.message);
-  }
-};
 </script>
