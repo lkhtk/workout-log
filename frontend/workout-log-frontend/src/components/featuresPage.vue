@@ -69,7 +69,7 @@
 import { storeToRefs } from 'pinia';
 
 import { useUserStore } from '../stores/userStore';
-import AuthButton from '../components/common/AuthButton.vue';
+import AuthButton from './common/AuthButton.vue';
 
 document.title = 'Workout Log';
 const userStore = useUserStore();

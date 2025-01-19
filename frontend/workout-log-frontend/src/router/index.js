@@ -8,24 +8,29 @@ const routes = [
     component: HomeView,
   },
   {
+    path: '/measurements',
+    name: 'measurements',
+    component: () => import('../components/measurements.vue'),
+  },
+  {
     path: '/about',
     name: 'about',
-    component: () => import('../views/AboutView.vue'),
+    component: () => import('../components/aboutComponent.vue'),
   },
   {
     path: '/features',
     name: 'features',
-    component: () => import('../views/FeaturesView.vue'),
+    component: () => import('../components/featuresPage.vue'),
   },
   {
     path: '/pricing',
     name: 'pricing',
-    component: () => import('../views/PricingView.vue'),
+    component: () => import('../components/pricingPage.vue'),
   },
   {
     path: '/faq',
     name: 'faq',
-    component: () => import('../views/FaqView.vue'),
+    component: () => import('../components/faqPage.vue'),
   },
   {
     path: '/profile',
@@ -34,7 +39,7 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    component: () => import('../views/NotFound.vue'),
+    component: () => import('../components/notFound.vue'),
   },
 ];
 

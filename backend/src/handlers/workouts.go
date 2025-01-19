@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	models "github.com/lkhtk/workout-log/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,37 +19,20 @@ import (
 const maxFieldLength = 150
 const perPage int64 = 3
 
-type WorkoutsHandler struct {
+type MongoConnectionHandler struct {
 	collection *mongo.Collection
 	ctx        context.Context
 }
 
-func NewWorkoutsHandler(ctx context.Context, collection *mongo.Collection) *WorkoutsHandler {
-	return &WorkoutsHandler{
+func NewWorkoutHandler(ctx context.Context, collection *mongo.Collection) *MongoConnectionHandler {
+	return &MongoConnectionHandler{
 		collection: collection,
 		ctx:        ctx,
 	}
 }
 
-func getCurrentUser(c *gin.Context) (string, error) {
-	session := sessions.Default(c)
-	user_id, ok := session.Get("user_id").(string)
-	if !ok || user_id == "" {
-		return "", errors.New("user is not authenticated")
-	}
-	return user_id, nil
-}
-
-func handleDBError(c *gin.Context, err error, notFoundMessage string) {
-	if err == mongo.ErrNoDocuments {
-		c.JSON(http.StatusNotFound, gin.H{"error": notFoundMessage})
-	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	}
-}
-
-func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
-	userID, err := getCurrentUser(c)
+func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
+	userID, err := GetCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -93,46 +75,6 @@ func (handler *WorkoutsHandler) ListWorkouts(c *gin.Context) {
 	})
 }
 
-func getFilter(c *gin.Context, userId string) bson.M {
-	objectId, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		return bson.M{}
-	}
-	filter := bson.M{
-		"user_id": objectId,
-	}
-	period := c.Query("period")
-	currentDate := time.Now().Truncate(24 * time.Hour)
-	if period == "" {
-		period = "all"
-	}
-
-	switch period {
-	case "day":
-		end := currentDate.AddDate(0, 0, 1)
-		filter["publishedat"] = bson.M{
-			"$gte": currentDate,
-			"$lt":  end,
-		}
-	case "month":
-		start := time.Date(currentDate.Year(), currentDate.Month(), 1, 0, 0, 0, 0, time.UTC)
-		end := start.AddDate(0, 1, 0)
-		filter["publishedat"] = bson.M{
-			"$gte": start,
-			"$lt":  end,
-		}
-	case "year":
-		start := time.Date(currentDate.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
-		end := start.AddDate(1, 0, 0)
-		filter["publishedat"] = bson.M{
-			"$gte": start,
-			"$lt":  end,
-		}
-	case "all":
-	}
-	return filter
-}
-
 func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 	var workout models.Workout
 	if err := c.ShouldBindJSON(&workout); err != nil {
@@ -140,7 +82,7 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 	}
 	workout.ID = primitive.NewObjectID()
 	workout.PublishedAt = time.Now()
-	userID, err := getCurrentUser(c)
+	userID, err := GetCurrentUser(c)
 	if err != nil {
 		return workout, err
 	}
@@ -162,7 +104,7 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 	return workout, nil
 }
 
-func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {
+func (handler *MongoConnectionHandler) NewWorkout(c *gin.Context) {
 	workout, err := validateAndPrepareWorkout(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -176,14 +118,14 @@ func (handler *WorkoutsHandler) NewWorkout(c *gin.Context) {
 	c.JSON(http.StatusCreated, workout)
 }
 
-func (handler *WorkoutsHandler) DeleteWorkout(c *gin.Context) {
+func (handler *MongoConnectionHandler) DeleteWorkout(c *gin.Context) {
 	id := c.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := getCurrentUser(c)
+	userID, err := GetCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -208,14 +150,14 @@ func (handler *WorkoutsHandler) DeleteWorkout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Workout deleted successfully"})
 }
 
-func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
+func (handler *MongoConnectionHandler) GetOneWorkout(c *gin.Context) {
 	id := c.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := getCurrentUser(c)
+	userID, err := GetCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -235,14 +177,14 @@ func (handler *WorkoutsHandler) GetOneWorkout(c *gin.Context) {
 	c.JSON(http.StatusOK, workout)
 }
 
-func (handler *WorkoutsHandler) UpdateWorkout(c *gin.Context) {
+func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 	id := c.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := getCurrentUser(c)
+	userID, err := GetCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

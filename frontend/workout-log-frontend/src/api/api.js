@@ -34,3 +34,11 @@ export async function checkToken(data) {
 export async function logOut() {
   return api.post('/auth/google/sigout');
 }
+
+export function createMeasurement(measurement) {
+  return api.post(`${base}/measurements`, measurement);
+}
+
+export function getMeasurement() {
+  return api.get(`${base}/measurement`);
+}

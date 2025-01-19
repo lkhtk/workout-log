@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -114,4 +115,13 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 		}
 		c.Next()
 	}
+}
+
+func GetCurrentUser(c *gin.Context) (string, error) {
+	session := sessions.Default(c)
+	user_id, ok := session.Get("user_id").(string)
+	if !ok || user_id == "" {
+		return "", errors.New("user is not authenticated")
+	}
+	return user_id, nil
 }

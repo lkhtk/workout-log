@@ -108,6 +108,7 @@
                       class="form-control col-sm-10"
                       type="number"
                       min="0"
+                      step="0.1"
                       maxlength="6"
                     />
                   </label>
@@ -338,7 +339,13 @@ export default {
     },
     showError(title, message) {
       this.toastTitle = title;
-      this.toastMessage = message;
+      this.toastMessage = '';
+      this.$nextTick(() => {
+        this.toastMessage = message;
+        setTimeout(() => {
+          this.clearToast();
+        }, 3000);
+      });
     },
     clearToast() {
       this.toastTitle = '';
