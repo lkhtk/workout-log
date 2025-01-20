@@ -127,18 +127,20 @@ export default {
       this.toastMessage = message;
     },
     async loadUserMeasurement() {
-      try {
-        const response = await getMeasurement();
-        this.formData = response;
-      } catch (error) {
-        console.error('Failed to load measurements:', error);
-        this.showError('Error', 'Failed to load measurements.');
+      const response = await getMeasurement();
+      if (response.data && response.data.length > 0) {
+        [this.formData] = response.data;
+        this.formData.measurement_date = this.getCurrentDate();
+      } else {
+        console.error('No data found');
+        this.showError('Error', 'No measurements found.');
       }
     },
     async submitData() {
       try {
+        this.formData.measurement_date = dayjs(this.formData.measurement_date).format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
-        if (response.status <= 201) {
+        if (response.status === 201 || response.status === 200) {
           this.showError('Success', 'Data submitted successfully!');
         } else {
           this.showError('Error', 'Failed to submit data.');
@@ -150,19 +152,7 @@ export default {
       }
     },
     resetForm() {
-      this.formData = {
-        measurement_date: this.getCurrentDate(),
-        body_weight: 0,
-        body_fat: 0,
-        neck: 0,
-        chest: 0,
-        waist: 0,
-        hips: 0,
-        upperarm: 0,
-        forearm: 0,
-        thighs: 0,
-        calves: 0,
-      };
+      this.formData = {};
     },
     getCurrentDate() {
       return dayjs().format('YYYY-MM-DD');

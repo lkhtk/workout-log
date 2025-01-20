@@ -32,18 +32,17 @@ type Workout struct {
 type Measurement struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id"`
 	UserID          primitive.ObjectID `json:"-" bson:"user_id"`
-	PublishedAt     time.Time
-	MeasurementDate time.Time
-	BodyFat         *float32 `json:"body_fat" bson:"body_fat"`
-	BodyWeight      *float32 `json:"body_weight" bson:"body_weight"`
-	Neck            *float32 `json:"neck" bson:"neck"`
-	Chest           *float32 `json:"chest" bson:"chest"`
-	Waist           *float32 `json:"waist" bson:"waist"`
-	Hips            *float32 `json:"hips" bson:"hips"`
-	UpperArm        *float32 `json:"upperarm" bson:"upperarm"`
-	Forearm         *float32 `json:"forearm" bson:"forearm"`
-	Thighs          *float32 `json:"thighs" bson:"thighs"`
-	Calves          *float32 `json:"calves" bson:"calves"`
+	MeasurementDate time.Time          `json:"measurement_date" bson:"measurement_date"`
+	BodyFat         *float32           `json:"body_fat" bson:"body_fat"`
+	BodyWeight      *float32           `json:"body_weight" bson:"body_weight"`
+	Neck            *float32           `json:"neck" bson:"neck"`
+	Chest           *float32           `json:"chest" bson:"chest"`
+	Waist           *float32           `json:"waist" bson:"waist"`
+	Hips            *float32           `json:"hips" bson:"hips"`
+	UpperArm        *float32           `json:"upperarm" bson:"upperarm"`
+	Forearm         *float32           `json:"forearm" bson:"forearm"`
+	Thighs          *float32           `json:"thighs" bson:"thighs"`
+	Calves          *float32           `json:"calves" bson:"calves"`
 }
 
 type User struct {

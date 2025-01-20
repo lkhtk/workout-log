@@ -6,7 +6,6 @@ import (
 	"math"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	models "github.com/lkhtk/workout-log/models"
@@ -104,7 +103,6 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 		return measurement, errors.New("invalid measurement data")
 	}
 	measurement.ID = primitive.NewObjectID()
-	measurement.PublishedAt = time.Now()
 	userID, err := GetCurrentUser(c)
 	if err != nil {
 		return measurement, err
@@ -122,10 +120,12 @@ func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
+	filter := getFilter(c, userID)
+
 	findOptions := options.Find().
 		SetLimit(1).
 		SetSort(bson.D{{"measurement_date", -1}})
-	cur, err := handler.collection.Find(handler.ctx, bson.M{"user_id": userID}, findOptions)
+	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
 	if err != nil {
 		handleDBError(c, err, "error fetching measurements")
 		return
