@@ -1,5 +1,5 @@
 <template>
-   <div class="container-lg p-3 mb-5 bg-body-tertiary rounded">
+   <div class="container-lg p-3 bg-body-tertiary rounded">
       <workoutComponent :workoutData="userData" v-if="userData" :edit='true'/>
   </div>
   <button type="button" class="btn btn-primary"

@@ -197,6 +197,8 @@
                   class="form-control"
                   type="number"
                   min="0"
+                  step="0.1"
+                  maxlength="6"
                 />
                 <p v-else>
                   {{cardio.speed}}
@@ -212,6 +214,7 @@
                   min="0"
                   type="number"
                   maxlength="6"
+                  step="0.1"
                 />
                 <p v-else>
                   {{cardio.distance}}
@@ -286,6 +289,7 @@ import dayjs from 'dayjs';
 import { ref } from 'vue';
 import { updateWorkout, deleteWorkout, createWorkout } from '../../api/api';
 import ToastComponent from '../common/toastComponent.vue';
+import { useUserStore } from '../../stores/userStore';
 
 export default {
   name: 'WorkoutComponent',
@@ -311,6 +315,7 @@ export default {
   },
   data() {
     let locationData;
+    const userStore = useUserStore();
     try {
       locationData = JSON.parse(JSON.stringify(this.workoutData));
     } catch (e) {
@@ -322,6 +327,7 @@ export default {
       localWorkoutData: locationData,
       toastTitle: '',
       toastMessage: '',
+      userStore,
     };
   },
   methods: {
@@ -443,7 +449,7 @@ export default {
           this.showError('', 'The training has been updated!');
         }).catch((error) => {
           if (error.response?.status === 401) {
-            localStorage.removeItem('user');
+            this.userStore.clearUser();
             this.$router.push('/about');
           }
           this.showError(error.code, error.message);
@@ -457,7 +463,7 @@ export default {
         })
           .catch((error) => {
             if (error.response?.status === 401) {
-              localStorage.removeItem('user');
+              this.userStore.clearUser();
               this.$router.push('/about');
             }
             this.showError(error.message, error.code);

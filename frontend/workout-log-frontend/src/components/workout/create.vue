@@ -1,5 +1,5 @@
 <template>
- <div class="container-lg p-3 mb-5 bg-body-tertiary rounded">
+ <div class="container-lg p-3 bg-body-tertiary rounded">
     <workoutComponent :edit="true" :workoutData="newWorkout" />
     <button type="button" class="btn btn-primary"
       @click="changeComponent('list', '')">

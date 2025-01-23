@@ -58,7 +58,8 @@
                     <div id="faqCol6" class="accordion-collapse collapse"
                     aria-labelledby="faq6" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Only on the scale and in the mirror
+                            Only on the scale and in the mirror.
+                            We're working on an analytics dashboard.
                         </div>
                     </div>
                 </div>

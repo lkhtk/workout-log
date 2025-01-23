@@ -58,7 +58,7 @@
     </div>
   </nav>
 </header>
-  <div class="shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+  <div class="shadow-lg p-3 bg-body-tertiary rounded">
     <div class="container">
       <router-view />
     </div>

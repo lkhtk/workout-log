@@ -73,12 +73,10 @@ const handleLogout = async () => {
     if (result.status !== 200) {
       throw new Error('Server logout failed');
     }
-    userStore.clearUser();
-    console.log('User logged out successfully');
-    this.$router.push('/about');
   } catch (error) {
     console.error('Logout error:', error.message);
-    this.$router.push('/about');
   }
+  userStore.clearUser();
+  this.$router.push('/about');
 };
 </script>

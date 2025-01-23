@@ -27,11 +27,11 @@
                   <auth-button />
                 </div>
                 <div v-else>
-                  <a href="#" class="btn btn-primary btn-lg"
+                  <button class="btn btn-primary btn-lg"
                     @click="this.$router.push('/')">
                     <font-awesome-icon icon="fa-solid fa-dumbbell" />
                     let's go!
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>

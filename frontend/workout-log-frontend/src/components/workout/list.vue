@@ -5,7 +5,7 @@
   <div v-else>
     <CreateButton label="Add workout" @action="changeComponent('create', '')" />
     <div v-if="workoutsList">
-      <div class="container-lg p-3 mb-5 bg-body-tertiary rounded"
+      <div class="container-lg p-3 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
         <workoutComponent :workoutData="workoutItem" />
         <div class="d-flex flex-row-reverse">
@@ -59,7 +59,7 @@
       <div class="alert alert-danger" role="alert" v-if="errorData.msg">
         {{ errorData.msg }}
       </div>
-      <div v-else class="container-lg p-3 mb-5 bg-body-tertiary rounded text-center">
+      <div v-else class="container-lg p-3 bg-body-tertiary rounded text-center">
         <h1 class="display-1">There are no workouts yet</h1>
         <h2 class="display-1">😞</h2>
       </div>

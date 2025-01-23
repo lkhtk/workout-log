@@ -128,12 +128,13 @@ export default {
     },
     async loadUserMeasurement() {
       const response = await getMeasurement();
-      if (response.data && response.data.length > 0) {
-        [this.formData] = response.data;
-        this.formData.measurement_date = this.getCurrentDate();
-      } else {
-        console.error('No data found');
-        this.showError('Error', 'No measurements found.');
+      if (response.status === 200) {
+        if (response.data) {
+          [this.formData] = response.data;
+          this.formData.measurement_date = this.getCurrentDate();
+        } else {
+          this.resetForm();
+        }
       }
     },
     async submitData() {
@@ -153,6 +154,7 @@ export default {
     },
     resetForm() {
       this.formData = {};
+      this.formData.measurement_date = this.getCurrentDate();
     },
     getCurrentDate() {
       return dayjs().format('YYYY-MM-DD');

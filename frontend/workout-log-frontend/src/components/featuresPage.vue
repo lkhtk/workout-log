@@ -13,11 +13,11 @@
               <auth-button />
             </div>
             <div v-else>
-              <a href="#" class="btn btn-primary btn-lg"
+              <button class="btn btn-primary btn-lg"
                 @click="this.$router.push('/')">
                 <font-awesome-icon icon="fa-solid fa-dumbbell" />
                 let's go!
-              </a>
+              </button>
             </div>
           </div>
           <div class="col">
@@ -43,10 +43,10 @@
             <div class="col d-flex flex-column gap-2">
               <div class="feature-icon-small d-inline-flex align-items-center
               justify-content-center fs-4 rounded-3">
-                <font-awesome-icon icon="fa-solid fa-child-reaching" />
+                <font-awesome-icon icon="fa-solid fa-baby" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">It's simple</h4>
-              <p class="text-body-secondary">Easy to use!
+              <h4 class="fw-semibold mb-0 text-body-emphasis">Easy to use!</h4>
+              <p class="text-body-secondary">It's simple.
                 Quick and easy recording of training sessions</p>
             </div>
             <div class="col d-flex flex-column gap-2">
@@ -55,8 +55,8 @@
               <font-awesome-icon icon="fa-solid fa-ban" />
               </div>
               <h4 class="fw-semibold mb-0 text-body-emphasis">No bullshit</h4>
-              <p class="text-body-secondary">No adverds, No cookies opt-out, No pop-up, No chatbots,
-                No clickbaits (okay, just a little bit)</p>
+              <p class="text-body-secondary">No ads, no opt-out cookies, no pop-ups,
+                no chatbots, no clickbait (okay, except for a little bit).</p>
               </div>
             </div>
           </div>
