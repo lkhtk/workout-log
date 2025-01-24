@@ -1,41 +1,33 @@
 <template>
-    <div class="d-flex h-100 text-center" v-if="user">
-        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-                <h1 class="display-5">
-                    Configs
-                </h1>
-            </div>
-            <main>
-              <form>
-                <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">Email address
-                    <input type="email" class="form-control" id="exampleInputEmail1"
-                    aria-describedby="emailHelp">
-                  </label>
-                  <div id="emailHelp" class="form-text">
-                    We'll never share your email with anyone else.
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="exampleInputPassword1" class="form-label">Password
-                  <input type="password" class="form-control" id="exampleInputPassword1">
-                  </label>
-                </div>
-                <div class="mb-3 form-check">
-                  <label class="form-check-label" for="exampleCheck1">Check me out
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  </label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </form>
-            </main>
-        </div>
-    </div>
+  <div class="container mt-5" v-if="user">
+    <h1 class="display-5">User Actions</h1>
+    <form @submit.prevent="exportData" class="mb-4">
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-outline-primary">
+          <font-awesome-icon icon="fa-solid fa-file-arrow-down" />
+          Export Data</button>
+        <button
+        class="btn btn-outline-warning"
+        @click="clearData"
+      >
+      <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
+        Clear All Data
+      </button>
+      <button
+        class="btn btn-outline-danger"
+        @click="deleteAccount"
+      >
+        <font-awesome-icon icon="fa-solid fa-skull" />
+        Delete Account
+      </button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
 import { storeToRefs } from 'pinia';
+import { Modal } from 'bootstrap';
 import { useUserStore } from '../stores/userStore';
 
 export default {
@@ -52,6 +44,86 @@ export default {
       return this.user || {
         id: 0,
       };
+    },
+  },
+  data() {
+    return {
+      formData: {
+        username: '',
+        email: '',
+        description: '',
+      },
+    };
+  },
+  methods: {
+    exportData() {
+      // Export form data to JSON
+      const jsonData = JSON.stringify(this.formData, null, 2);
+      console.log('Exported Data:', jsonData);
+    },
+    clearData() {
+      this.showConfirmationModal(
+        'Are you sure you want to clear all data?',
+        () => {
+          this.formData = {
+            username: '',
+            email: '',
+            description: '',
+          };
+        },
+      );
+    },
+    deleteAccount() {
+      // Simulate account deletion
+      this.showConfirmationModal(
+        'Are you sure you want to delete your account? This action cannot be undone.',
+        () => {
+          console.log('Account deleted.');
+          // Reset the form data as a placeholder for account deletion
+          this.formData = {
+            username: '',
+            email: '',
+            description: '',
+          };
+        },
+      );
+    },
+    showConfirmationModal(message, onConfirm) {
+      const modalElement = document.createElement('div');
+      modalElement.innerHTML = `
+        <div class="modal fade" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>${message}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmBtn">Confirm</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modalElement);
+      const modal = new Modal(modalElement.querySelector('.modal'));
+      modal.show();
+
+      modalElement.querySelector('#confirmBtn').addEventListener('click', () => {
+        onConfirm();
+        modal.hide();
+        document.body.removeChild(modalElement);
+      });
+
+      modalElement.querySelector('[data-bs-dismiss="modal"]').addEventListener('click', () => {
+        modal.hide();
+        document.body.removeChild(modalElement);
+      });
     },
   },
 };

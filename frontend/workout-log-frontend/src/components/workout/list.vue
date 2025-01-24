@@ -2,8 +2,8 @@
   <div class="spinner-border align-items-center" role="status" v-if="loading">
     <span class="visually-hidden align-items-center">Loading...</span>
   </div>
-  <div v-else>
-    <CreateButton label="Add workout" @action="changeComponent('create', '')" />
+  <div>
+    <CreateButton label="Add workout" @action="changeComponent('create', '')"/>
     <div v-if="workoutsList">
       <div class="container-lg p-3 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
@@ -32,7 +32,7 @@
             </button>
           </li>
           <li
-            v-for="pageNumber in pages"
+            v-for="pageNumber in visiblePages"
             :key="pageNumber"
             class="page-item"
             :class="{ active: pageNumber === pagination.current }">
@@ -97,16 +97,38 @@ export default {
     },
   }),
   computed: {
-    pages() {
-      return Array.from({ length: this.pagination.last }, (_, i) => i + 1);
+    visiblePages() {
+      const { last: total, current } = this.pagination;
+      const range = 4; // Number of pages on either side of the current page
+      const start = Math.max(1, current - range);
+      const end = Math.min(total, current + range);
+
+      const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+      if (start > 1) {
+        pages.unshift(1);
+        if (start > 2) {
+          pages.splice(1, 0, '...');
+        }
+      }
+
+      if (end < total) {
+        if (end < total - 1) {
+          pages.push('...');
+        }
+        pages.push(total);
+      }
+
+      return pages;
     },
   },
   methods: {
     goToPage(pageNumber) {
-      if (pageNumber >= 1 && pageNumber <= this.pagination.last) {
-        this.pagination.current = pageNumber;
-        this.loadAllWorkouts(pageNumber);
+      if (pageNumber === '...' || pageNumber < 1 || pageNumber > this.pagination.last) {
+        return;
       }
+      this.pagination.current = pageNumber;
+      this.loadAllWorkouts(pageNumber);
     },
     async loadAllWorkouts(pageId) {
       this.loading = true;

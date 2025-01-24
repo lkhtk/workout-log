@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex h-100 text-center" >
+    <div class="d-flex h-100 text-center" v-if="user">
         <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
             <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
                 <h1 class="display-5">
@@ -122,6 +122,10 @@ export default {
     },
   },
   methods: {
+    clearToast() {
+      this.toastTitle = '';
+      this.toastMessage = '';
+    },
     showError(title, message) {
       this.toastTitle = title;
       this.toastMessage = message;
@@ -142,7 +146,7 @@ export default {
         this.formData.measurement_date = dayjs(this.formData.measurement_date).format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
         if (response.status === 201 || response.status === 200) {
-          this.showError('Success', 'Data submitted successfully!');
+          this.showError('', 'Data submitted successfully!');
         } else {
           this.showError('Error', 'Failed to submit data.');
           return;
