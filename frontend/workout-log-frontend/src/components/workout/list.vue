@@ -143,7 +143,7 @@ export default {
       } catch (error) {
         if (error.response?.status === 401) {
           localStorage.removeItem('user');
-          this.$router.push('/about');
+          window.location.replace('/about');
         } else {
           this.errorData.code = error.code;
           this.errorData.msg = error.message;

@@ -464,7 +464,7 @@ export default {
           .catch((error) => {
             if (error.response?.status === 401) {
               this.userStore.clearUser();
-              this.$router.push('/about');
+              window.location.replace('/about');
             }
             this.showError(error.message, error.code);
           });
@@ -479,7 +479,8 @@ export default {
       })
         .catch((error) => {
           if (error.response?.status === 401) {
-            this.$router.push('/about');
+            this.userStore.clearUser();
+            window.location.replace('/about');
           }
           this.showError(error.message, error.code);
         });

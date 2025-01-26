@@ -21,7 +21,7 @@ func handleDBError(c *gin.Context, err error, notFoundMessage string) {
 func getFilter(c *gin.Context, userId string) bson.M {
 	objectId, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
-		return bson.M{}
+		return nil
 	}
 	filter := bson.M{
 		"user_id": objectId,

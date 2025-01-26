@@ -42,3 +42,15 @@ export function createMeasurement(measurement) {
 export function getMeasurement() {
   return api.get(`${base}/measurement`);
 }
+
+export function exportData() {
+  return api.get(`${base}/user/export`, { responseType: 'blob' });
+}
+
+export function wipeData() {
+  return api.post(`${base}/user/wipe`);
+}
+
+export function deleteUser() {
+  return api.delete(`${base}/user`);
+}

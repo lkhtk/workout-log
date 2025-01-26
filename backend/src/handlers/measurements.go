@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	models "github.com/lkhtk/workout-log/models"
+	"github.com/lkhtk/workout-log/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -57,7 +59,7 @@ func (handler *MongoConnectionHandler) Create(c *gin.Context) {
 }
 
 func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -103,7 +105,7 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 		return measurement, errors.New("invalid measurement data")
 	}
 	measurement.ID = primitive.NewObjectID()
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		return measurement, err
 	}
@@ -115,7 +117,7 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 	return measurement, nil
 }
 func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -138,4 +140,43 @@ func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, measurements)
+}
+
+func (handler *MongoConnectionHandler) ExportMeasurements(ctx *gin.Context, zipWriter *utils.ZipWriter) error {
+	userID, err := getCurrentUser(ctx)
+	if err != nil {
+		return err
+	}
+	filter := getFilter(ctx, userID)
+
+	cursor, err := handler.collection.Find(ctx, filter)
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	var results []bson.M
+	if err := cursor.All(ctx, &results); err != nil {
+		return err
+	}
+
+	data, err := json.MarshalIndent(results, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	return zipWriter.AddFile("measurements.json", data)
+}
+
+func (handler *MongoConnectionHandler) CleanupUserMeasurements(c *gin.Context) error {
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+	filter := getFilter(c, userID)
+	if err != nil {
+		return err
+	}
+	_, err = handler.collection.DeleteMany(c, filter)
+	return err
 }

@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"log"
 	"net/http"
 	"os"
 
 	handlers "github.com/lkhtk/workout-log/handlers"
+	"github.com/lkhtk/workout-log/utils"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
@@ -36,9 +38,12 @@ func init() {
 	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	workoutsCollection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("workouts")
-	usersCollection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("users")
-	measurementsCollection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("measurements")
+	database := client.Database(os.Getenv("MONGO_DATABASE"))
+
+	workoutsCollection := database.Collection("workouts")
+	usersCollection := database.Collection("users")
+	measurementsCollection := database.Collection("measurements")
+
 	workoutsHandler = handlers.NewWorkoutHandler(ctx, workoutsCollection)
 	measurementsHandler = handlers.NewMeasurementsHandler(ctx, measurementsCollection)
 	authHandler = handlers.NewAuthHandler(ctx, usersCollection)
@@ -78,6 +83,10 @@ func main() {
 		authorized.GET("/measurements", measurementsHandler.GetAllMeasurements)
 		authorized.GET("/measurement", measurementsHandler.GetLatestMeasurement)
 		authorized.POST("/measurements", measurementsHandler.Create)
+
+		authorized.GET("/user/export", exportAccountData)
+		authorized.POST("/user/wipe", clearAccountData)
+		authorized.DELETE("/user", deleteAccount)
 	}
 	server.Use(cors.Default())
 	server.Run("0.0.0.0:8000")
@@ -85,4 +94,60 @@ func main() {
 
 func health(c *gin.Context) {
 	c.JSON(http.StatusOK, "OK")
+}
+
+func exportAccountData(c *gin.Context) {
+	zipBuffer := new(bytes.Buffer)
+	zipWriter := utils.NewZipWriter(zipBuffer)
+	if err := workoutsHandler.ExportWorkouts(c, zipWriter); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process workouts"})
+		return
+	}
+	if err := measurementsHandler.ExportMeasurements(c, zipWriter); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process measurements"})
+		return
+	}
+	if err := zipWriter.Close(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to finalize ZIP archive"})
+		return
+	}
+	c.Header("Content-Disposition", "attachment; filename=user_data.zip")
+	c.Header("Content-Type", "application/zip")
+	c.Data(http.StatusOK, "application/zip", zipBuffer.Bytes())
+	c.JSON(http.StatusOK, "OK")
+}
+
+func clearAccountData(ctx *gin.Context) {
+	if err := workoutsHandler.CleanupUserWorkouts(ctx); err != nil {
+		log.Println("failed to fetch workouts: %w", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "workouts cleanup err"})
+		return
+	}
+	if err := measurementsHandler.CleanupUserWorkouts(ctx); err != nil {
+		log.Println("failed to fetch measurements: %w", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cleanup err"})
+		return
+	}
+	ctx.JSON(http.StatusOK, nil)
+	return
+}
+
+func deleteAccount(ctx *gin.Context) {
+	if err := workoutsHandler.CleanupUserWorkouts(ctx); err != nil {
+		log.Println("failed to fetch workouts: %w", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "workouts cleanup err"})
+		return
+	}
+	if err := measurementsHandler.CleanupUserWorkouts(ctx); err != nil {
+		log.Println("failed to fetch measurements: %w", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cleanup err"})
+		return
+	}
+	if err := authHandler.DeleteCurrentUser(ctx); err != nil {
+		log.Println("failed to fetch measurements: %w", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cleanup err"})
+		return
+	}
+	ctx.JSON(http.StatusOK, nil)
+	return
 }

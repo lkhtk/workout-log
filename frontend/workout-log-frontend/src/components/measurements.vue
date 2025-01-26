@@ -131,15 +131,17 @@ export default {
       this.toastMessage = message;
     },
     async loadUserMeasurement() {
-      const response = await getMeasurement();
-      if (response.status === 200) {
-        if (response.data) {
-          [this.formData] = response.data;
-          this.formData.measurement_date = this.getCurrentDate();
-        } else {
-          this.resetForm();
+      await getMeasurement().then((response) => {
+        [this.formData] = response.data;
+        this.formData.measurement_date = this.getCurrentDate();
+      }).catch((error) => {
+        if (error.response?.status === 401) {
+          this.user = null;
+          localStorage.removeItem('user');
+          this.$router.push('/about');
         }
-      }
+        this.showError(error.code, error.message);
+      });
     },
     async submitData() {
       try {

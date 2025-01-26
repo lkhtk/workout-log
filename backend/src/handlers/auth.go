@@ -14,6 +14,7 @@ import (
 	models "github.com/lkhtk/workout-log/models"
 	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/api/idtoken"
 )
@@ -74,7 +75,7 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		userId = res.InsertedID.(string)
+		userId = res.InsertedID.(primitive.ObjectID).String()
 	} else {
 		userId = existingUser.ID.Hex()
 	}
@@ -102,6 +103,7 @@ func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {
 	})
 	session.Save()
 	c.JSON(http.StatusOK, gin.H{"message": "you have successfully logged out"})
+	return
 }
 
 func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
@@ -117,11 +119,30 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func GetCurrentUser(c *gin.Context) (string, error) {
+func getCurrentUser(c *gin.Context) (string, error) {
 	session := sessions.Default(c)
 	user_id, ok := session.Get("user_id").(string)
 	if !ok || user_id == "" {
 		return "", errors.New("user is not authenticated")
 	}
 	return user_id, nil
+}
+
+func (handler *AuthHandler) DeleteCurrentUser(c *gin.Context) error {
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+	objectId, _ := primitive.ObjectIDFromHex(userID)
+	session := sessions.Default(c)
+	_, err = handler.collection.DeleteOne(c, bson.M{"_id": objectId})
+	if err != nil {
+		return err
+	}
+	session.Clear()
+	session.Options(sessions.Options{
+		MaxAge: -1,
+	})
+	session.Save()
+	return nil
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	models "github.com/lkhtk/workout-log/models"
+	"github.com/lkhtk/workout-log/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -32,7 +34,7 @@ func NewWorkoutHandler(ctx context.Context, collection *mongo.Collection) *Mongo
 }
 
 func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -43,6 +45,10 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 		page = 1
 	}
 	filter := getFilter(c, userID)
+	if err != nil {
+		handleDBError(c, err, "error fetching userID")
+		return
+	}
 	total, err := handler.collection.CountDocuments(handler.ctx, filter)
 	if err != nil {
 		handleDBError(c, err, "error counting documents")
@@ -82,7 +88,7 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 	}
 	workout.ID = primitive.NewObjectID()
 	workout.PublishedAt = time.Now()
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		return workout, err
 	}
@@ -125,7 +131,7 @@ func (handler *MongoConnectionHandler) DeleteWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -157,7 +163,7 @@ func (handler *MongoConnectionHandler) GetOneWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -184,7 +190,7 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := GetCurrentUser(c)
+	userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -224,4 +230,45 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Workout updated successfully", "workout": newWorkout})
+}
+
+func (handler *MongoConnectionHandler) ExportWorkouts(ctx *gin.Context, zipWriter *utils.ZipWriter) error {
+	userID, err := getCurrentUser(ctx)
+	if err != nil {
+		return err
+	}
+	filter := getFilter(ctx, userID)
+	if err != nil {
+		return err
+	}
+	cursor, err := handler.collection.Find(ctx, filter)
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	var results []bson.M
+	if err := cursor.All(ctx, &results); err != nil {
+		return err
+	}
+
+	data, err := json.MarshalIndent(results, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	return zipWriter.AddFile("workouts.json", data)
+}
+
+func (handler *MongoConnectionHandler) CleanupUserWorkouts(c *gin.Context) error {
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+	filter := getFilter(c, userID)
+	if err != nil {
+		return err
+	}
+	_, err = handler.collection.DeleteMany(c, filter)
+	return err
 }
