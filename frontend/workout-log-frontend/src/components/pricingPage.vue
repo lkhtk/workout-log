@@ -28,7 +28,7 @@
                 </div>
                 <div v-else>
                   <button class="btn btn-primary btn-lg"
-                    @click="this.$router.push('/')">
+                    @click="$router.push('/')">
                     <font-awesome-icon icon="fa-solid fa-dumbbell" />
                     let's go!
                   </button>
@@ -47,7 +47,7 @@ import { storeToRefs } from 'pinia';
 import { useUserStore } from '../stores/userStore';
 import AuthButton from './common/AuthButton.vue';
 
-document.title = 'Workout Log';
+document.title = 'Gym Log';
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 </script>

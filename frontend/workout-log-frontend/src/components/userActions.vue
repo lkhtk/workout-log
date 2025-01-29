@@ -1,20 +1,25 @@
 <template>
-  <div class="container mt-5" v-if="user">
-    <h1 class="display-5">User Actions</h1>
+  <div class="container" v-if="user">
     <form @submit.prevent="" class="mb-4">
       <div class="d-grid gap-2">
-        <button type="button" class="btn btn-outline-primary" @click="exportData">
-          <font-awesome-icon icon="fa-solid fa-file-arrow-down" />
-          Export Data
-        </button>
-        <button class="btn btn-outline-warning" @click="clearData">
-          <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
-          Clear All Data
-        </button>
-        <button class="btn btn-outline-danger" @click="deleteAccount">
-          <font-awesome-icon icon="fa-solid fa-skull" />
-          Delete Account
-        </button>
+        <div class="container d-grid gap-2 col-6 mx-auto">
+          <h1 class="display-5">Actions</h1>
+          <button type="button" class="btn btn-outline-primary" @click="exportData">
+            <font-awesome-icon icon="fa-solid fa-file-arrow-down" />
+            Export Data
+          </button>
+          <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger">
+            Dangerous heading
+          </div>
+          <button class="btn btn-outline-warning" @click="clearData">
+            <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
+            Clear All Data
+          </button>
+          <button class="btn btn-outline-danger" @click="deleteAccount">
+            <font-awesome-icon icon="fa-solid fa-skull" />
+            Delete Account
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -27,7 +32,7 @@ import { useUserStore } from '../stores/userStore';
 import { exportData as apiExportData, wipeData, deleteUser } from '../api/api';
 
 export default {
-  name: 'userConfigs',
+  name: 'userActions',
   setup() {
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);

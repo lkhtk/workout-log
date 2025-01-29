@@ -161,6 +161,8 @@
                 Activity</th>
               <th><font-awesome-icon icon="fa-solid fa-gauge-high" />
                 Speed/Level</th>
+              <th><font-awesome-icon icon="fa-solid fa-wave-square" />
+                Heart rate</th>
               <th><font-awesome-icon icon="fa-solid fa-infinity" />
                 Distance</th>
               <th><font-awesome-icon icon="fa-solid fa-stopwatch-20" />
@@ -202,6 +204,22 @@
                 />
                 <p v-else>
                   {{cardio.speed}}
+                </p>
+              </label>
+            </td>
+            <td>
+              <label for="heart">
+                <input v-if="edit"
+                  v-model="cardio.heart"
+                  id="heart"
+                  class="form-control"
+                  min="60"
+                  type="number"
+                  maxlength="3"
+                  step="1"
+                />
+                <p v-else>
+                  {{cardio.heart}}
                 </p>
               </label>
             </td>
@@ -403,10 +421,11 @@ export default {
       }
       this.localWorkoutData.workout.cardio.push({
         type: 'New Cardio Exercise',
-        speed: 0,
-        distance: 0,
-        time: 0,
-        calories: 0,
+        speed: 10,
+        distance: 100,
+        time: 15,
+        calories: 100,
+        heart: 60,
       });
       this.syncData();
     },
@@ -443,6 +462,7 @@ export default {
         this.localWorkoutData.workout.cardio[index].speed = parseFloat(exercise.speed);
         this.localWorkoutData.workout.cardio[index].time = parseFloat(exercise.time);
         this.localWorkoutData.workout.cardio[index].calories = parseFloat(exercise.calories);
+        this.localWorkoutData.workout.cardio[index].heart = parseFloat(exercise.heart);
       });
       if (this.localWorkoutData.id) {
         await updateWorkout(this.localWorkoutData).then(() => {

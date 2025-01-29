@@ -21,11 +21,12 @@ type Workout struct {
 			} `json:"sets"`
 		} `json:"exercises"`
 		Cardio []struct {
-			Type     string  `json:"type"`
-			Speed    float32 `json:"speed"`
-			Distance float32 `json:"distance"`
-			Time     int     `json:"time"`
-			Calories int     `json:"calories"`
+			Type      string  `json:"type"`
+			HeartRate int     `json:"heart"`
+			Speed     float32 `json:"speed"`
+			Distance  float32 `json:"distance"`
+			Time      int     `json:"time"`
+			Calories  int     `json:"calories"`
 		} `json:"cardio"`
 	} `json:"workout"`
 }

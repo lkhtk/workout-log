@@ -3,7 +3,7 @@
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="#"><font-awesome-icon icon="fa-solid fa-dumbbell" />
-        Workout log
+        Gym Log
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarCollapse"
@@ -65,7 +65,7 @@
   </div>
   <footer class="container d-flex flex-wrap justify-content-between align-items-center
     py-3 my-4 border-top">
-    <p class="col-md-4 mb-0 text-body-secondary">Copyright &copy; Workout log</p>
+    <p class="col-md-4 mb-0 text-body-secondary">Copyright &copy; Gym log</p>
     <nav style="--bs-breadcrumb-divider: '';" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item" v-if="user">
@@ -97,7 +97,7 @@ import { storeToRefs } from 'pinia';
 import { useUserStore } from './stores/userStore';
 import AuthButton from './components/common/AuthButton.vue';
 
-document.title = 'Workout Log';
+document.title = 'Gym Log';
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 </script>

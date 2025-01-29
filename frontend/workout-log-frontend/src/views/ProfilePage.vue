@@ -5,11 +5,13 @@
     </div>
     <div class="col">
       <userConfigs />
-    </div>
+      <userActions />
+  </div>
   </div>
 </template>
 
 <script setup>
 import userProfile from '../components/profile.vue';
-import userConfigs from '../components/userconfigs.vue';
+import userActions from '../components/userActions.vue';
+import userConfigs from '../components/userConf.vue';
 </script>
