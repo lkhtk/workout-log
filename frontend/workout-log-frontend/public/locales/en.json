@@ -1,0 +1,89 @@
+{
+    "userConf": {
+        "title": "Language",
+        "selectTitle": "Select Language",
+        "ru": "Russian",
+        "eng": "English"
+    },
+    "userActions": {
+        "title": "Actions",
+        "danger": "Danger Zone",
+        "wipe": "Wipe activity",
+        "delete": "Delete account and activity",
+        "export": "Export Data"
+    },
+    "measurements": {
+        "title": "Measurements",
+        "date": "Date",
+        "body_weight": "Weight",
+        "body_fat": "Body fat %",
+        "neck": "Neck",
+        "chest": "Chest",
+        "waist": "Waist",
+        "hips": "Hips",
+        "upperarm": "Upper arm",
+        "forearm": "Forearm",
+        "thighs": "Thighs",
+        "calves": "Calves"
+    },
+    "buttons": {
+        "submit": "Submit",
+        "edit": "Edit",
+        "save": "Save",
+        "login": "LogIn",
+        "logout": "LogOut",
+        "go": "Let's go!"
+    },
+    "links": {
+        "profile": "Profile",
+        "features": "Features",
+        "pricing": "Pricing",
+        "about": "About",
+        "journal": "Journal"
+    },
+    "records": {
+        "title": "Records"
+    },
+    "info": {
+        "loading": "Loading...",
+        "okMsg": "Data submitted successfully!",
+        "actionSuccess": "Success!",
+        "updated": "The training has been updated!",
+        "created": "The training has been created!",
+        "deleted": "The training has been deleted!",
+        "cleanUpQuestion": "Are you sure you want to clear all account data?",
+        "deleteQuestion": "Are you sure you want to delete your account? This action cannot be undone."
+    },
+    "workout": {
+        "newButtonTitle": "New workout",
+        "label": "Title",
+        "default_title": "Leg day",
+        "default_ex": "Bulgarian Split Squat",
+        "name_subtitle": "Muscle group or name of workout",
+        "instructor": "Training with an instructor",
+        "training": "Strength training",
+        "exercise": "Exercise",
+        "new": "Add exercise",
+        "set": "Set"
+    },
+    "cardio": {
+        "title": "Cardio",
+        "default_ex": "Jogging",
+        "activity": "Activity",
+        "speed": "Speed/Level",
+        "heart": "Heart rate",
+        "distance": "Distance",
+        "time": "Time",
+        "calories": "Calories",
+        "new": "Add exercise"
+    },
+    "errorsMsg": {
+        "setsLimit": "Maximum number of sets = 10",
+        "exercisesLimit": "Maximum number of exercises = 10",
+        "cardiosLimit": "Maximum number of cardio = 10",
+        "failedMsg": "Failed to submit data",
+        "noworkouts": "There are no workouts yet",
+        "exportFailed": "Failed to export data. Please try again.",
+        "cleanupFailed": "Failed to clear data. Please try again."
+    }
+}

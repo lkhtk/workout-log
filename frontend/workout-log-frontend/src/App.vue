@@ -14,12 +14,12 @@
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item" v-if="user">
             <a class="nav-link active" aria-current="page" href="#">
-              <router-link to="/">Journal</router-link>
+              <router-link to="/">{{ $t('links.journal') }}</router-link>
             </a>
           </li>
           <li class="nav-item" v-if="user">
             <a class="nav-link active" aria-current="page" href="#">
-              <router-link to="/measurements">Measurements</router-link>
+              <router-link to="/measurements">{{ $t('measurements.title') }}</router-link>
             </a>
           </li>
         </ul>
@@ -43,7 +43,7 @@
             <li>
               <router-link class="dropdown-item" to="/profile">
                 <font-awesome-icon icon="fa-solid fa-address-card" />
-                Profile
+                {{ $t('links.profile') }}
               </router-link>
             </li>
             <li>
@@ -69,22 +69,24 @@
     <nav style="--bs-breadcrumb-divider: '';" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item" v-if="user">
-          <router-link class="nav-item" to="/">Journal</router-link>
+          <router-link class="nav-item" to="/">{{ $t('links.journal') }}</router-link>
         </li>
         <li class="breadcrumb-item" v-if="user">
-          <router-link class="nav-item" to="/measurements">Measurements</router-link>
+          <router-link class="nav-item" to="/measurements">
+            {{ $t('measurements.title') }}
+          </router-link>
         </li>
         <li class="breadcrumb-item">
-          <router-link class="nav-item" to="/features">Features</router-link>
+          <router-link class="nav-item" to="/features">{{ $t('links.features') }}</router-link>
         </li>
         <li class="breadcrumb-item">
-          <router-link class="nav-item" to="/pricing">Pricing</router-link>
+          <router-link class="nav-item" to="/pricing">{{ $t('links.pricing') }}</router-link>
         </li>
         <li class="breadcrumb-item">
           <router-link class="nav-item" to="/faq">FAQ</router-link>
         </li>
         <li class="breadcrumb-item">
-          <router-link class="nav-item" to="/about">About</router-link>
+          <router-link class="nav-item" to="/about">{{ $t('links.about') }}</router-link>
         </li>
       </ol>
     </nav>

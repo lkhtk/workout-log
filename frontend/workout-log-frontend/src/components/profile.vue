@@ -3,7 +3,7 @@
         <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
             <div class="pricing-header p-3 pb-md-4 mx-auto">
                 <h1 class="display-5">
-                    Profile
+                  {{ $t('links.profile') }}
                 </h1>
             </div>
             <main>
@@ -45,9 +45,10 @@ export default {
   },
   setup() {
     const userStore = useUserStore();
-    const { user } = storeToRefs(userStore);
+    const { user, language } = storeToRefs(userStore);
     return {
       user,
+      language,
     };
   },
   computed: {

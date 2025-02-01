@@ -2,7 +2,7 @@
   <div class="d-flex h-100 text-center">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <h1 class="display-1">Features</h1>
+        <h1 class="display-1">{{ $t('links.features') }}</h1>
       </div>
       <main>
         <div class="row row-cols-1 row-cols-md-2 align-items-md-center g-5 py-5">
@@ -16,7 +16,7 @@
               <button class="btn btn-primary btn-lg"
                 @click="$router.push('/')">
                 <font-awesome-icon icon="fa-solid fa-dumbbell" />
-                let's go!
+                {{ $t('buttons.go') }}
               </button>
             </div>
           </div>

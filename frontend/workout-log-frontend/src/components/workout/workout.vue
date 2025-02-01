@@ -6,7 +6,7 @@
   <div>
     <div v-if="edit">
       <div class="input-group input-group-lg">
-          <span class="input-group-text" id="inputGroup-sizing-lg">Title</span>
+          <span class="input-group-text" id="inputGroup-sizing-lg">{{ $t('workout.label') }}</span>
           <input label="rest"
           type="text" class="form-control" id="muscleGroup"
           placeholder="Legs day"
@@ -15,7 +15,7 @@
           aria-describedby="inputGroup-sizing-lg">
       </div>
       <div class="form-text" id="basic-addon4">
-        Muscle group or name of workout
+        {{ $t('workout.name_subtitle') }}
       </div>
     </div>
     <div v-else>
@@ -39,25 +39,26 @@
       id="flexSwitchCheckChecked" :disabled="!edit"
       v-model="localWorkoutData.coach"
       aria-checked>
-      Training with an instructor
+      {{ $t('workout.instructor') }}
     </label>
     </div>
-    <div v-if="localWorkoutData.workout.exercises.length > 0 || edit">
+    <div v-if="edit || (typeof localWorkoutData.workout.exercises !== 'undefined'
+      && localWorkoutData.workout.exercises.length > 0)">
       <h1 class="display-6">
-        Strength training</h1>
+        {{ $t('workout.training') }}</h1>
       <table class="table table-hover align-middle table-bordered table-striped table-light">
         <thead >
           <tr>
             <th scope="row" colspan="3">
               <font-awesome-icon icon="fa-solid fa-medal" />
-              Exercise</th>
+              {{ $t('workout.exercise') }}</th>
               <th
                 scope="col"
                 v-for="(set, index) in getMaxSets(localWorkoutData.workout.exercises)"
                 :key="'set-' + index"
               >
               <font-awesome-icon icon="fa-solid fa-fire-flame-curved" />
-              Set {{ index + 1 }}
+              {{ $t('workout.set') }} {{ index + 1 }}
             </th>
           </tr>
         </thead>
@@ -145,30 +146,30 @@
       <div v-if="edit">
         <button type="button" class="btn btn-success" @click="addExercise()">
           <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
-          New exercise
+          {{ $t('workout.new') }}
         </button>
       </div>
     </div>
-    <div v-if="(typeof localWorkoutData.workout.cardio !== 'undefined'
-      && localWorkoutData.workout.cardio.length > 0) || edit">
+    <div v-if="edit || (typeof localWorkoutData.workout.cardio !== 'undefined'
+      && localWorkoutData.workout.cardio.length > 0)">
       <h1 class="display-6"><font-awesome-icon icon="fa-solid fa-heart-pulse" />
-        Cardio</h1>
+        {{ $t('cardio.title') }}</h1>
       <table class="table table-hover align-middle table-bordered table-light">
         <thead>
           <tr>
               <th>#</th>
               <th><font-awesome-icon icon="fa-solid fa-solid fa-person-swimming" />
-                Activity</th>
+                {{ $t('cardio.activity') }}</th>
               <th><font-awesome-icon icon="fa-solid fa-gauge-high" />
-                Speed/Level</th>
+                {{ $t('cardio.speed') }}</th>
               <th><font-awesome-icon icon="fa-solid fa-wave-square" />
-                Heart rate</th>
+                {{ $t('cardio.heart') }}</th>
               <th><font-awesome-icon icon="fa-solid fa-infinity" />
-                Distance</th>
+                {{ $t('cardio.distance') }}</th>
               <th><font-awesome-icon icon="fa-solid fa-stopwatch-20" />
-                Time</th>
+                {{ $t('cardio.time') }}</th>
               <th><font-awesome-icon icon="fa-solid fa-fire" />
-                Calories</th>
+                {{ $t('cardio.calories') }}</th>
           </tr>
         </thead>
         <tbody v-for="cardio in localWorkoutData.workout.cardio" v-bind:key="cardio">
@@ -275,7 +276,7 @@
       <div v-if="edit">
           <button type="button" class="btn btn-success" @click="addCardio()">
             <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
-            New cardio
+            {{ $t('cardio.new') }}
           </button>
         </div>
       </div>
@@ -389,7 +390,7 @@ export default {
         exercise.sets = [];
       }
       if (exercise.sets.length >= 10) {
-        this.showError('', 'Maximum number of sets = 10');
+        this.showError('', this.$t('errorsMsg.setsLimit'));
         return;
       }
       exercise.sets.push({
@@ -400,7 +401,7 @@ export default {
     },
     addExercise() {
       if (this.localWorkoutData.workout.exercises.length >= 10) {
-        this.showError('', 'Maximum number of exercises = 10');
+        this.showError('', this.$t('errorsMsg.exercisesLimit'));
         return;
       }
       const emptySets = [];
@@ -408,7 +409,7 @@ export default {
         emptySets.push({ weight: 10, reps: 12 });
       }
       this.localWorkoutData.workout.exercises.push({
-        name: 'New Exercise',
+        name: this.$t('workout.default_ex'),
         sets: emptySets,
       });
       this.syncData();
@@ -416,11 +417,11 @@ export default {
 
     addCardio() {
       if (this.localWorkoutData.workout.cardio.length >= 10) {
-        this.showError('', 'Maximum number of cardio = 10');
+        this.showError('', this.$t('errorsMsg.cardiosLimit'));
         return;
       }
       this.localWorkoutData.workout.cardio.push({
-        type: 'New Cardio Exercise',
+        type: this.$t('cardio.default_ex'),
         speed: 10,
         distance: 100,
         time: 15,
@@ -466,7 +467,7 @@ export default {
       });
       if (this.localWorkoutData.id) {
         await updateWorkout(this.localWorkoutData).then(() => {
-          this.showError('', 'The training has been updated!');
+          this.showError('', this.$t('info.updated'));
         }).catch((error) => {
           if (error.response?.status === 401) {
             this.userStore.clearUser();
@@ -476,7 +477,7 @@ export default {
         });
       } else {
         await createWorkout(this.localWorkoutData).then(() => {
-          this.showError('', 'The training has been added!');
+          this.showError('', this.$t('info.created'));
           this.errorData = {};
           this.localWorkoutData.workout = {};
           window.location.reload();
@@ -492,7 +493,7 @@ export default {
     },
     async deleteWorkoutById(id) {
       await deleteWorkout(id).then(() => {
-        this.showError('', 'The training has been deleted');
+        this.showError('', this.$t('info.deleted'));
         this.errorData = {};
         this.localWorkoutData.workout = {};
         window.location.reload();

@@ -13,12 +13,12 @@
         <button type="button" class="btn btn-primary btn-lg px-4 me-md-2"
         @click="this.$router.push('/pricing')">
           <font-awesome-icon icon="fa-solid fa-money-check-dollar" />
-          Pricing
+          {{ $t('links.pricing') }}
         </button>
         <button type="button" class="btn btn-outline-secondary btn-lg px-4"
         @click="this.$router.push('/features')">
           <font-awesome-icon icon="fa-solid fa-user-ninja" />
-        Features</button>
+          {{ $t('links.features') }}</button>
       </div>
     </div>
   </div>

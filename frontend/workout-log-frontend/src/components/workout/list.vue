@@ -1,9 +1,9 @@
 <template>
   <div class="spinner-border align-items-center" role="status" v-if="loading">
-    <span class="visually-hidden align-items-center">Loading...</span>
+    <span class="visually-hidden align-items-center">{{ $t('info.loading') }}</span>
   </div>
   <div>
-    <CreateButton label="Add workout" @action="changeComponent('create', '')"/>
+    <CreateButton :label="$t('workout.newButtonTitle')" @action="changeComponent('create', '')"/>
     <div v-if="workoutsList">
       <div class="container-lg p-3 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
@@ -13,7 +13,7 @@
             <button type="button" class="btn btn-primary"
               @click="changeComponent('view', workoutItem.id)">
               <font-awesome-icon inverse icon="fa-solid fa-sliders" />
-              Edit
+              {{ $t('buttons.edit') }}
             </button>
           </div>
         </div>
@@ -60,7 +60,7 @@
         {{ errorData.msg }}
       </div>
       <div v-else class="container-lg p-3 bg-body-tertiary rounded text-center">
-        <h1 class="display-1">There are no workouts yet</h1>
+        <h1 class="display-1">{{ $t('errorsMsg.noworkouts') }}</h1>
         <h2 class="display-1">😞</h2>
       </div>
     </div>
@@ -79,6 +79,12 @@ export default {
   components: {
     workoutComponent,
     CreateButton,
+  },
+  props: {
+    workoutId: {
+      type: String,
+      required: false,
+    },
   },
   async beforeMount() {
     this.loadAllWorkouts(1);
@@ -99,7 +105,7 @@ export default {
   computed: {
     visiblePages() {
       const { last: total, current } = this.pagination;
-      const range = 4; // Number of pages on either side of the current page
+      const range = 4;
       const start = Math.max(1, current - range);
       const end = Math.min(total, current + range);
 

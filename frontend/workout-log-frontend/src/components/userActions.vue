@@ -3,21 +3,21 @@
     <form @submit.prevent="" class="mb-4">
       <div class="d-grid gap-2">
         <div class="container d-grid gap-2 col-6 mx-auto">
-          <h1 class="display-5">Actions</h1>
+          <h1 class="display-5">{{ $t('userActions.title') }}</h1>
           <button type="button" class="btn btn-outline-primary" @click="exportData">
             <font-awesome-icon icon="fa-solid fa-file-arrow-down" />
-            Export Data
+            {{ $t('userActions.export') }}
           </button>
           <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger">
-            Dangerous heading
+            {{ $t('userActions.danger') }}
           </div>
           <button class="btn btn-outline-warning" @click="clearData">
             <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
-            Clear All Data
+            {{ $t('userActions.wipe') }}
           </button>
           <button class="btn btn-outline-danger" @click="deleteAccount">
             <font-awesome-icon icon="fa-solid fa-skull" />
-            Delete Account
+           {{ $t('userActions.delete') }}
           </button>
         </div>
       </div>
@@ -105,25 +105,25 @@ export default {
         window.URL.revokeObjectURL(url);
       } catch (error) {
         console.error('Export failed:', error.message);
-        this.showError('Export Error', 'Failed to export data. Please try again.');
+        this.showError('', this.$t('errorsMsg.exportFailed'));
       }
     },
     clearData() {
       this.showConfirmationModal(
-        'Are you sure you want to clear all account data?',
+        this.$t('info.cleanUpQuestion'),
         async () => {
           try {
             await wipeData();
-            alert('Data cleared successfully.');
+            alert(this.$t('info.ok'));
           } catch (error) {
-            this.showError('Clear Data Error', 'Failed to clear data. Please try again.');
+            this.showError('', this.$t('errorsMsg.cleanupFailed'));
           }
         },
       );
     },
     deleteAccount() {
       this.showConfirmationModal(
-        'Are you sure you want to delete your account? This action cannot be undone.',
+        this.$t('info.deleteQuestion'),
         async () => {
           try {
             await deleteUser();
@@ -139,7 +139,6 @@ export default {
     },
     showError(title, message) {
       console.error(`${title}: ${message}`);
-
       alert(`${title}: ${message}`);
     },
   },

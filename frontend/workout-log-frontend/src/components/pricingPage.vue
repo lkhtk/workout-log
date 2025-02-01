@@ -2,7 +2,7 @@
   <div class="d-flex h-100 text-center">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <h1 class="display-1">Pricing</h1>
+        <h1 class="display-1">{{ $t('links.pricing') }}</h1>
         <p class="fs-5 text-body-secondary">Dead simple plan unlocks everything.
           No bundles. No add-ons.</p>
       </div>
@@ -30,7 +30,7 @@
                   <button class="btn btn-primary btn-lg"
                     @click="$router.push('/')">
                     <font-awesome-icon icon="fa-solid fa-dumbbell" />
-                    let's go!
+                    {{ $t('buttons.go') }}
                   </button>
                 </div>
               </div>

@@ -26,6 +26,7 @@ export default {
           speed: 10,
           distance: 2.5,
           time: 20,
+          heart: 90,
           calories: 200,
         }],
         exercises: [{

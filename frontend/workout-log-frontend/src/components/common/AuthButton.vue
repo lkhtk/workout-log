@@ -7,7 +7,7 @@
       @click="handleLogin"
     >
       <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
-      Log in
+      {{ $t('buttons.login') }}
     </button>
     <button
       v-else
@@ -15,7 +15,7 @@
       @click="handleLogout"
     >
       <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
-      Sign out
+      {{ $t('buttons.logout') }}
     </button>
   </div>
 </template>
@@ -23,12 +23,13 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { useOneTap, idRevoke, decodeCredential } from 'vue3-google-signin';
+import { useRouter } from 'vue-router';
 import { checkToken, logOut } from '../../api/api';
 import { useUserStore } from '../../stores/userStore';
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
-
+const router = useRouter();
 const { isReady, login } = useOneTap({
   disableAutomaticPrompt: true,
   onSuccess: async (response) => {
@@ -77,6 +78,6 @@ const handleLogout = async () => {
     console.error('Logout error:', error.message);
   }
   userStore.clearUser();
-  this.$router.push('/about');
+  router.push('/about');
 };
 </script>

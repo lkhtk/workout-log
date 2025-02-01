@@ -4,7 +4,7 @@
             <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
                 <h1 class="display-5">
                   <font-awesome-icon icon="fa-solid fa-weight-scale" />
-                  Measurements
+                  {{ $t('measurements.title') }}
                 </h1>
             </div>
             <main>
@@ -12,14 +12,10 @@
                 <form @submit.prevent="submitData">
                   <div class="table-responsive">
                     <table class="table table-bordered">
-                      <thead class="table-dark text-center">
-                        <tr>
-                          <th colspan="3">BODY</th>
-                        </tr>
-                      </thead>
+                      <thead class="table-dark text-center"></thead>
                       <tbody>
                         <tr>
-                          <td>DATE</td>
+                          <td>{{ $t('measurements.date') }}</td>
                           <td colspan="2">
                             <input
                               type="date"
@@ -48,7 +44,7 @@
                   <div class="text-center mt-3">
                     <button type="submit" class="btn btn-primary">
                       <font-awesome-icon icon="fa-solid fa-floppy-disk" inverse />
-                      Submit
+                      {{ $t('buttons.submit') }}
                     </button>
                   </div>
                 </form>
@@ -67,6 +63,7 @@
 <script>
 import { storeToRefs } from 'pinia';
 import dayjs from 'dayjs';
+import { useI18n } from 'vue-i18n';
 import { useUserStore } from '../stores/userStore';
 import ToastComponent from './common/toastComponent.vue';
 import { createMeasurement, getMeasurement } from '../api/api';
@@ -93,25 +90,27 @@ export default {
         thighs: 0,
         calves: 0,
       },
-      measurements: {
-        body_weight: 'Weight',
-        body_fat: 'Body fat %',
-        neck: 'Neck',
-        chest: 'Chest',
-        waist: 'Waist',
-        hips: 'Hips',
-        upperarm: 'Upper arm',
-        forearm: 'Forearm',
-        thighs: 'Thighs',
-        calves: 'Calves',
-      },
     };
   },
   setup() {
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);
+    const { t } = useI18n();
+    const measurements = {
+      body_weight: t('measurements.body_weight'),
+      body_fat: t('measurements.body_fat'),
+      neck: t('measurements.neck'),
+      chest: t('measurements.chest'),
+      waist: t('measurements.waist'),
+      hips: t('measurements.hips'),
+      upperarm: t('measurements.upperarm'),
+      forearm: t('measurements.forearm'),
+      thighs: t('measurements.thighs'),
+      calves: t('measurements.calves'),
+    };
     return {
       user,
+      measurements,
     };
   },
   computed: {
@@ -148,13 +147,13 @@ export default {
         this.formData.measurement_date = dayjs(this.formData.measurement_date).format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
         if (response.status === 201 || response.status === 200) {
-          this.showError('', 'Data submitted successfully!');
+          this.showError('', this.$t('info.okMsg'));
         } else {
-          this.showError('Error', 'Failed to submit data.');
+          this.showError('Error', this.$t('errorsMsg.failedMsg'));
           return;
         }
       } catch (error) {
-        this.showError('Error', 'Error submitting data');
+        this.showError('Error', this.$t('errorsMsg.failedMsg'));
         console.error(error);
       }
     },
