@@ -17,6 +17,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const measurementsLimits int64 = 50
+
 func NewMeasurementsHandler(ctx context.Context, collection *mongo.Collection) *MongoConnectionHandler {
 	return &MongoConnectionHandler{
 		collection: collection,
@@ -75,9 +77,9 @@ func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
 		return
 	}
 	findOptions := options.Find().
-		SetSkip((int64(page) - 1) * perPage).
-		SetLimit(perPage).
-		SetSort(bson.D{{"measurement_date", -1}})
+		SetSkip((int64(page) - 1) * measurementsLimits).
+		SetLimit(measurementsLimits).
+		SetSort(bson.D{{"measurement_date", 1}})
 
 	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
 	if err != nil {
@@ -95,7 +97,7 @@ func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
 		"data":      measurements,
 		"total":     total,
 		"page":      page,
-		"last_page": math.Ceil(float64(total) / float64(perPage)),
+		"last_page": math.Ceil(float64(total) / float64(measurementsLimits)),
 	})
 }
 

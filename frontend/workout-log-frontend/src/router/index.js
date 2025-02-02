@@ -38,6 +38,11 @@ const routes = [
     component: () => import('../views/ProfilePage.vue'),
   },
   {
+    path: '/trends',
+    name: 'trends',
+    component: () => import('../views/TrendsPage.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('../components/notFound.vue'),
   },

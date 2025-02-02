@@ -20,7 +20,7 @@
         <hr>
       </div>
       <nav aria-label="Page navigation" v-if="pagination.last > 1">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination justify-content-center" data-bs-theme="dark">
           <li
             class="page-item"
             :class="{ disabled: pagination.current === 1 }">

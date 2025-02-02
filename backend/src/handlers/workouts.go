@@ -19,7 +19,7 @@ import (
 )
 
 const maxFieldLength = 150
-const perPage int64 = 3
+const pageSize int64 = 4
 
 type MongoConnectionHandler struct {
 	collection *mongo.Collection
@@ -56,8 +56,8 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 	}
 
 	findOptions := options.Find().
-		SetSkip((int64(page) - 1) * perPage).
-		SetLimit(perPage).
+		SetSkip((int64(page) - 1) * pageSize).
+		SetLimit(pageSize).
 		SetSort(bson.D{{"publishedat", -1}})
 
 	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
@@ -77,7 +77,7 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 		"data":      workouts,
 		"total":     total,
 		"page":      page,
-		"last_page": math.Ceil(float64(total) / float64(perPage)),
+		"last_page": math.Ceil(float64(total) / float64(pageSize)),
 	})
 }
 

@@ -8,19 +8,27 @@
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarCollapse"
-        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarCollapse" aria-expanded="false">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item" v-if="user">
-            <a class="nav-link active" aria-current="page" href="#">
-              <router-link to="/">{{ $t('links.journal') }}</router-link>
+            <a aria-current="page" href="#" class="nav-link">
+              <router-link to="/" class="link-light">
+                {{ $t('links.journal') }}</router-link>
             </a>
           </li>
           <li class="nav-item" v-if="user">
-            <a class="nav-link active" aria-current="page" href="#">
-              <router-link to="/measurements">{{ $t('measurements.title') }}</router-link>
+            <a aria-current="page" href="#" class="nav-link">
+              <router-link to="/measurements" class="link-light">
+                {{ $t('measurements.title') }}</router-link>
+            </a>
+          </li>
+          <li class="nav-item" v-if="user">
+            <a aria-current="page" href="#" class="nav-link">
+              <router-link to="/trends" class="link-light">
+                {{ $t('trends.title') }}</router-link>
             </a>
           </li>
         </ul>
@@ -52,9 +60,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <auth-button
-              loginButtonClass="btn btn-outline-dark"
-              logoutButtonClass="btn btn-outline-dark" />
+              <auth-button />
             </li>
           </ul>
         </div>
@@ -79,6 +85,11 @@
         <li class="breadcrumb-item" v-if="user">
           <router-link class="nav-item link-body-emphasis" to="/measurements">
             {{ $t('measurements.title') }}
+          </router-link>
+        </li>
+        <li class="breadcrumb-item" v-if="user">
+          <router-link class="nav-item link-body-emphasis" to="/trends">
+            {{ $t('trends.title') }}
           </router-link>
         </li>
         <li class="breadcrumb-item">

@@ -1,56 +1,63 @@
 <template>
-    <div class="d-flex h-100 text-center" v-if="user">
-        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-                <h1 class="display-5">
-                  <font-awesome-icon icon="fa-solid fa-weight-scale" />
-                  {{ $t('measurements.title') }}
-                </h1>
-            </div>
-            <main>
-              <div class="container my-4">
-                <form @submit.prevent="submitData">
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <thead class="table-dark text-center"></thead>
-                      <tbody>
-                        <tr>
-                          <td>{{ $t('measurements.date') }}</td>
-                          <td colspan="2">
-                            <input
-                              type="date"
-                              class="form-control"
-                              v-model="formData.measurement_date"
-                              required
-                            />
-                          </td>
-                        </tr>
-                        <tr v-for="(label, key) in measurements" :key="key">
-                          <td>{{ label }}</td>
-                          <td colspan="2">
-                            <input
-                              type="number"
-                              min="0"
-                              step="0.1"
-                              class="form-control"
-                              v-model="formData[key]"
-                              :placeholder="label"
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-outline-dark">
-                      <font-awesome-icon icon="fa-solid fa-floppy-disk"/>
-                      {{ $t('buttons.submit') }}
-                    </button>
-                  </div>
-                </form>
+    <div class="row">
+      <div class="col">
+        <div class="d-flex h-100 text-center" v-if="user">
+          <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+              <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                  <h1 class="display-5">
+                    <font-awesome-icon icon="fa-solid fa-weight-scale" />
+                    {{ $t('measurements.title') }}
+                  </h1>
               </div>
-            </main>
+              <main>
+                <div class="container my-4">
+                  <form @submit.prevent="submitData">
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead class="table-dark text-center"></thead>
+                        <tbody>
+                          <tr>
+                            <td>{{ $t('measurements.date') }}</td>
+                            <td colspan="2">
+                              <input
+                                type="date"
+                                class="form-control"
+                                v-model="formData.measurement_date"
+                                required
+                              />
+                            </td>
+                          </tr>
+                          <tr v-for="(label, key) in measurements" :key="key">
+                            <td>{{ label }}</td>
+                            <td colspan="2">
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.1"
+                                class="form-control"
+                                v-model="formData[key]"
+                                :placeholder="label"
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="text-center mt-3">
+                      <button type="submit" class="btn btn-outline-dark">
+                        <font-awesome-icon icon="fa-solid fa-floppy-disk"/>
+                        {{ $t('buttons.submit') }}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </main>
+          </div>
         </div>
+      </div>
+      <div class="col">
+        <userProgress />
+      </div>
     </div>
     <!-- Toast container -->
     <ToastComponent
@@ -65,6 +72,7 @@ import { storeToRefs } from 'pinia';
 import dayjs from 'dayjs';
 import { useI18n } from 'vue-i18n';
 import { useUserStore } from '../stores/userStore';
+import userProgress from './analytics/progressChart.vue';
 import ToastComponent from './common/toastComponent.vue';
 import { createMeasurement, getMeasurement } from '../api/api';
 
@@ -72,6 +80,7 @@ export default {
   name: 'userMeasurement',
   components: {
     ToastComponent,
+    userProgress,
   },
   data() {
     return {

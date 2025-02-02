@@ -41,11 +41,12 @@
     "pricing": "Цены",
     "about": "О сервисе"
   },
-  "records": {
-    "title": "Records"
+  "trends": {
+    "title": "Динамика",
+    "chartTitle": ""
   },
   "info": {
-    "loading": "Loading...",
+    "loading": "Загрузка данных...",
     "actionSuccess": "Выполнено!",
     "okMsg": "Запись добавлена!", 
     "updated": "Тренировка успешно обновлена",

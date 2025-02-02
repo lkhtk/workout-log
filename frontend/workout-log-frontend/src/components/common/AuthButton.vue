@@ -9,7 +9,7 @@
       {{ $t('buttons.login') }}
     </button>
     <button
-      v-else
+      v-else-if="user && loginButtonClass !== 'btn btn-outline-light'"
       :class="logoutButtonClass"
       @click="handleLogout"
     >

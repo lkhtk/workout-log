@@ -40,8 +40,9 @@
         "about": "About",
         "journal": "Journal"
     },
-    "records": {
-        "title": "Records"
+    "trends": {
+        "title": "Trends",
+        "chartTitle": ""
     },
     "info": {
         "loading": "Loading...",

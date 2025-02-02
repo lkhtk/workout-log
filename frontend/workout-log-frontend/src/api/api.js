@@ -42,6 +42,9 @@ export function createMeasurement(measurement) {
 export function getMeasurement() {
   return api.get(`${base}/measurement`);
 }
+export function getMeasurements() {
+  return api.get(`${base}/measurements`);
+}
 
 export function exportData() {
   return api.get(`${base}/user/export`, { responseType: 'blob' });
