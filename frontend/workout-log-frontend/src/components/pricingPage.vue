@@ -24,10 +24,12 @@
                   <li>No gamification! <font-awesome-icon icon="fa-solid fa-check" /></li>
                 </ul>
                 <div v-if="!user">
-                  <auth-button />
+                  <auth-button
+                  loginButtonClass="btn btn-outline-dark"
+                  logoutButtonClass="btn btn-outline-dark" />
                 </div>
                 <div v-else>
-                  <button class="btn btn-primary btn-lg"
+                  <button class="btn btn-dark btn-lg"
                     @click="$router.push('/')">
                     <font-awesome-icon icon="fa-solid fa-dumbbell" />
                     {{ $t('buttons.go') }}

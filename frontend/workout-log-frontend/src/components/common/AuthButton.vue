@@ -2,8 +2,7 @@
   <div>
     <button
       v-if="!user"
-      class="btn btn-outline-primary"
-      :disabled="!isReady"
+      :class="loginButtonClass"
       @click="handleLogin"
     >
       <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" />
@@ -11,7 +10,7 @@
     </button>
     <button
       v-else
-      class="dropdown-item"
+      :class="logoutButtonClass"
       @click="handleLogout"
     >
       <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
@@ -27,10 +26,21 @@ import { useRouter } from 'vue-router';
 import { checkToken, logOut } from '../../api/api';
 import { useUserStore } from '../../stores/userStore';
 
+defineProps({
+  loginButtonClass: {
+    type: String,
+    default: 'btn btn-outline-primary',
+  },
+  logoutButtonClass: {
+    type: String,
+    default: 'dropdown-item',
+  },
+});
+
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const router = useRouter();
-const { isReady, login } = useOneTap({
+const { login } = useOneTap({
   disableAutomaticPrompt: true,
   onSuccess: async (response) => {
     try {

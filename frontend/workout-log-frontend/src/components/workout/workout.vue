@@ -14,7 +14,7 @@
           v-model="localWorkoutData.muscle_group"
           aria-describedby="inputGroup-sizing-lg">
       </div>
-      <div class="form-text" id="basic-addon4">
+      <div class="form-text">
         {{ $t('workout.name_subtitle') }}
       </div>
     </div>
@@ -22,13 +22,13 @@
       <div class="grid text-center">
         <div class="g-col-3">
           <h1 class="display-2">
-            <font-awesome-icon icon="fa-solid fa-dumbbell" />
-            {{ localWorkoutData.muscle_group }}
+            {{ formatDate(localWorkoutData.PublishedAt) }}
           </h1>
         </div>
         <div class="g-col-4">
           <h1 class="display-6">
-            {{ formatDate(localWorkoutData.PublishedAt) }}
+            <font-awesome-icon icon="fa-solid fa-dumbbell" />
+            {{ localWorkoutData.muscle_group }}
           </h1>
         </div>
       </div>
@@ -68,26 +68,26 @@
               <div v-if="edit" style="border: 0px solid #ccc; width: 50px;"
                 class="d-flex flex-column align-items-center">
                 <font-awesome-icon icon="fa-solid fa-trash"
-                  style="color: #dc3545; cursor: pointer;"
+                  style="color: #838383; cursor: pointer;"
                   class="mb-2"
                   @keydown.enter="removeExercise(exIndex)"
                   @click="removeExercise(exIndex)"
                   />
                 <font-awesome-icon icon="fa-solid fa-circle-plus"
-                  style="color: #198754; cursor: pointer;"
+                  style="color: #454545; cursor: pointer;"
                   class="mb-2"
                   @keydown.enter="addSet(exIndex)"
                   @click="addSet(exIndex)"
                   />
                 <font-awesome-icon icon="fa-solid fa-circle-minus"
-                  style="color: #fd7e14; cursor: pointer;"
+                  style="color: #454545; cursor: pointer;"
                   @keydown.enter="removeSet(exIndex)"
                   @click="removeSet(exIndex)"
                   />
               </div>
-              <p v-else>
+              <div class="d-flex flex-column align-items-center" v-else>
                 {{ exIndex + 1 }}
-              </p>
+              </div>
             </td>
             <td rowspan="2">
               <template v-if="edit">
@@ -144,8 +144,8 @@
         </tbody>
       </table>
       <div v-if="edit">
-        <button type="button" class="btn btn-success" @click="addExercise()">
-          <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
+        <button type="button" class="btn btn-outline-dark" @click="addExercise()">
+          <font-awesome-icon icon="fa-solid fa-circle-plus"/>
           {{ $t('workout.new') }}
         </button>
       </div>
@@ -274,8 +274,8 @@
         </tbody>
       </table>
       <div v-if="edit">
-          <button type="button" class="btn btn-success" @click="addCardio()">
-            <font-awesome-icon icon="fa-solid fa-circle-plus" inverse/>
+          <button type="button" class="btn btn-outline-dark" @click="addCardio()">
+            <font-awesome-icon icon="fa-solid fa-circle-plus"/>
             {{ $t('cardio.new') }}
           </button>
         </div>
@@ -284,12 +284,12 @@
     <div class="container mx-auto p-2" style="width: 200px;" v-if="edit">
       <div class="btn-group"
         role="group" aria-label="Basic mixed styles example">
-        <button type="button" class="btn btn-success" @click="saveWorkout()">
-          <font-awesome-icon icon="fa-solid fa-floppy-disk" inverse />
+        <button type="button" class="btn btn-outline-dark" @click="saveWorkout()">
+          <font-awesome-icon icon="fa-solid fa-floppy-disk" />
         </button>
-        <button type="button" class="btn btn-danger"
+        <button type="button" class="btn btn-outline-dark"
           @click="deleteWorkoutById(localWorkoutData.id)">
-          <font-awesome-icon icon="fa-solid fa-trash-can" inverse />
+          <font-awesome-icon icon="fa-solid fa-trash-can" />
         </button>
       </div>
     </div>

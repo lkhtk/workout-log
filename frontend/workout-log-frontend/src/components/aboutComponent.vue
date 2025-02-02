@@ -10,7 +10,7 @@
         your gym sessions and analyzing your strength training progress. Don't miss
         the opportunity to make your workouts even more effective and interesting!</p>
       <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2"
+        <button type="button" class="btn btn-dark btn-lg px-4 me-md-2"
         @click="this.$router.push('/pricing')">
           <font-awesome-icon icon="fa-solid fa-money-check-dollar" />
           {{ $t('links.pricing') }}

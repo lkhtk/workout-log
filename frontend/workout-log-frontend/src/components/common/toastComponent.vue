@@ -4,7 +4,7 @@
     style="z-index: 1050;">
     <div
       ref="toast"
-      class="toast align-items-center text-bg-primary border-0"
+      class="toast align-items-center text-bg-dark border-0"
       role="alert"
       aria-live="assertive"
       aria-atomic="true">

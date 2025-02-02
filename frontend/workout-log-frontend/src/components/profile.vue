@@ -23,7 +23,9 @@
                                     <font-awesome-icon icon="fa-solid fa-envelope" />
                                     {{ currentUser.email }}
                                 </h6>
-                                <auth-button />
+                                <auth-button
+                                loginButtonClass="btn btn-outline-dark"
+                                logoutButtonClass="btn btn-outline-dark"/>
                             </div>
                         </div>
                     </div>

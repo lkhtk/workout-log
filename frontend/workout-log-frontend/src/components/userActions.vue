@@ -4,14 +4,14 @@
       <div class="d-grid gap-2">
         <div class="container d-grid gap-2 col-6 mx-auto">
           <h1 class="display-5">{{ $t('userActions.title') }}</h1>
-          <button type="button" class="btn btn-outline-primary" @click="exportData">
+          <button type="button" class="btn btn-outline-dark" @click="exportData">
             <font-awesome-icon icon="fa-solid fa-file-arrow-down" />
             {{ $t('userActions.export') }}
           </button>
           <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger">
             {{ $t('userActions.danger') }}
           </div>
-          <button class="btn btn-outline-warning" @click="clearData">
+          <button class="btn btn-outline-dark" @click="clearData">
             <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
             {{ $t('userActions.wipe') }}
           </button>
@@ -63,7 +63,7 @@ export default {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmBtn">Confirm</button>
+                <button type="button" class="btn btn-dark" id="confirmBtn">Confirm</button>
               </div>
             </div>
           </div>

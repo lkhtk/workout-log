@@ -5,7 +5,7 @@
         <div class="container d-grid gap-2 col-6 mx-auto">
           <h1 class="display-5">{{ $t('userConf.title') }}</h1>
           <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button"
+            <button class="btn btn-outline-dark dropdown-toggle" type="button"
             data-bs-toggle="dropdown" aria-expanded="false">
               <font-awesome-icon icon="fa-solid fa-language" />
               {{ $t('userConf.selectTitle') }}
@@ -17,10 +17,6 @@
                 🇺🇸 {{ $t('userConf.eng') }}</a></li>
             </ul>
           </div>
-          <button class="btn btn-primary" type="submit">
-            <font-awesome-icon icon="fa-solid fa-floppy-disk" />
-            {{ $t('buttons.save') }}
-          </button>
         </div>
       </div>
     </form>

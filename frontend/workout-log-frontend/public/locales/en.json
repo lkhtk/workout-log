@@ -27,9 +27,8 @@
         "calves": "Calves"
     },
     "buttons": {
-        "submit": "Submit",
+        "submit": "Save",
         "edit": "Edit",
-        "save": "Save",
         "login": "LogIn",
         "logout": "LogOut",
         "go": "Let's go!"

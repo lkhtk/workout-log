@@ -24,7 +24,7 @@ export default {
   },
 };
 </script>
-  <style scoped>
+<style scoped>
   .floating-button {
     position: fixed;
     bottom: 100px;

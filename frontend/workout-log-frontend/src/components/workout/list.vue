@@ -9,10 +9,10 @@
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
         <workoutComponent :workoutData="workoutItem" />
         <div class="d-flex flex-row-reverse">
-          <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <button type="button" class="btn btn-primary"
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-dark"
               @click="changeComponent('view', workoutItem.id)">
-              <font-awesome-icon inverse icon="fa-solid fa-sliders" />
+              <font-awesome-icon icon="fa-solid fa-sliders" />
               {{ $t('buttons.edit') }}
             </button>
           </div>

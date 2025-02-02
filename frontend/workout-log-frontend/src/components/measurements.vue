@@ -42,8 +42,8 @@
                     </table>
                   </div>
                   <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary">
-                      <font-awesome-icon icon="fa-solid fa-floppy-disk" inverse />
+                    <button type="submit" class="btn btn-outline-dark">
+                      <font-awesome-icon icon="fa-solid fa-floppy-disk"/>
                       {{ $t('buttons.submit') }}
                     </button>
                   </div>

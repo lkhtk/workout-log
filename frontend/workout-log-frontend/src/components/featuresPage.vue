@@ -10,10 +10,12 @@
             <h2 class="fw-bold text-body-emphasis">A dead simple</h2>
             <p class="text-body-secondary">gym journal for anyone and everyone</p>
             <div v-if="!user">
-              <auth-button />
+              <auth-button
+                loginButtonClass="btn btn-outline-dark"
+                logoutButtonClass="btn btn-outline-dark"/>
             </div>
             <div v-else>
-              <button class="btn btn-primary btn-lg"
+              <button class="btn btn-dark btn-lg"
                 @click="$router.push('/')">
                 <font-awesome-icon icon="fa-solid fa-dumbbell" />
                 {{ $t('buttons.go') }}
@@ -29,7 +31,7 @@
               </div>
               <h4 class="fw-semibold mb-0 text-body-emphasis">It's free!</h4>
               <p class="text-body-secondary">Wait, what? - Yeah, it's totally free!
-                <a href="/pricing" class="icon-link">Read more ></a>
+                <a href="/pricing" class="icon-link link-body-emphasis">Read more ></a>
               </p>
             </div>
             <div class="col d-flex flex-column gap-2">
@@ -38,7 +40,7 @@
                 <font-awesome-icon icon="fa-solid fa-code" />
               </div>
               <h4 class="fw-semibold mb-0 text-body-emphasis">Open Source</h4>
-              <p class="text-body-secondary"><a href="https://github.com/lkhtk/workout-log" target="_blank">Source code ></a></p>
+              <p class="text-body-secondary"><a href="https://github.com/lkhtk/workout-log" target="_blank" class="link-body-emphasis">Source code ></a></p>
             </div>
             <div class="col d-flex flex-column gap-2">
               <div class="feature-icon-small d-inline-flex align-items-center
