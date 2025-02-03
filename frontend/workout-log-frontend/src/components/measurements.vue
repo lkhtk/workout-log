@@ -22,7 +22,7 @@
                               <input
                                 type="date"
                                 class="form-control"
-                                v-model="formData.measurement_date"
+                                v-model="formData.measurementDate"
                                 required
                               />
                             </td>
@@ -34,6 +34,7 @@
                                 type="number"
                                 min="0"
                                 step="0.1"
+                                max="350"
                                 class="form-control"
                                 v-model="formData[key]"
                                 :placeholder="label"
@@ -87,9 +88,9 @@ export default {
       toastTitle: '',
       toastMessage: '',
       formData: {
-        measurement_date: this.getCurrentDate(),
-        body_weight: 0,
-        body_fat: 0,
+        measurementDate: this.getCurrentDate(),
+        bodyWeight: 0,
+        bodyWat: 0,
         neck: 0,
         chest: 0,
         waist: 0,
@@ -106,8 +107,8 @@ export default {
     const { user } = storeToRefs(userStore);
     const { t } = useI18n();
     const measurements = {
-      body_weight: t('measurements.body_weight'),
-      body_fat: t('measurements.body_fat'),
+      bodyWeight: t('measurements.bodyWeight'),
+      bodyFat: t('measurements.bodyFat'),
       neck: t('measurements.neck'),
       chest: t('measurements.chest'),
       waist: t('measurements.waist'),
@@ -134,14 +135,53 @@ export default {
       this.toastTitle = '';
       this.toastMessage = '';
     },
+    validateForm() {
+      const {
+        bodyWeight, bodyFat, neck, chest,
+        waist, hips, upperarm, forearm, thighs, calves,
+      } = this.formData;
+
+      if (bodyFat >= 100 || bodyFat < 0) {
+        this.showError('', this.$t('errorsMsg.invalidbodyFat'));
+        return false;
+      }
+
+      const measurementsToValidate = {
+        bodyWeight,
+        neck,
+        chest,
+        waist,
+        hips,
+        upperarm,
+        forearm,
+        thighs,
+        calves,
+      };
+      const invalidMeasurement = Object.entries(measurementsToValidate).some(([value]) => {
+        if (value < 0 || value > 350) {
+          this.showError('', this.$t('errorsMsg.invalidMeasurement'));
+          return true;
+        }
+        return false;
+      });
+      if (invalidMeasurement) {
+        return false;
+      }
+      return true;
+    },
+
     showError(title, message) {
       this.toastTitle = title;
       this.toastMessage = message;
     },
     async loadUserMeasurement() {
       await getMeasurement().then((response) => {
-        [this.formData] = response.data;
-        this.formData.measurement_date = this.getCurrentDate();
+        if (response.data) {
+          [this.formData] = response.data;
+          this.formData.measurementDate = this.getCurrentDate();
+        } else {
+          this.showError('', this.$t('errors.noDataAvailable'));
+        }
       }).catch((error) => {
         if (error.response?.status === 401) {
           this.user = null;
@@ -152,8 +192,11 @@ export default {
       });
     },
     async submitData() {
+      if (!this.validateForm()) {
+        return;
+      }
       try {
-        this.formData.measurement_date = dayjs(this.formData.measurement_date).format('YYYY-MM-DDTHH:mm:ssZ');
+        this.formData.measurementDate = dayjs(this.formData.measurementDate).format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
         if (response.status === 201 || response.status === 200) {
           this.showError('', this.$t('info.okMsg'));
@@ -168,7 +211,7 @@ export default {
     },
     resetForm() {
       this.formData = {};
-      this.formData.measurement_date = this.getCurrentDate();
+      this.formData.measurementDate = this.getCurrentDate();
     },
     getCurrentDate() {
       return dayjs().format('YYYY-MM-DD');

@@ -60,7 +60,7 @@
         {{ errorData.msg }}
       </div>
       <div v-else class="container-lg p-3 bg-body-tertiary rounded text-center">
-        <h1 class="display-1">{{ $t('errorsMsg.noworkouts') }}</h1>
+        <h1 class="display-1">{{ $t('errorsMsg.noDataAvailable') }}</h1>
         <h2 class="display-1">😞</h2>
       </div>
     </div>

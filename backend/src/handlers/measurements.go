@@ -33,21 +33,21 @@ func (handler *MongoConnectionHandler) Create(c *gin.Context) {
 		return
 	}
 	filter := bson.M{
-		"measurement_date": measurement.MeasurementDate,
-		"user_id":          measurement.UserID,
+		"measurementDate": measurement.MeasurementDate,
+		"user_id":         measurement.UserID,
 	}
 	update := bson.M{
 		"$set": bson.M{
-			"body_fat":    measurement.BodyFat,
-			"body_weight": measurement.BodyWeight,
-			"Neck":        measurement.Neck,
-			"Chest":       measurement.Chest,
-			"Waist":       measurement.Waist,
-			"Hips":        measurement.Hips,
-			"UpperArm":    measurement.UpperArm,
-			"Forearm":     measurement.Forearm,
-			"Thighs":      measurement.Thighs,
-			"Calves":      measurement.Calves,
+			"bodyFat":    measurement.BodyFat,
+			"bodyWeight": measurement.BodyWeight,
+			"Neck":       measurement.Neck,
+			"Chest":      measurement.Chest,
+			"Waist":      measurement.Waist,
+			"Hips":       measurement.Hips,
+			"UpperArm":   measurement.UpperArm,
+			"Forearm":    measurement.Forearm,
+			"Thighs":     measurement.Thighs,
+			"Calves":     measurement.Calves,
 		},
 	}
 	options := options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)
@@ -79,7 +79,7 @@ func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
 	findOptions := options.Find().
 		SetSkip((int64(page) - 1) * measurementsLimits).
 		SetLimit(measurementsLimits).
-		SetSort(bson.D{{"measurement_date", 1}})
+		SetSort(bson.D{{"measurementDate", 1}})
 
 	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
 	if err != nil {
@@ -128,7 +128,7 @@ func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
 
 	findOptions := options.Find().
 		SetLimit(1).
-		SetSort(bson.D{{"measurement_date", -1}})
+		SetSort(bson.D{{"measurementDate", -1}})
 	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
 	if err != nil {
 		handleDBError(c, err, "error fetching measurements")

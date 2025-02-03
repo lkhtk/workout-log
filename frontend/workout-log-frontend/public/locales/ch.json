@@ -1,0 +1,93 @@
+{
+    "userConf": {
+        "title": "語言",
+        "selectTitle": "選擇語言",
+        "ru": "Русский",
+        "eng": "English",
+        "ch": "中文",
+        "esp": "Español"
+    },
+    "userActions": {
+        "title": "行动",
+        "danger": "危险地带",
+        "wipe": "擦拭活动",
+        "delete": "删除账户和活动",
+        "export": "导出数据"
+    },
+    "measurements": {
+        "title": "测量",
+        "date": "日期",
+        "bodyWeight": "重量",
+        "bodyFat": "体脂率",
+        "neck": "颈部",
+        "chest": "胸部",
+        "waist": "腰部",
+        "hips": "臀部",
+        "upperarm": "上臂",
+        "forearm": "前臂",
+        "thighs": "大腿",
+        "calves": "小牛"
+    },
+    "buttons": {
+        "submit": "节省",
+        "edit": "编辑",
+        "login": "登录",
+        "logout": "注销",
+        "go": "出发"
+    },
+    "links": {
+        "profile": "简介",
+        "features": "功能",
+        "pricing": "定价",
+        "about": "关于",
+        "journal": "期刊"
+    },
+    "trends": {
+        "title": "发展趋势",
+        "chartTitle": ""
+    },
+    "info": {
+        "loading": "正在加载",
+        "okMsg": "数据提交成功",
+        "actionSuccess": "成功！",
+        "updated": "培训已更新！",
+        "created": "培训已创建！",
+        "deleted": "这项训练已被删除",
+        "cleanUpQuestion": "您确定要清除所有账户数据吗？",
+        "deleteQuestion": "您确定要删除账户吗？此操作无法撤销"
+    },
+    "workout": {
+        "newButtonTitle": "新锻炼",
+        "label": "标题",
+        "default_title": "腿部锻炼日",
+        "default_ex": "保加利亚深蹲",
+        "name_subtitle": "肌肉群或训练名称",
+        "instructor": "与教练一起训练",
+        "training": "力量训练 “力量训练",
+        "exercise": "锻炼 “锻炼",
+        "new": "添加练习",
+        "set": "设置"
+    },
+    "cardio": {
+        "title": "Cardio",
+        "default_ex": "慢跑",
+        "activity": "活动",
+        "speed": "速度/水平",
+        "heart": "心率心率",
+        "distance": "距离",
+        "time": "时间",
+        "calories": "卡路里",
+        "new": "增加锻炼"
+    },
+    "errorsMsg": {
+        "setsLimit": "最多组数 = 10",
+        "exercisesLimit": "最多练习次数 = 10",
+        "cardiosLimit": "有氧运动次数上限 = 10",
+        "failedMsg": "未能提交数据",
+        "noDataAvailable": "目前还没有锻炼计划",
+        "exportFailed": "导出数据失败。请重试。",
+        "cleanupFailed": "清除数据失败。请重试。",
+        "invalidbodyFat": "脂肪百分比不得超过 100",
+        "invalidMeasurement": "输入正确的数据"
+    }
+}

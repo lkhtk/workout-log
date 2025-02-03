@@ -15,6 +15,10 @@
                 🇷🇺 {{ $t('userConf.ru') }}</a></li>
               <li><a class="dropdown-item" href="#" @click.prevent="loadLanguage('en')">
                 🇺🇸 {{ $t('userConf.eng') }}</a></li>
+              <li><a class="dropdown-item" href="#" @click.prevent="loadLanguage('esp')">
+                🇪🇸 {{ $t('userConf.esp') }}</a></li>
+              <li><a class="dropdown-item" href="#" @click.prevent="loadLanguage('ch')">
+                🇨🇳 {{ $t('userConf.ch') }}</a></li>
             </ul>
           </div>
         </div>

@@ -33,9 +33,9 @@ type Workout struct {
 type Measurement struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id"`
 	UserID          primitive.ObjectID `json:"-" bson:"user_id"`
-	MeasurementDate time.Time          `json:"measurement_date" bson:"measurement_date"`
-	BodyFat         *float32           `json:"body_fat" bson:"body_fat"`
-	BodyWeight      *float32           `json:"body_weight" bson:"body_weight"`
+	MeasurementDate time.Time          `json:"measurementDate" bson:"measurementDate"`
+	BodyFat         *float32           `json:"bodyFat" bson:"bodyFat"`
+	BodyWeight      *float32           `json:"bodyWeight" bson:"bodyWeight"`
 	Neck            *float32           `json:"neck" bson:"neck"`
 	Chest           *float32           `json:"chest" bson:"chest"`
 	Waist           *float32           `json:"waist" bson:"waist"`

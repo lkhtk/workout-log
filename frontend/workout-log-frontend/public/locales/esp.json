@@ -1,0 +1,93 @@
+{
+    "userConf": {
+        "title": "Idioma",
+        "selectTitle": "Elect Idioma",
+        "ru": "Русский",
+        "eng": "English",
+        "ch": "中文",
+        "esp": "Español"
+    },
+    "userActions": {
+        "title": "Acciones",
+        "danger": "Zona de peligro",
+        "wipe": "Actividad de limpieza",
+        "delete": "Eliminar cuenta y actividad",
+        "export": "Exportar datos"
+    },
+    "measurements": {
+        "title": "Medidas",
+        "date": "Fecha",
+        "bodyWeight": "Peso",
+        "bodyFat": "Grasa corporal",
+        "neck": "Cuello",
+        "chest": "Pecho",
+        "waist": "Cintura",
+        "hips": "Caderas",
+        "upperarm": "Brazo",
+        "forearm": "Antebrazo",
+        "thighs": "Muslos",
+        "calves": "Pantorrillas"
+    },
+    "buttons": {
+        "submit": "Guardar",
+        "edit": "Editar",
+        "login": "Iniciar sesión",
+        "logout": "Cerrar sesión",
+        "go": "¡Vamos!"
+    },
+    "links": {
+        "profile": "Perfil",
+        "features": "Características",
+        "pricing": "Precio",
+        "about": "Acerca de",
+        "journal": "Diario"
+    },
+    "trends": {
+        "title": "Tendencias",
+        "chartTitle": ""
+    },
+    "info": {
+        "loading": "Cargando...",
+        "okMsg": "¡Datos enviados con éxito!",
+        "actionSuccess": "¡Éxito!",
+        "updated": "¡La formación ha sido actualizada!",
+        "created": "¡El entrenamiento ha sido creado!",
+        "deleted": "¡El entrenamiento ha sido eliminado!",
+        "cleanUpQuestion": "¿Estás seguro de que quieres borrar todos los datos de la cuenta?",
+        "deleteQuestion": "¿Estás seguro de que quieres borrar tu cuenta? Esta acción no se puede deshacer"
+    },
+    "workout": {
+        "newButtonTitle": "Nuevo entrenamiento",
+        "label": "Título",
+        "default_title": "Día de piernas",
+        "default_ex": "Sentadilla búlgara dividida",
+        "name_subtitle": "Grupo muscular o nombre del entrenamiento",
+        "instructor": "Entrenamiento con instructor",
+        "training": "Entrenamiento de fuerza",
+        "exercise": "Ejercicio",
+        "new": "Añadir ejercicio",
+        "set": "Conjunto"
+    },
+    "cardio": {
+        "title": "Cardio",
+        "default_ex": "Jogging",
+        "activity": "Actividad",
+        "speed": "Velocidad/Nivel",
+        "heart": "Frecuencia cardiaca",
+        "distance": "Distancia",
+        "time": "Tiempo",
+        "calories": "Calorías",
+        "new": "Añadir ejercicio"
+    },
+    "errorsMsg": {
+        "setsLimit": "Número máximo de series = 10",
+        "exercisesLimit": "Número máximo de ejercicios = 10",
+        "cardiosLimit": "Número máximo de cardio = 10",
+        "failedMsg": "Fallo al enviar datos",
+        "noDataAvailable": "Aún no hay entrenamientos",
+        "exportFailed": "Error al exportar datos. Inténtalo de nuevo",
+        "cleanupFailed": "Error al borrar datos. Inténtalo de nuevo",
+        "invalidbodyFat": "El porcentaje de grasa no debe superar el 100",
+        "invalidMeasurement": "Introduzca los datos correctos"
+    }
+}

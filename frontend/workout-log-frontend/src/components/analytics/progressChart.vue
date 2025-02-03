@@ -2,19 +2,23 @@
   <div class="d-flex h-100 text-center" v-if="!user">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-          <h1 class="display-5" v-if="isLoading">{{ $t('info.loading') }}</h1>
-          <h1 class="display-5">
-            <font-awesome-icon icon="fa-solid fa-chart-column" />
-            {{ $t('trends.title') }}
-          </h1>
+        <div class="spinner-border align-items-center" role="status" v-if="isLoading"></div>
+        <h1 class="display-5" v-if="isLoading">{{ $t('info.loading') }}</h1>
+        <h1 class="display-5" v-else>
+          <font-awesome-icon icon="fa-solid fa-arrow-trend-up" />
+          {{ $t('trends.title') }}
+        </h1>
       </div>
-      <main>
+      <main v-if="!isLoading">
         <div class="container my-4">
-          <div v-if="!isLoading && chartData && chartData.labels.length">
+          <div v-if="hasNoData">
+            <p>{{ $t('errorsMsg.noDataAvailable') }}</p>
+          </div>
+          <div v-else-if="chartData && chartData.labels.length">
             <LineChart :data="chartData" :options="chartOptions" />
           </div>
           <div v-else>
-            <p>{{ $t('errorsMsg.noworkouts') }}</p>
+            <p>{{ $t('errorsMsg.noDataAvailable') }}</p>
           </div>
         </div>
       </main>
@@ -42,12 +46,17 @@ Chart.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Leg
 
 const measurements = ref([]);
 const isLoading = ref(true);
+const hasNoData = ref(false);
 const { t } = useI18n();
 
 const fetchMeasurements = async () => {
   try {
     const response = await getMeasurements();
-    measurements.value = response.data.data;
+    if (!response.data || response.data.total === 0) {
+      hasNoData.value = true;
+    } else {
+      measurements.value = response.data.data;
+    }
   } catch (error) {
     console.error('Error fetching measurements:', error);
     if (error.response?.status === 401) {
@@ -62,8 +71,8 @@ const fetchMeasurements = async () => {
 onMounted(fetchMeasurements);
 
 const measurementFields = [
-  { key: 'body_fat', color: 'rgba(3, 7, 30, 1)' },
-  { key: 'body_weight', color: 'rgba(55, 6, 23, 1)' },
+  { key: 'bodyFat', color: 'rgba(3, 7, 30, 1)' },
+  { key: 'bodyWeight', color: 'rgba(55, 6, 23, 1)' },
   { key: 'neck', color: 'rgba(106, 4, 15, 1)' },
   { key: 'chest', color: 'rgba(157, 2, 8, 1)' },
   { key: 'waist', color: 'rgba(208, 0, 0, 1)' },
@@ -77,7 +86,7 @@ const measurementFields = [
 const chartData = computed(() => {
   if (!measurements.value.length) return null;
 
-  const labels = measurements.value.map((m) => new Date(m.measurement_date).toLocaleDateString());
+  const labels = measurements.value.map((m) => new Date(m.measurementDate).toLocaleDateString());
 
   const datasets = measurementFields.map(({ key, color }) => ({
     label: t(`measurements.${key}`),

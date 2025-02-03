@@ -2,8 +2,10 @@
     "userConf": {
         "title": "Language",
         "selectTitle": "Select Language",
-        "ru": "Russian",
-        "eng": "English"
+        "ru": "Русский",
+        "eng": "English",
+        "ch": "中文",
+        "esp": "Español"
     },
     "userActions": {
         "title": "Actions",
@@ -15,8 +17,8 @@
     "measurements": {
         "title": "Measurements",
         "date": "Date",
-        "body_weight": "Weight",
-        "body_fat": "Body fat %",
+        "bodyWeight": "Weight",
+        "bodyFat": "Body fat %",
         "neck": "Neck",
         "chest": "Chest",
         "waist": "Waist",
@@ -29,8 +31,8 @@
     "buttons": {
         "submit": "Save",
         "edit": "Edit",
-        "login": "LogIn",
-        "logout": "LogOut",
+        "login": "Login",
+        "logout": "Logout",
         "go": "Let's go!"
     },
     "links": {
@@ -82,8 +84,10 @@
         "exercisesLimit": "Maximum number of exercises = 10",
         "cardiosLimit": "Maximum number of cardio = 10",
         "failedMsg": "Failed to submit data",
-        "noworkouts": "There are no workouts yet",
+        "noDataAvailable": "There are no workouts yet",
         "exportFailed": "Failed to export data. Please try again.",
-        "cleanupFailed": "Failed to clear data. Please try again."
+        "cleanupFailed": "Failed to clear data. Please try again.",
+        "invalidbodyFat": "The percentage of fat should not exceed 100%",
+        "invalidMeasurement": "Enter the correct information"
     }
 }
