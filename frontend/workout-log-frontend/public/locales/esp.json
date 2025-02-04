@@ -33,7 +33,8 @@
         "edit": "Editar",
         "login": "Iniciar sesión",
         "logout": "Cerrar sesión",
-        "go": "¡Vamos!"
+        "go": "¡Vamos!",
+        "clone": "Clonar"
     },
     "links": {
         "profile": "Perfil",

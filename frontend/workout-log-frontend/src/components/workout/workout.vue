@@ -1,5 +1,5 @@
 <template>
-  <p v-if="localWorkoutData.id && edit" class="font-monospace">
+  <p v-if="localWorkoutData.id != null && edit" class="font-monospace">
     <font-awesome-icon icon="fa-solid fa-fingerprint"/>
     {{ localWorkoutData.id }}
   </p>
@@ -333,17 +333,17 @@ export default {
     },
   },
   data() {
-    let locationData;
+    let localData;
     const userStore = useUserStore();
     try {
-      locationData = JSON.parse(JSON.stringify(this.workoutData));
+      localData = JSON.parse(JSON.stringify(this.workoutData));
     } catch (e) {
       console.error('Invalid JSON in propsName:', e);
-      locationData = {};
+      localData = {};
     }
     return {
       isAddButtonDisabled: ref(false),
-      localWorkoutData: locationData,
+      localWorkoutData: localData,
       toastTitle: '',
       toastMessage: '',
       userStore,

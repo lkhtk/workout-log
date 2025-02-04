@@ -1,9 +1,13 @@
 <template>
-  <div class="spinner-border align-items-center" role="status" v-if="loading">
-    <span class="visually-hidden align-items-center">{{ $t('info.loading') }}</span>
-  </div>
+  <div id="overlay" class="show" v-if="loading">
+      <div id="overlay-container">
+        <div class="spinner-border align-items-center" role="status">
+          <span class="visually-hidden align-items-center">{{ $t('info.loading') }}</span>
+        </div>
+      </div>
+    </div>
   <div>
-    <CreateButton :label="$t('workout.newButtonTitle')" @action="changeComponent('create', '')"/>
+    <CreateButton :label="$t('workout.newButtonTitle')" @action="changeComponent('create', {})"/>
     <div v-if="workoutsList">
       <div class="container-lg p-3 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
@@ -11,7 +15,12 @@
         <div class="d-flex flex-row-reverse">
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-outline-dark"
-              @click="changeComponent('view', workoutItem.id)">
+              @click="cloneWorkout(workoutItem)">
+              <font-awesome-icon icon="fa-solid fa-clone" />
+              {{ $t('buttons.clone') }}
+            </button>
+            <button type="button" class="btn btn-outline-dark"
+              @click="changeComponent('view', workoutItem)">
               <font-awesome-icon icon="fa-solid fa-sliders" />
               {{ $t('buttons.edit') }}
             </button>
@@ -65,12 +74,20 @@
       </div>
     </div>
   </div>
+   <!-- Toast container -->
+   <ToastComponent
+      v-if="toastMessage"
+      :header="toastTitle"
+      :body="toastMessage"
+      @close-toast="clearToast"
+    />
 </template>
 
 <script>
 import { getAllWorkouts } from '@/api/api';
 import changeComponent from '@/mixin/changeComponent';
 import workoutComponent from './workout.vue';
+import ToastComponent from '../common/toastComponent.vue';
 import CreateButton from '../common/addWorkoutButton.vue';
 
 export default {
@@ -79,10 +96,11 @@ export default {
   components: {
     workoutComponent,
     CreateButton,
+    ToastComponent,
   },
   props: {
-    workoutId: {
-      type: String,
+    workoutData: {
+      type: Object,
       required: false,
     },
   },
@@ -91,6 +109,7 @@ export default {
   },
   data: () => ({
     loading: false,
+    toastMessage: '',
     workoutsList: [],
     pagination: {
       last: 0,
@@ -129,6 +148,19 @@ export default {
     },
   },
   methods: {
+    cloneWorkout(w) {
+      const cloned = w;
+      cloned.id = null;
+      this.changeComponent('view', cloned);
+    },
+    showError(title, message) {
+      this.toastTitle = title;
+      this.toastMessage = message;
+    },
+    clearToast() {
+      this.toastTitle = '';
+      this.toastMessage = '';
+    },
     goToPage(pageNumber) {
       if (pageNumber === '...' || pageNumber < 1 || pageNumber > this.pagination.last) {
         return;
@@ -151,8 +183,8 @@ export default {
           localStorage.removeItem('user');
           window.location.replace('/about');
         } else {
-          this.errorData.code = error.code;
-          this.errorData.msg = error.message;
+          this.showError('Error', this.$t('errorsMsg.failedMsg'));
+          console.error(error);
         }
       } finally {
         this.loading = false;
@@ -161,3 +193,31 @@ export default {
   },
 };
 </script>
+<style scoped>
+body {
+  overflow: hidden;
+}
+
+#overlay {
+  background-color: rgba(255,255,255,0.7);
+  display: none;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+#overlay.show {
+  display: block;
+}
+
+#overlay-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+</style>

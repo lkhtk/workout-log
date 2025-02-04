@@ -3,13 +3,12 @@
       <workoutComponent :workoutData="userData" v-if="userData" :edit='true'/>
   </div>
   <button type="button" class="btn btn-outline-dark"
-    @click="changeComponent('list', '')">
+    @click="changeComponent('list', {})">
     <font-awesome-icon icon="fa-solid fa-angles-left" />
   </button>
 </template>
 <script>
 import changeComponent from '../../mixin/changeComponent';
-import { getWorkout } from '../../api/api';
 import workoutComponent from './workout.vue';
 
 export default {
@@ -19,17 +18,15 @@ export default {
     workoutComponent,
   },
   props: {
-    workoutId: {
-      type: String,
+    workoutData: {
+      type: Object,
       required: true,
     },
   },
   data: () => ({
     userData: {
-      workout: {
-        type: Object,
-        required: true,
-      },
+      type: Object,
+      required: true,
     },
   }),
   async beforeMount() {
@@ -38,8 +35,7 @@ export default {
 
   methods: {
     async getWorkoutById() {
-      const { data } = await getWorkout(this.workoutId);
-      this.userData = data;
+      this.userData = this.workoutData;
     },
   },
 };

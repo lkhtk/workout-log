@@ -33,7 +33,8 @@
         "edit": "编辑",
         "login": "登录",
         "logout": "注销",
-        "go": "出发"
+        "go": "出发",
+        "clone": "克隆"
     },
     "links": {
         "profile": "简介",

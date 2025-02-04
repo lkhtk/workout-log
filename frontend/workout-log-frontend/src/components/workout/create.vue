@@ -2,7 +2,7 @@
  <div class="container-lg p-3 bg-body-tertiary rounded">
     <workoutComponent :edit="true" :workoutData="newWorkout" />
     <button type="button" class="btn btn-dark"
-      @click="changeComponent('list', '')">
+      @click="changeComponent('list', {})">
     <font-awesome-icon icon="fa-solid fa-angles-left" />
   </button>
   </div>
@@ -19,6 +19,7 @@ export default {
   },
   data: () => ({
     newWorkout: {
+      id: null,
       muscle_group: 'Leg day',
       workout: {
         cardio: [{

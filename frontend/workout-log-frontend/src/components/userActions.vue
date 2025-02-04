@@ -130,7 +130,6 @@ export default {
             this.userStore.clearUser();
             window.location.replace('/about');
           } catch (error) {
-            console.log(error);
             console.error('delete failed:', error.message);
             window.location.replace('/about');
           }

@@ -33,7 +33,8 @@
         "edit": "Edit",
         "login": "Login",
         "logout": "Logout",
-        "go": "Let's go!"
+        "go": "Let's go!",
+        "clone": "Clone"
     },
     "links": {
         "profile": "Profile",
