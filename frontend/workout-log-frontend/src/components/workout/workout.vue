@@ -8,11 +8,13 @@
       <div class="input-group input-group-lg">
           <span class="input-group-text" id="inputGroup-sizing-lg">{{ $t('workout.label') }}</span>
           <input label="rest"
-          type="text" class="form-control" id="muscleGroup"
-          placeholder="Legs day"
-          maxlength="150"
-          v-model="localWorkoutData.muscle_group"
-          aria-describedby="inputGroup-sizing-lg">
+            type="text" class="form-control" id="muscleGroup"
+            placeholder="Legs day"
+            maxlength="150"
+            v-model="localWorkoutData.muscle_group"
+            aria-describedby="inputGroup-sizing-lg"
+            required
+          />
       </div>
       <div class="form-text">
         {{ $t('workout.name_subtitle') }}
@@ -36,9 +38,10 @@
     <div class="form-check form-switch">
       <label class="form-check-label" for="flexSwitchCheckChecked">
       <input class="form-check-input" type="checkbox" role="switch"
-      id="flexSwitchCheckChecked" :disabled="!edit"
-      v-model="localWorkoutData.coach"
-      aria-checked>
+        id="flexSwitchCheckChecked" :disabled="!edit"
+        v-model="localWorkoutData.coach"
+        aria-checked
+      />
       {{ $t('workout.instructor') }}
     </label>
     </div>
@@ -91,8 +94,13 @@
             </td>
             <td rowspan="2">
               <template v-if="edit">
-                <input v-model="ex.name" class="form-control"
-                maxlength="150" size="50"/>
+                <input
+                  v-model="ex.name"
+                  class="form-control"
+                  maxlength="150"
+                  size="50"
+                  required
+                />
               </template>
               <template v-else>
                 {{ ex.name }}
@@ -111,6 +119,7 @@
                       min="0"
                       step="0.1"
                       maxlength="6"
+                      required
                     />
                   </label>
                 </div>
@@ -132,6 +141,7 @@
                       class="form-control"
                       type="number"
                       min="0"
+                      required
                     />
                   </label>
                 </div>
@@ -181,11 +191,13 @@
             <td v-else>1</td>
             <td >
               <label for="type">
-                <input v-if="edit"
-                maxlength="150"
-                type="text"
-                v-model="cardio.type"
-                class="form-control"
+                <input
+                  v-if="edit"
+                  maxlength="150"
+                  type="text"
+                  v-model="cardio.type"
+                  class="form-control"
+                  required
                 />
               <p v-else>
                 {{cardio.type}}
@@ -202,6 +214,7 @@
                   min="0"
                   step="0.1"
                   maxlength="6"
+                  required
                 />
                 <p v-else>
                   {{cardio.speed}}
@@ -218,6 +231,7 @@
                   type="number"
                   maxlength="3"
                   step="1"
+                  required
                 />
                 <p v-else>
                   {{cardio.heart}}
@@ -232,6 +246,7 @@
                   class="form-control"
                   min="0"
                   type="number"
+                  required
                   maxlength="6"
                   step="0.1"
                 />
@@ -248,6 +263,7 @@
                   class="form-control"
                   type="number"
                   min="0"
+                  required
                   maxlength="6"
                 />
                 <p v-else>
@@ -264,6 +280,7 @@
                   min="0"
                   type="number"
                   maxlength="6"
+                  required
                 />
                 <p v-else>
                   {{cardio.calories}}
@@ -406,10 +423,10 @@ export default {
       }
       const emptySets = [];
       for (let i = 0; i <= 2; i += 1) {
-        emptySets.push({ weight: 10, reps: 12 });
+        emptySets.push({});
       }
       this.localWorkoutData.workout.exercises.push({
-        name: this.$t('workout.default_ex'),
+        name: '',
         sets: emptySets,
       });
       this.syncData();
@@ -420,14 +437,7 @@ export default {
         this.showError('', this.$t('errorsMsg.cardiosLimit'));
         return;
       }
-      this.localWorkoutData.workout.cardio.push({
-        type: this.$t('cardio.default_ex'),
-        speed: 10,
-        distance: 100,
-        time: 15,
-        calories: 100,
-        heart: 60,
-      });
+      this.localWorkoutData.workout.cardio.push({});
       this.syncData();
     },
 

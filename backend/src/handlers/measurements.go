@@ -116,6 +116,12 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 		return measurement, err
 	}
 	measurement.UserID = uid
+	if measurement.BodyWeight == nil || math.Abs(float64(*measurement.BodyWeight)) <= 0 {
+		return measurement, errors.New("invalid BodyWeight data")
+	}
+	if math.Abs(float64(*measurement.BodyFat)) >= 100 {
+		return measurement, errors.New("invalid BodyFat data")
+	}
 	return measurement, nil
 }
 func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {

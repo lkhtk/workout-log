@@ -20,30 +20,23 @@ export default {
   data: () => ({
     newWorkout: {
       id: null,
-      muscle_group: 'Leg day',
+      muscle_group: null,
       workout: {
-        cardio: [{
-          type: 'Jogging',
-          speed: 10,
-          distance: 2.5,
-          time: 20,
-          heart: 90,
-          calories: 200,
-        }],
+        cardio: [{}],
         exercises: [{
-          name: 'Bulgarian Split Squat',
+          name: null,
           sets: [
             {
-              reps: 15,
-              weight: 32,
+              reps: null,
+              weight: null,
             },
             {
-              reps: 15,
-              weight: 32,
+              reps: null,
+              weight: null,
             },
             {
-              reps: 15,
-              weight: 32,
+              reps: null,
+              weight: null,
             },
           ],
         },

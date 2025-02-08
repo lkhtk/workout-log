@@ -19,7 +19,10 @@ import (
 )
 
 const maxFieldLength = 150
+const minFieldLength = 3
 const pageSize int64 = 4
+const maxSetsCount = 10
+const maxExsCount = 10
 
 type MongoConnectionHandler struct {
 	collection *mongo.Collection
@@ -97,14 +100,31 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 		return workout, err
 	}
 	workout.UserID = uid
+	if len(workout.MuscleGroup) > maxFieldLength || len(workout.MuscleGroup) < minFieldLength {
+		return workout, errors.New("Invalid MuscleGroup:" + workout.MuscleGroup)
+	}
+	if len(workout.Workout.Exercises) > maxExsCount || len(workout.Workout.Cardio) > maxExsCount {
+		return workout, errors.New("too much Exercises")
+	}
 	for _, ex := range workout.Workout.Exercises {
-		if len(ex.Name) > maxFieldLength {
-			return workout, errors.New("exercise name too long")
+		if len(ex.Name) > maxFieldLength || len(ex.Name) < minFieldLength {
+			return workout, errors.New("Invalid exercise name:" + ex.Name)
+		}
+		if len(ex.Sets) > maxSetsCount {
+			return workout, errors.New("too much sets:" + ex.Name)
 		}
 		for _, set := range ex.Sets {
-			if set.Reps != nil && *set.Reps == 0 {
-				set.Reps = nil
+			if set.Reps == nil || *set.Reps <= 0 {
+				return workout, errors.New("Invalid workout data:" + ex.Name)
 			}
+		}
+	}
+	for _, cardio := range workout.Workout.Cardio {
+		if len(cardio.Type) > maxFieldLength || len(cardio.Type) < minFieldLength {
+			return workout, errors.New("Invalid cardio name:" + cardio.Type)
+		}
+		if cardio.Time <= 0 {
+			return workout, errors.New("Cardio time should not be zero:" + cardio.Type)
 		}
 	}
 	return workout, nil

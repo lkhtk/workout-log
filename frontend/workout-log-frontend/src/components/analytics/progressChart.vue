@@ -87,14 +87,18 @@ const chartData = computed(() => {
   if (!measurements.value.length) return null;
 
   const labels = measurements.value.map((m) => new Date(m.measurementDate).toLocaleDateString());
-
-  const datasets = measurementFields.map(({ key, color }) => ({
-    label: t(`measurements.${key}`),
-    data: measurements.value.map((m) => m[key]),
-    borderColor: color,
-    backgroundColor: color.replace('1)', '0.2)'),
-    tension: 0.4,
-  }));
+  const datasets = measurementFields.map(({ key, color }) => {
+    const data = measurements.value.map((m) => m[key]).filter((value) => value !== 0);
+    return data.length > 0
+      ? {
+        label: t(`measurements.${key}`),
+        data,
+        borderColor: color,
+        backgroundColor: color.replace('1)', '0.2)'),
+        tension: 0.4,
+      }
+      : null;
+  }).filter((dataset) => dataset !== null);
 
   return { labels, datasets };
 });
