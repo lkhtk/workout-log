@@ -73,7 +73,7 @@ import { storeToRefs } from 'pinia';
 import dayjs from 'dayjs';
 import { useI18n } from 'vue-i18n';
 import { useUserStore } from '../stores/userStore';
-import userProgress from './analytics/progressChart.vue';
+import userProgress from './analytics/measurementsChart.vue';
 import ToastComponent from './common/toastComponent.vue';
 import { createMeasurement, getMeasurement } from '../api/api';
 

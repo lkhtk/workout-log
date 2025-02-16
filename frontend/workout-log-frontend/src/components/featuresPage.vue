@@ -7,8 +7,8 @@
       <main>
         <div class="row row-cols-1 row-cols-md-2 align-items-md-center g-5 py-5">
           <div class="col d-flex flex-column align-items-start gap-2">
-            <h2 class="fw-bold text-body-emphasis">A dead simple</h2>
-            <p class="text-body-secondary">gym journal for anyone and everyone</p>
+            <h2 class="fw-bold text-body-emphasis">{{ $t('features.title') }}</h2>
+            <p class="text-body-secondary">{{ $t('features.header') }}</p>
             <div v-if="!user">
               <auth-button
                 loginButtonClass="btn btn-outline-dark"
@@ -29,9 +29,10 @@
                 justify-content-center fs-4 rounded-3">
                 <font-awesome-icon icon="fa-solid fa-credit-card" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">It's free!</h4>
-              <p class="text-body-secondary">Wait, what? - Yeah, it's totally free!
-                <a href="/pricing" class="icon-link link-body-emphasis">Read more ></a>
+              <h4 class="fw-semibold mb-0 text-body-emphasis">{{ $t('features.feature1_h') }}</h4>
+              <p class="text-body-secondary">{{ $t('features.feature1_d') }}
+                <a href="/pricing" class="icon-link link-body-emphasis">
+                  {{ $t('features.read_more') }}</a>
               </p>
             </div>
             <div class="col d-flex flex-column gap-2">
@@ -39,26 +40,27 @@
               justify-content-center fs-4 rounded-3">
                 <font-awesome-icon icon="fa-solid fa-code" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">Open Source</h4>
-              <p class="text-body-secondary"><a href="https://github.com/lkhtk/workout-log" target="_blank" class="link-body-emphasis">Source code ></a></p>
+              <h4 class="fw-semibold mb-0 text-body-emphasis">{{ $t('features.feature2_h') }}</h4>
+              <p class="text-body-secondary">{{ $t('features.feature2_d') }}
+                <a href="https://github.com/lkhtk/workout-log" target="_blank" class="icon-link link-body-emphasis">
+                  {{ $t('features.read_more') }}</a>
+              </p>
             </div>
             <div class="col d-flex flex-column gap-2">
               <div class="feature-icon-small d-inline-flex align-items-center
               justify-content-center fs-4 rounded-3">
                 <font-awesome-icon icon="fa-solid fa-baby" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">Easy to use!</h4>
-              <p class="text-body-secondary">It's simple.
-                Quick and easy recording of training sessions</p>
+              <h4 class="fw-semibold mb-0 text-body-emphasis">{{ $t('features.feature3_h') }}</h4>
+              <p class="text-body-secondary">{{ $t('features.feature3_d') }}</p>
             </div>
             <div class="col d-flex flex-column gap-2">
               <div class="feature-icon-small d-inline-flex align-items-center
               justify-content-center fs-4 rounded-3">
               <font-awesome-icon icon="fa-solid fa-ban" />
               </div>
-              <h4 class="fw-semibold mb-0 text-body-emphasis">No bullshit</h4>
-              <p class="text-body-secondary">No ads, no opt-out cookies, no pop-ups,
-                no chatbots, no clickbait (okay, except for a little bit).</p>
+              <h4 class="fw-semibold mb-0 text-body-emphasis">{{ $t('features.feature4_h') }}</h4>
+              <p class="text-body-secondary">{{ $t('features.feature4_d') }}</p>
               </div>
             </div>
           </div>

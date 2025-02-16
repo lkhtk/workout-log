@@ -21,6 +21,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",
+    "chartjs-adapter-date-fns": "^3.0.0",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.13",
     "eslint": "^7.32.0",

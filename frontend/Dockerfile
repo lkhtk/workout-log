@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS build-stage
+FROM node:18-alpine AS build-stage
 
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV

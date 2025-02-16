@@ -79,6 +79,7 @@ func main() {
 		authorized.POST("/workouts", workoutsHandler.NewWorkout)
 		authorized.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)
 		authorized.DELETE("/workouts/:id", workoutsHandler.DeleteWorkout)
+		authorized.GET("/workout-aggregation", workoutsHandler.GetWorkoutAggregation)
 
 		authorized.GET("/measurements", measurementsHandler.GetAllMeasurements)
 		authorized.GET("/measurement", measurementsHandler.GetLatestMeasurement)

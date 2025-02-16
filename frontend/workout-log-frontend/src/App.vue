@@ -107,6 +107,9 @@
           <router-link class="nav-item link-body-emphasis" to="/about">
             {{ $t('links.about') }}</router-link>
         </li>
+        <li class="breadcrumb-item">
+          <userLang />
+        </li>
       </ol>
     </nav>
   </footer>
@@ -117,6 +120,7 @@ import { storeToRefs } from 'pinia';
 
 import { useUserStore } from './stores/userStore';
 import AuthButton from './components/common/AuthButton.vue';
+import userLang from './components/userLang.vue';
 
 document.title = 'Gym Log';
 const userStore = useUserStore();
