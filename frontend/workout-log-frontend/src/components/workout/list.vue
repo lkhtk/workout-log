@@ -24,6 +24,11 @@
               <font-awesome-icon icon="fa-solid fa-sliders" />
               {{ $t('buttons.edit') }}
             </button>
+            <button type="button" class="btn btn-outline-dark"
+              @click="exportToPdf(workoutItem.Id)">
+              <font-awesome-icon icon="fa-solid fa-file-export" />
+              {{ $t('buttons.export') }}
+            </button>
           </div>
         </div>
         <hr>
@@ -167,6 +172,9 @@ export default {
       }
       this.pagination.current = pageNumber;
       this.loadAllWorkouts(pageNumber);
+    },
+    exportToPdf(id) {
+      console.log('export', id);
     },
     async loadAllWorkouts(pageId) {
       this.loading = true;

@@ -394,7 +394,7 @@ export default {
       this.toastMessage = '';
     },
     formatDate(dateString) {
-      return dayjs(dateString).format('DD.MM.YYYY hh:mm');
+      return dayjs(dateString).format('DD.MM.YYYY');
     },
 
     addSet(exerciseIndex) {

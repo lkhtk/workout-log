@@ -7,6 +7,7 @@
 
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
+import { getAllWorkouts } from '@/api/api';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -20,7 +21,6 @@ import {
   TimeScale,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import { getAggregationData } from '../../api/api';
 
 ChartJS.register(
   Title,
@@ -66,21 +66,48 @@ export default defineComponent({
       },
     });
 
+    const N_DAYS = 365; // Количество последних дней для отображения
+
     const fetchData = async () => {
       try {
-        const data = await getAggregationData();
-        if (!data || !Array.isArray(data.datasets)) {
-          throw new Error('Invalid data format');
-        }
+        const data = await getAllWorkouts();
+        const exerciseMap = {};
+        data.data.data.forEach((entry) => {
+          const date = new Date(entry.PublishedAt).toISOString().split('T')[0];
+          entry.workout.exercises.forEach((exercise) => {
+            if (!exerciseMap[exercise.name]) {
+              exerciseMap[exercise.name] = {};
+            }
+            if (!exerciseMap[exercise.name][date]) {
+              exerciseMap[exercise.name][date] = [];
+            }
+            exercise.sets.forEach((set) => {
+              exerciseMap[exercise.name][date].push(set.weight);
+            });
+          });
+        });
 
-        chartData.value = {
-          datasets: data.datasets.map((dataset) => ({
-            ...dataset,
-            data: dataset.data.map((point) => ({ x: new Date(point.x), y: point.y })),
-          })),
-        };
+        // Рассчитываем средний вес за день для каждого упражнения
+        const aggregatedData = Object.keys(exerciseMap).map((exercise, index) => {
+          const dataPoints = Object.keys(exerciseMap[exercise])
+            .map((date) => {
+              const weights = exerciseMap[exercise][date];
+              const avgWeight = weights.reduce((sum, w) => sum + w, 0) / weights.length;
+              return { x: date, y: avgWeight };
+            })
+            .sort((a, b) => new Date(a.x) - new Date(b.x))
+            .slice(-N_DAYS);
+          return {
+            label: exercise,
+            borderColor: `hsl(${index * 60}, 70%, 50%)`,
+            data: dataPoints,
+            fill: false,
+          };
+        });
+
+        chartData.value = { datasets: aggregatedData };
       } catch (error) {
-        console.error('Error fetching workout data:', error);
+        console.error('Error fetching workout data:', error.message);
       }
     };
 
