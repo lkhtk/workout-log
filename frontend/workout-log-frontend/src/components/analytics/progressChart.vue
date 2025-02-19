@@ -7,7 +7,7 @@
 
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
-import { getAllWorkouts } from '@/api/api';
+import { getTrends } from '@/api/api';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -66,11 +66,11 @@ export default defineComponent({
       },
     });
 
-    const N_DAYS = 365; // Количество последних дней для отображения
+    const N_DAYS = 365;
 
     const fetchData = async () => {
       try {
-        const data = await getAllWorkouts();
+        const data = await getTrends('year');
         const exerciseMap = {};
         data.data.data.forEach((entry) => {
           const date = new Date(entry.PublishedAt).toISOString().split('T')[0];
@@ -86,8 +86,6 @@ export default defineComponent({
             });
           });
         });
-
-        // Рассчитываем средний вес за день для каждого упражнения
         const aggregatedData = Object.keys(exerciseMap).map((exercise, index) => {
           const dataPoints = Object.keys(exerciseMap[exercise])
             .map((date) => {

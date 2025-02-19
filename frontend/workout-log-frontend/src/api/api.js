@@ -58,6 +58,6 @@ export function deleteUser() {
   return api.delete(`${base}/user`);
 }
 
-export function getAggregationData() {
-  return api.get(`${base}/workout-aggregation`);
+export function getTrends(period) {
+  return api.get(`${base}/workouts?period=${period}`);
 }
