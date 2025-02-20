@@ -57,10 +57,14 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 		handleDBError(c, err, "error counting documents")
 		return
 	}
+	size, _ := strconv.ParseInt(c.Query("size"), 10, 64)
+	if size == 0 {
+		size = pageSize
+	}
 
 	findOptions := options.Find().
-		SetSkip((int64(page) - 1) * pageSize).
-		SetLimit(pageSize).
+		SetSkip((int64(page) - 1) * size).
+		SetLimit(size).
 		SetSort(bson.D{{"publishedat", -1}})
 
 	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)

@@ -70,7 +70,7 @@ export default defineComponent({
 
     const fetchData = async () => {
       try {
-        const data = await getTrends('year');
+        const data = await getTrends(100);
         const exerciseMap = {};
         data.data.data.forEach((entry) => {
           const date = new Date(entry.PublishedAt).toISOString().split('T')[0];
