@@ -52,16 +52,16 @@ func (handler *MongoConnectionHandler) Create(c *gin.Context) {
 	}
 	options := options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)
 	var updatedMeasurement models.Measurement
-	err = handler.collection.FindOneAndUpdate(context.TODO(), filter, update, options).Decode(&updatedMeasurement)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error updating or inserting measurement"})
+	ok := handler.collection.FindOneAndUpdate(context.TODO(), filter, update, options).Decode(&updatedMeasurement)
+	if ok != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": ok.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, updatedMeasurement)
 }
 
 func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -70,8 +70,8 @@ func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
 	if page <= 0 {
 		page = 1
 	}
-	filter := getFilter(c, userID)
-	total, err := handler.collection.CountDocuments(handler.ctx, filter)
+
+	total, err := handler.collection.CountDocuments(handler.ctx, userID)
 	if err != nil {
 		handleDBError(c, err, "error counting documents")
 		return
@@ -81,7 +81,7 @@ func (handler *MongoConnectionHandler) GetAllMeasurements(c *gin.Context) {
 		SetLimit(measurementsLimits).
 		SetSort(bson.D{{"measurementDate", 1}})
 
-	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
+	cur, err := handler.collection.Find(handler.ctx, userID, findOptions)
 	if err != nil {
 		handleDBError(c, err, "error fetching measurements")
 		return
@@ -107,15 +107,11 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 		return measurement, errors.New("invalid measurement data")
 	}
 	measurement.ID = primitive.NewObjectID()
-	userID, err := getCurrentUser(c)
+	userIDPrimitive, _, err := getCurrentUser(c)
 	if err != nil {
 		return measurement, err
 	}
-	uid, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return measurement, err
-	}
-	measurement.UserID = uid
+	measurement.UserID = userIDPrimitive
 	if measurement.BodyWeight == nil || math.Abs(float64(*measurement.BodyWeight)) <= 0 {
 		return measurement, errors.New("invalid BodyWeight data")
 	}
@@ -125,17 +121,16 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 	return measurement, nil
 }
 func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	filter := getFilter(c, userID)
 
 	findOptions := options.Find().
 		SetLimit(1).
 		SetSort(bson.D{{"measurementDate", -1}})
-	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
+	cur, err := handler.collection.Find(handler.ctx, userID, findOptions)
 	if err != nil {
 		handleDBError(c, err, "error fetching measurements")
 		return
@@ -151,13 +146,12 @@ func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
 }
 
 func (handler *MongoConnectionHandler) ExportMeasurements(ctx *gin.Context, zipWriter *utils.ZipWriter) error {
-	userID, err := getCurrentUser(ctx)
+	_, userID, err := getCurrentUser(ctx)
 	if err != nil {
 		return err
 	}
-	filter := getFilter(ctx, userID)
 
-	cursor, err := handler.collection.Find(ctx, filter)
+	cursor, err := handler.collection.Find(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -177,14 +171,10 @@ func (handler *MongoConnectionHandler) ExportMeasurements(ctx *gin.Context, zipW
 }
 
 func (handler *MongoConnectionHandler) CleanupUserMeasurements(c *gin.Context) error {
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		return err
 	}
-	filter := getFilter(c, userID)
-	if err != nil {
-		return err
-	}
-	_, err = handler.collection.DeleteMany(c, filter)
+	_, err = handler.collection.DeleteMany(c, userID)
 	return err
 }

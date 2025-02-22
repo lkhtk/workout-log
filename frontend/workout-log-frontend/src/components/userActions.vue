@@ -23,16 +23,27 @@
       </div>
     </form>
   </div>
+  <!-- Исправлено: Условный рендеринг ToastComponent -->
+  <ToastComponent
+      v-if="toastMessage"
+      :header="toastTitle"
+      :body="toastMessage"
+      @close-toast="clearToast"
+  />
 </template>
 
 <script>
 import { storeToRefs } from 'pinia';
 import { Modal } from 'bootstrap';
 import { useUserStore } from '../stores/userStore';
+import ToastComponent from './common/toastComponent.vue';
 import { exportData as apiExportData, wipeData, deleteUser } from '../api/api';
 
 export default {
   name: 'userActions',
+  components: {
+    ToastComponent,
+  },
   setup() {
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);
@@ -40,12 +51,11 @@ export default {
       user,
     };
   },
-  computed: {
-    currentUser() {
-      return this.user || {
-        id: 0,
-      };
-    },
+  data() {
+    return {
+      toastTitle: '',
+      toastMessage: '',
+    };
   },
   methods: {
     showConfirmationModal(message, onConfirm) {
@@ -103,6 +113,7 @@ export default {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        this.showError('', this.$t('info.actionSuccess'));
       } catch (error) {
         console.error('Export failed:', error.message);
         this.showError('', this.$t('errorsMsg.exportFailed'));
@@ -114,7 +125,7 @@ export default {
         async () => {
           try {
             await wipeData();
-            alert(this.$t('info.ok'));
+            this.showError('', this.$t('info.actionSuccess'));
           } catch (error) {
             this.showError('', this.$t('errorsMsg.cleanupFailed'));
           }
@@ -128,17 +139,28 @@ export default {
           try {
             await deleteUser();
             this.userStore.clearUser();
-            window.location.replace('/about');
+            this.showError('', this.$t('info.deleteSuccess'));
+            setTimeout(() => {
+              window.location.replace('/about');
+            }, 2000);
           } catch (error) {
-            console.error('delete failed:', error.message);
-            window.location.replace('/about');
+            console.error('Delete failed:', error.message);
+            this.showError('', this.$t('errorsMsg.deleteFailed'));
+            this.userStore.clearUser();
+            setTimeout(() => {
+              window.location.replace('/about');
+            }, 2000);
           }
         },
       );
     },
     showError(title, message) {
-      console.error(`${title}: ${message}`);
-      alert(`${title}: ${message}`);
+      this.toastTitle = title;
+      this.toastMessage = message;
+    },
+    clearToast() {
+      this.toastTitle = '';
+      this.toastMessage = '';
     },
   },
 };

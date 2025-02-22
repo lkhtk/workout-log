@@ -119,23 +119,31 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func getCurrentUser(c *gin.Context) (string, error) {
+func getCurrentUser(c *gin.Context) (primitive.ObjectID, bson.M, error) {
 	session := sessions.Default(c)
 	user_id, ok := session.Get("user_id").(string)
 	if !ok || user_id == "" {
-		return "", errors.New("user is not authenticated")
+		return primitive.ObjectID{}, bson.M{}, errors.New("user is not authenticated")
 	}
-	return user_id, nil
+	objectId, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		return primitive.ObjectID{}, bson.M{}, err
+	}
+	user := bson.M{"user_id": objectId}
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		return primitive.ObjectID{}, bson.M{}, err
+	}
+	return userID, user, nil
 }
 
 func (handler *AuthHandler) DeleteCurrentUser(c *gin.Context) error {
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		return err
 	}
-	objectId, _ := primitive.ObjectIDFromHex(userID)
 	session := sessions.Default(c)
-	_, err = handler.collection.DeleteOne(c, bson.M{"_id": objectId})
+	_, err = handler.collection.DeleteOne(c, bson.M{"_id": userID})
 	if err != nil {
 		return err
 	}

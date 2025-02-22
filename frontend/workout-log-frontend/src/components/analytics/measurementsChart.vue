@@ -22,6 +22,9 @@
           </div>
         </div>
       </main>
+      <div v-else>
+        <h1>loading</h1>
+      </div>
     </div>
   </div>
 </template>
@@ -106,7 +109,7 @@ const chartData = computed(() => {
 const chartOptions = computed(() => ({
   responsive: true,
   plugins: {
-    legend: { position: 'top' },
+    legend: { position: 'right' },
     title: { display: true, text: t('trends.chartTitle') },
   },
 }));

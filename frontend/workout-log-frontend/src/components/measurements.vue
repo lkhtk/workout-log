@@ -90,10 +90,10 @@ export default {
       formData: {
         measurementDate: this.getCurrentDate(),
         bodyWeight: 0,
-        bodyWat: 0,
         neck: 0,
         chest: 0,
         waist: 0,
+        bodyFat: 0,
         hips: 0,
         upperarm: 0,
         forearm: 0,
@@ -180,7 +180,7 @@ export default {
           [this.formData] = response.data;
           this.formData.measurementDate = this.getCurrentDate();
         } else {
-          this.showError('', this.$t('errors.noDataAvailable'));
+          this.showError('', this.$t('errorsMsg.noDataAvailable'));
         }
       }).catch((error) => {
         if (error.response?.status === 401) {

@@ -37,7 +37,7 @@ func NewWorkoutHandler(ctx context.Context, collection *mongo.Collection) *Mongo
 }
 
 func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -47,12 +47,8 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 	if page <= 0 {
 		page = 1
 	}
-	filter := getFilter(c, userID)
-	if err != nil {
-		handleDBError(c, err, "error fetching userID")
-		return
-	}
-	total, err := handler.collection.CountDocuments(handler.ctx, filter)
+
+	total, err := handler.collection.CountDocuments(handler.ctx, userID)
 	if err != nil {
 		handleDBError(c, err, "error counting documents")
 		return
@@ -67,7 +63,7 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 		SetLimit(size).
 		SetSort(bson.D{{"publishedat", -1}})
 
-	cur, err := handler.collection.Find(handler.ctx, filter, findOptions)
+	cur, err := handler.collection.Find(handler.ctx, userID, findOptions)
 	if err != nil {
 		handleDBError(c, err, "error fetching workouts")
 		return
@@ -95,15 +91,11 @@ func validateAndPrepareWorkout(c *gin.Context) (models.Workout, error) {
 	}
 	workout.ID = primitive.NewObjectID()
 	workout.PublishedAt = time.Now()
-	userID, err := getCurrentUser(c)
+	userIDPrimitive, _, err := getCurrentUser(c)
 	if err != nil {
 		return workout, err
 	}
-	uid, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return workout, err
-	}
-	workout.UserID = uid
+	workout.UserID = userIDPrimitive
 	if len(workout.MuscleGroup) > maxFieldLength || len(workout.MuscleGroup) < minFieldLength {
 		return workout, errors.New("Invalid MuscleGroup:" + workout.MuscleGroup)
 	}
@@ -155,17 +147,13 @@ func (handler *MongoConnectionHandler) DeleteWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	userObject, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-	result := handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userObject})
+
+	result := handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userID})
 	if err := result.Err(); err != nil {
 		handleDBError(c, err, "workout not found")
 		return
@@ -187,19 +175,14 @@ func (handler *MongoConnectionHandler) GetOneWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := getCurrentUser(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-	userObject, err := primitive.ObjectIDFromHex(userID)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
 	var workout models.Workout
-	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userObject}).Decode(&workout)
+	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userID}).Decode(&workout)
 	if err != nil {
 		handleDBError(c, err, "workout not found")
 		return
@@ -214,19 +197,14 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	userID, err := getCurrentUser(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-	userObject, err := primitive.ObjectIDFromHex(userID)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
 	var oldWorkout models.Workout
-	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userObject}).Decode(&oldWorkout)
+	err = handler.collection.FindOne(handler.ctx, bson.M{"_id": objectId, "user_id": userID}).Decode(&oldWorkout)
 	if err != nil {
 		handleDBError(c, err, "workout not found")
 		return
@@ -257,15 +235,11 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 }
 
 func (handler *MongoConnectionHandler) ExportWorkouts(ctx *gin.Context, zipWriter *utils.ZipWriter) error {
-	userID, err := getCurrentUser(ctx)
+	_, userID, err := getCurrentUser(ctx)
 	if err != nil {
 		return err
 	}
-	filter := getFilter(ctx, userID)
-	if err != nil {
-		return err
-	}
-	cursor, err := handler.collection.Find(ctx, filter)
+	cursor, err := handler.collection.Find(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -285,14 +259,10 @@ func (handler *MongoConnectionHandler) ExportWorkouts(ctx *gin.Context, zipWrite
 }
 
 func (handler *MongoConnectionHandler) CleanupUserWorkouts(c *gin.Context) error {
-	userID, err := getCurrentUser(c)
+	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		return err
 	}
-	filter := getFilter(c, userID)
-	if err != nil {
-		return err
-	}
-	_, err = handler.collection.DeleteMany(c, filter)
+	_, err = handler.collection.DeleteMany(c, userID)
 	return err
 }
