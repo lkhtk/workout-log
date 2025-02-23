@@ -147,7 +147,7 @@ func (handler *MongoConnectionHandler) DeleteWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	_, userID, err := getCurrentUser(c)
+	userID, _, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -197,7 +197,7 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
-	_, userID, err := getCurrentUser(c)
+	userID, _, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
