@@ -14,8 +14,8 @@
           <div v-if="hasNoData">
             <p>{{ $t('errorsMsg.noDataAvailable') }}</p>
           </div>
-          <div v-else-if="chartData && chartData.labels.length">
-            <LineChart :data="chartData" :options="chartOptions" />
+          <div v-else-if="chartSeries.length">
+            <ApexCharts type="line" :options="chartOptions" :series="chartSeries" height="400" />
           </div>
           <div v-else>
             <p>{{ $t('errorsMsg.noDataAvailable') }}</p>
@@ -32,20 +32,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Line } from 'vue-chartjs';
-import {
-  Chart,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  CategoryScale,
-  Legend,
-  Tooltip,
-} from 'chart.js';
+import ApexCharts from 'vue3-apexcharts';
 import { getMeasurements } from '../../api/api';
-
-Chart.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Legend, Tooltip);
 
 const measurements = ref([]);
 const isLoading = ref(true);
@@ -74,48 +62,52 @@ const fetchMeasurements = async () => {
 onMounted(fetchMeasurements);
 
 const measurementFields = [
-  { key: 'bodyFat', color: 'rgba(3, 7, 30, 1)' },
-  { key: 'bodyWeight', color: 'rgba(55, 6, 23, 1)' },
-  { key: 'neck', color: 'rgba(106, 4, 15, 1)' },
-  { key: 'chest', color: 'rgba(157, 2, 8, 1)' },
-  { key: 'waist', color: 'rgba(208, 0, 0, 1)' },
-  { key: 'upperarm', color: 'rgba(220, 47, 2, 1)' },
-  { key: 'hips', color: 'rgba(232, 93, 4, 1)' },
-  { key: 'forearm', color: 'rgba(244, 140, 6, 1)' },
-  { key: 'thighs', color: 'rgba(250, 163, 7, 1)' },
-  { key: 'calves', color: 'rgba(255, 186, 8, 1)' },
+  { key: 'bodyFat', color: '#03071E' },
+  { key: 'bodyWeight', color: '#370617' },
+  { key: 'neck', color: '#6A040F' },
+  { key: 'chest', color: '#9D0208' },
+  { key: 'waist', color: '#D00000' },
+  { key: 'upperarm', color: '#DC2F02' },
+  { key: 'hips', color: '#E85D04' },
+  { key: 'forearm', color: '#F48C06' },
+  { key: 'thighs', color: '#FAA307' },
+  { key: 'calves', color: '#FFBA08' },
 ];
 
-const chartData = computed(() => {
-  if (!measurements.value.length) return null;
+const chartSeries = computed(() => {
+  if (!measurements.value.length) return [];
 
-  const labels = measurements.value.map((m) => new Date(m.measurementDate).toLocaleDateString());
-  const datasets = measurementFields.map(({ key, color }) => {
-    const data = measurements.value.map((m) => m[key]).filter((value) => value !== 0);
-    return data.length > 0
-      ? {
-        label: t(`measurements.${key}`),
-        data,
-        borderColor: color,
-        backgroundColor: color.replace('1)', '0.2)'),
-        tension: 0.4,
-      }
+  return measurementFields.map(({ key, color }) => {
+    const seriesData = measurements.value
+      .map((m) => ({ x: new Date(m.measurementDate), y: m[key] }))
+      .filter((entry) => entry.y !== 0);
+    return seriesData.length > 1
+      ? { name: t(`measurements.${key}`), data: seriesData, color }
       : null;
-  }).filter((dataset) => dataset !== null);
-
-  return { labels, datasets };
+  }).filter((series) => series !== null);
 });
 
 const chartOptions = computed(() => ({
-  responsive: true,
-  plugins: {
-    legend: { position: 'right' },
-    title: { display: true, text: t('trends.chartTitle') },
+  chart: {
+    type: 'line',
+    height: 400,
+    toolbar: { show: false },
   },
+  xaxis: {
+    type: 'datetime',
+    labels: { format: 'dd MMM' },
+  },
+  stroke: {
+    width: 2,
+    curve: 'smooth',
+  },
+  markers: { size: 0 },
+  legend: {
+    position: 'right',
+    verticalAlign: 'middle',
+  },
+  tooltip: { x: { format: 'dd MMM yyyy' } },
 }));
-console.log('chartData', chartData);
-console.log('chartOptions', chartOptions);
-const LineChart = Line;
 </script>
 
 <style scoped>
