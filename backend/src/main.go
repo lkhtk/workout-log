@@ -75,6 +75,8 @@ func main() {
 	authorized.Use(authHandler.AuthMiddleware())
 	{
 		authorized.GET("/workouts", workoutsHandler.ListWorkouts)
+		authorized.GET("/workouts/average", workoutsHandler.AverageWeight)
+		authorized.GET("/workouts/top5", workoutsHandler.Top5)
 		authorized.GET("/workouts/:id", workoutsHandler.GetOneWorkout)
 		authorized.POST("/workouts", workoutsHandler.NewWorkout)
 		authorized.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)

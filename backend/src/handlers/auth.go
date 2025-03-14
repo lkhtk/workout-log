@@ -21,6 +21,7 @@ import (
 
 var (
 	GoogleClientID = os.Getenv("GOOGLE_CLIENT_ID")
+	env            = os.Getenv("STAND")
 )
 
 type TokenRequest struct {
@@ -111,7 +112,9 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 		session := sessions.Default(c)
 		sessionToken := session.Get("token")
 		email := session.Get("email")
-		if sessionToken == nil || email == nil {
+		if env == "dev" {
+			c.Next()
+		} else if sessionToken == nil || email == nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			c.Abort()
 		}
@@ -120,8 +123,14 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 }
 
 func getCurrentUser(c *gin.Context) (primitive.ObjectID, bson.M, error) {
-	session := sessions.Default(c)
-	user_id, ok := session.Get("user_id").(string)
+	user_id := ""
+	ok := false
+	if env == "dev" {
+		user_id = os.Getenv("TEST_USER_ID")
+		ok = true
+	} else {
+		user_id, ok = sessions.Default(c).Get("user_id").(string)
+	}
 	if !ok || user_id == "" {
 		return primitive.ObjectID{}, bson.M{}, errors.New("user is not authenticated")
 	}
@@ -129,6 +138,7 @@ func getCurrentUser(c *gin.Context) (primitive.ObjectID, bson.M, error) {
 	if err != nil {
 		return primitive.ObjectID{}, bson.M{}, err
 	}
+
 	user := bson.M{"user_id": objectId}
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {

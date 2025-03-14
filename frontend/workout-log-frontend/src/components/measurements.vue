@@ -60,7 +60,6 @@
         <userProgress />
       </div>
     </div>
-    <!-- Toast container -->
     <ToastComponent
       v-if="toastMessage"
       :header="toastTitle"

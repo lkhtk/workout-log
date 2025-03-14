@@ -54,3 +54,17 @@ type User struct {
 	CreatedAt time.Time          `bson:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"`
 }
+
+type AverageWeight struct {
+	PublishedAt time.Time
+	MuscleGroup string `json:"muscle_group" bson:"muscle_group"`
+	Exercises   []struct {
+		Name                        string   `json:"name" bson:"name"`
+		Average_weight_per_exercise *float64 `json:"average_weight_per_exercise" bson:"average_weight_per_exercise"`
+	} `json:"exercises"`
+}
+
+type Top struct {
+	Name  string `json:"name" bson:"_id"`
+	Count int64  `json:"count" bson:"count"`
+}

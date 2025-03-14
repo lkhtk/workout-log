@@ -1,1 +1,134 @@
-{"userConf":{"title":"語言","selectTitle":"選擇語言","ru":"Русский","eng":"English","ch":"中文","esp":"Español"},"userActions":{"title":"行动","danger":"危险地带","wipe":"擦拭活动","delete":"删除账户和活动","export":"导出数据"},"measurements":{"title":"测量","date":"日期","bodyWeight":"重量","bodyFat":"体脂率","neck":"颈部","chest":"胸部","waist":"腰部","hips":"臀部","upperarm":"上臂","forearm":"前臂","thighs":"大腿","calves":"小牛"},"buttons":{"submit":"节省","edit":"编辑","export":"出口","login":"登录","logout":"注销","go":"出发","clone":"克隆"},"links":{"profile":"简介","features":"功能","pricing":"定价","about":"关于","journal":"期刊"},"features":{"title":"非常简单！","header":"适合所有人的健身日志","read_more":"更多信息 ❯","feature1_h":"它是免费的！","feature1_d":"等等，什么？","feature2_h":"开放源代码","feature2_d":"添加自己的功能或在自己的基础设施上运行！","feature3_h":"易于使用！","feature3_d":"很简单 快速、轻松地录制培训课程","feature4_h":"不说废话","feature4_d":"无广告、无退出 Cookie、无弹出窗口、无聊天机器人、无点击诱饵（好吧，除了一点点）。"},"trends":{"title":"发展趋势","chartTitle":""},"info":{"description":"一项免费、简单、无广告的服务，用于记录健身日记和分析力量训练进展。不要错过这个让你的锻炼更有效、更有趣的机会！","loading":"正在加载","okMsg":"数据提交成功","actionSuccess":"成功！","updated":"培训已更新！","created":"培训已创建！","deleted":"这项训练已被删除","cleanUpQuestion":"您确定要清除所有账户数据吗？","deleteQuestion":"您确定要删除账户吗？此操作无法撤销"},"price":{"description":"简单的计划可解锁一切。无捆绑。无附加组件","p1_header":"免费","p1_price":"0 美元","p1_period":"/月","p1_b1":"“按原样 提供！","p1_b2":"不支持！","p1_b3":"没有保证！","p1_b4":"没有人工智能！"},"faq":{"title":"常见问题","header":"常见问题答案如下","q1":"您的应用程序与其他健身日志有何不同？","a1":"这款应用程序设计简约，完全免费，使用极为方便。没有广告、复杂的功能或干扰--只有记录锻炼和跟踪进展的便捷方式。","q2":"该应用程序真的免费吗？有没有付费功能？","a2":"没错，这款应用程序完全免费，无需订阅。您可以使用所有功能，没有任何隐藏费用。","q3":"如何查看我的进度？","a3":"只有在秤上和镜子里才能看到。我们正在制作一个分析仪表盘。","q4":"我可以联系谁寻求支持？","a4":"这里没有支持，你是孤独的。","q5":"这款应用程序是否适合刚开始健身的人？","a5":"当然可以！简洁的界面非常适合初学者使用。您可以轻松记录基本练习并跟踪结果，而不会被不必要的细节所淹没。"},"workout":{"newButtonTitle":"新锻炼","label":"标题","default_title":"腿部锻炼日","default_ex":"保加利亚深蹲","name_subtitle":"肌肉群或训练名称","instructor":"与教练一起训练","training":"力量训练 “力量训练","exercise":"锻炼 “锻炼","new":"添加练习","set":"设置"},"cardio":{"title":"Cardio","default_ex":"慢跑","activity":"活动","speed":"速度/水平","heart":"心率心率","distance":"距离","time":"时间","calories":"卡路里","new":"增加锻炼"},"errorsMsg":{"setsLimit":"最多组数 = 10","exercisesLimit":"最多练习次数 = 10","cardiosLimit":"有氧运动次数上限 = 10","failedMsg":"未能提交数据","noDataAvailable":"目前还没有锻炼计划","exportFailed":"导出数据失败。请重试。","cleanupFailed":"清除数据失败。请重试。","invalidbodyFat":"脂肪百分比不得超过 100","invalidMeasurement":"输入正确的数据"}}
+{
+    "userConf": {
+        "title": "語言",
+        "selectTitle": "選擇語言",
+        "ru": "Русский",
+        "eng": "English",
+        "ch": "中文",
+        "esp": "Español"
+    },
+    "userActions": {
+        "title": "行动",
+        "danger": "危险地带",
+        "wipe": "擦拭活动",
+        "delete": "删除账户和活动",
+        "export": "导出数据"
+    },
+    "measurements": {
+        "title": "测量",
+        "date": "日期",
+        "bodyWeight": "重量",
+        "bodyFat": "体脂率",
+        "neck": "颈部",
+        "chest": "胸部",
+        "waist": "腰部",
+        "hips": "臀部",
+        "upperarm": "上臂",
+        "forearm": "前臂",
+        "thighs": "大腿",
+        "calves": "小牛"
+    },
+    "buttons": {
+        "submit": "节省",
+        "edit": "编辑",
+        "export": "出口",
+        "login": "登录",
+        "logout": "注销",
+        "go": "出发",
+        "clone": "克隆"
+    },
+    "links": {
+        "profile": "简介",
+        "features": "功能",
+        "pricing": "定价",
+        "about": "关于",
+        "journal": "期刊"
+    },
+    "features": {
+        "title": "非常简单！",
+        "header": "适合所有人的健身日志",
+        "read_more": "更多信息 ❯",
+        "feature1_h": "它是免费的！",
+        "feature1_d": "等等，什么？",
+        "feature2_h": "开放源代码",
+        "feature2_d": "添加自己的功能或在自己的基础设施上运行！",
+        "feature3_h": "易于使用！",
+        "feature3_d": "很简单 快速、轻松地录制培训课程",
+        "feature4_h": "不说废话",
+        "feature4_d": "无广告、无退出 Cookie、无弹出窗口、无聊天机器人、无点击诱饵（好吧，除了一点点）。"
+    },
+    "trends": {
+        "title": "发展趋势",
+        "chartTitle": "",
+        "pieChartTitle": "5 大运动"
+    },
+    "info": {
+        "description": "一项免费、简单、无广告的服务，用于记录健身日记和分析力量训练进展。不要错过这个让你的锻炼更有效、更有趣的机会！",
+        "loading": "正在加载",
+        "okMsg": "数据提交成功",
+        "actionSuccess": "成功！",
+        "updated": "培训已更新！",
+        "created": "培训已创建！",
+        "deleted": "这项训练已被删除",
+        "cleanUpQuestion": "您确定要清除所有账户数据吗？",
+        "deleteQuestion": "您确定要删除账户吗？此操作无法撤销"
+    },
+    "price": {
+        "description": "简单的计划可解锁一切。无捆绑。无附加组件",
+        "p1_header": "免费",
+        "p1_price": "0 美元",
+        "p1_period": "/月",
+        "p1_b1": "“按原样 提供！",
+        "p1_b2": "不支持！",
+        "p1_b3": "没有保证！",
+        "p1_b4": "没有人工智能！"
+    },
+    "faq": {
+        "title": "常见问题",
+        "header": "常见问题答案如下",
+        "q1": "您的应用程序与其他健身日志有何不同？",
+        "a1": "这款应用程序设计简约，完全免费，使用极为方便。没有广告、复杂的功能或干扰--只有记录锻炼和跟踪进展的便捷方式。",
+        "q2": "该应用程序真的免费吗？有没有付费功能？",
+        "a2": "没错，这款应用程序完全免费，无需订阅。您可以使用所有功能，没有任何隐藏费用。",
+        "q3": "如何查看我的进度？",
+        "a3": "只有在秤上和镜子里才能看到。我们正在制作一个分析仪表盘。",
+        "q4": "我可以联系谁寻求支持？",
+        "a4": "这里没有支持，你是孤独的。",
+        "q5": "这款应用程序是否适合刚开始健身的人？",
+        "a5": "当然可以！简洁的界面非常适合初学者使用。您可以轻松记录基本练习并跟踪结果，而不会被不必要的细节所淹没。"
+    },
+    "workout": {
+        "newButtonTitle": "新锻炼",
+        "label": "标题",
+        "default_title": "腿部锻炼日",
+        "default_ex": "保加利亚深蹲",
+        "name_subtitle": "肌肉群或训练名称",
+        "instructor": "与教练一起训练",
+        "training": "力量训练 “力量训练",
+        "exercise": "锻炼 “锻炼",
+        "new": "添加练习",
+        "set": "设置"
+    },
+    "cardio": {
+        "title": "Cardio",
+        "default_ex": "慢跑",
+        "activity": "活动",
+        "speed": "速度/水平",
+        "heart": "心率心率",
+        "distance": "距离",
+        "time": "时间",
+        "calories": "卡路里",
+        "new": "增加锻炼"
+    },
+    "errorsMsg": {
+        "setsLimit": "最多组数 = 10",
+        "exercisesLimit": "最多练习次数 = 10",
+        "cardiosLimit": "有氧运动次数上限 = 10",
+        "failedMsg": "未能提交数据",
+        "noDataAvailable": "目前还没有锻炼计划",
+        "exportFailed": "导出数据失败。请重试。",
+        "cleanupFailed": "清除数据失败。请重试。",
+        "invalidbodyFat": "脂肪百分比不得超过 100",
+        "invalidMeasurement": "输入正确的数据"
+    }
+}

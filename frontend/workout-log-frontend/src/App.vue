@@ -92,6 +92,11 @@
             {{ $t('trends.title') }}
           </router-link>
         </li>
+        <li class="breadcrumb-item" v-if="user">
+          <router-link class="nav-item link-body-emphasis" to="/top">
+            {{ $t('trends.title') }}
+          </router-link>
+        </li>
         <li class="breadcrumb-item">
           <router-link class="nav-item link-body-emphasis" to="/features">
             {{ $t('links.features') }}</router-link>

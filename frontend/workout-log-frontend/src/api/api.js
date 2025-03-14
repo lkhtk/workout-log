@@ -59,5 +59,9 @@ export function deleteUser() {
 }
 
 export function getTrends(period) {
-  return api.get(`${base}/workouts?size=${period}`);
+  return api.get(`${base}/workouts/average?size=${period}`);
+}
+
+export function getTop5(period) {
+  return api.get(`${base}/workouts/top5?size=${period}`);
 }

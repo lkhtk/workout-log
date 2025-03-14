@@ -23,7 +23,6 @@
       </div>
     </form>
   </div>
-  <!-- Исправлено: Условный рендеринг ToastComponent -->
   <ToastComponent
       v-if="toastMessage"
       :header="toastTitle"

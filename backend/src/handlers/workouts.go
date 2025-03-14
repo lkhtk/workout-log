@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -265,4 +266,181 @@ func (handler *MongoConnectionHandler) CleanupUserWorkouts(c *gin.Context) error
 	}
 	_, err = handler.collection.DeleteMany(c, userID)
 	return err
+}
+
+func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
+	_, userID, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	size, _ := strconv.ParseInt(c.Query("size"), 10, 64)
+	if size == 0 {
+		size = pageSize
+	}
+	cur, err := handler.collection.Aggregate(c, bson.A{
+		bson.D{{"$match", userID}},
+		bson.D{{"$sort", bson.D{{"publishedat", -1}}}},
+		bson.D{{"$limit", size}},
+		bson.D{
+			{"$addFields",
+				bson.D{
+					{"exercises",
+						bson.D{
+							{"$map",
+								bson.D{
+									{"input", "$workout.exercises"},
+									{"as", "exercise"},
+									{"in",
+										bson.D{
+											{"name", "$$exercise.name"},
+											{"average_weight_per_exercise",
+												bson.D{
+													{"$cond",
+														bson.D{
+															{"if",
+																bson.D{
+																	{"$gt",
+																		bson.A{
+																			bson.D{
+																				{"$sum",
+																					bson.D{
+																						{"$map",
+																							bson.D{
+																								{"input", "$$exercise.sets"},
+																								{"as", "set"},
+																								{"in", "$$set.reps"},
+																							},
+																						},
+																					},
+																				},
+																			},
+																			0,
+																		},
+																	},
+																},
+															},
+															{"then",
+																bson.D{
+																	{"$divide",
+																		bson.A{
+																			bson.D{
+																				{"$sum",
+																					bson.D{
+																						{"$map",
+																							bson.D{
+																								{"input", "$$exercise.sets"},
+																								{"as", "set"},
+																								{"in",
+																									bson.D{
+																										{"$multiply",
+																											bson.A{
+																												"$$set.weight",
+																												"$$set.reps",
+																											},
+																										},
+																									},
+																								},
+																							},
+																						},
+																					},
+																				},
+																			},
+																			bson.D{
+																				{"$sum",
+																					bson.D{
+																						{"$map",
+																							bson.D{
+																								{"input", "$$exercise.sets"},
+																								{"as", "set"},
+																								{"in", "$$set.reps"},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+															{"else", 0},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{
+			{"$unset",
+				bson.A{
+					"_id",
+					"coach",
+					"workout",
+					"user_id",
+				},
+			},
+		},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var workouts []models.AverageWeight
+	if err := cur.All(handler.ctx, &workouts); err != nil {
+		handleDBError(c, err, "error decoding workouts")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": workouts,
+	})
+}
+func (handler *MongoConnectionHandler) Top5(c *gin.Context) {
+	var limitOfTopEx int64
+	limitOfTopEx = 5
+	_, userID, err := getCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	workoutsCount, _ := strconv.ParseInt(c.Query("size"), 10, 64)
+	if workoutsCount < 3 {
+		workoutsCount = 9999999
+	}
+	cur, err := handler.collection.Aggregate(c, bson.A{
+		bson.D{{"$match", userID}},
+		bson.D{{"$sort", bson.D{{"publishedat", -1}}}},
+		bson.D{{"$limit", workoutsCount}},
+		bson.D{{"$unwind", "$workout.exercises"}},
+		bson.D{
+			{"$group",
+				bson.D{
+					{"_id", "$workout.exercises.name"},
+					{"count", bson.D{{"$sum", 1}}},
+				},
+			},
+		},
+		bson.D{{"$sort", bson.D{{"count", -1}}}},
+		bson.D{{"$limit", limitOfTopEx}},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var workouts []models.Top
+	if err := cur.All(handler.ctx, &workouts); err != nil {
+		handleDBError(c, err, "error decoding workouts")
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": workouts,
+	})
 }

@@ -1,1 +1,134 @@
-{"userConf":{"title":"Idioma","selectTitle":"Idioma","ru":"Русский","eng":"English","ch":"中文","esp":"Español"},"userActions":{"title":"Acciones","danger":"Zona de peligro","wipe":"Actividad de limpieza","delete":"Eliminar cuenta y actividad","export":"Exportar datos"},"measurements":{"title":"Medidas","date":"Fecha","bodyWeight":"Peso","bodyFat":"Grasa corporal","neck":"Cuello","chest":"Pecho","waist":"Cintura","hips":"Caderas","upperarm":"Brazo","forearm":"Antebrazo","thighs":"Muslos","calves":"Pantorrillas"},"buttons":{"submit":"Guardar","edit":"Editar","export":"Exportar","login":"Iniciar sesión","logout":"Cerrar sesión","go":"¡Vamos!","clone":"Clonar"},"links":{"profile":"Perfil","features":"Características","pricing":"Precio","about":"Acerca de","journal":"Diario"},"features":{"title":"Muy sencillo","header":"diario de gimnasia para todos","read_more":"Seguir leyendo ❯","feature1_h":"Es gratis!","feature1_d":"Espera, ¿qué? - ¡Sí, es totalmente gratis!","feature2_h":"Odprta koda","feature2_d":"¡añada su propia función o ejecútelo en su infraestructura!","feature3_h":"Fácil de usar","feature3_d":"Es muy sencillo. Grabación rápida y sencilla de las sesiones de entrenamiento","feature4_h":"Sin tonterías.","feature4_d":"Sin anuncios, sin cookies de exclusión, sin pop-ups, sin chatbots, sin clickbait (vale, excepto un poco)."},"trends":{"title":"Tendencias","chartTitle":""},"info":{"description":"Un servicio gratuito y sencillo, sin anuncios, para llevar un diario de tus sesiones de gimnasio y analizar tus progresos en el entrenamiento de fuerza. No pierdas la oportunidad de hacer que tus entrenamientos sean aún más eficaces e interesantes!","loading":"Cargando...","okMsg":"¡Datos enviados con éxito!","actionSuccess":"¡Éxito!","updated":"¡La formación ha sido actualizada!","created":"¡El entrenamiento ha sido creado!","deleted":"¡El entrenamiento ha sido eliminado!","cleanUpQuestion":"¿Estás seguro de que quieres borrar todos los datos de la cuenta?","deleteQuestion":"¿Estás seguro de que quieres borrar tu cuenta? Esta acción no se puede deshacer"},"price":{"description":"El plan sencillo lo desbloquea todo. Sin paquetes. Sin complementos.","p1_header":"Gratis","p1_price":"0 $","p1_period":"/mes","p1_b1":"Se suministra «tal cual».","p1_b2":"¡No hay apoyo!","p1_b3":"Sin garantías.","p1_b4":"¡Sin IA!"},"faq":{"title":"Preguntas frecuentes","header":"A continuación encontrará respuestas a las preguntas más frecuentes","q1":"¿Qué diferencia a su aplicación de otros registros de entrenamiento?","a1":"La aplicación es minimalista, completamente gratuita y muy fácil de usar. No hay anuncios, funciones complicadas ni distracciones, solo una forma cómoda de registrar tus entrenamientos y seguir tu progreso.","q2":"¿La aplicación es realmente gratuita? ¿Hay funciones de pago?","a2":"Sí, la aplicación es completamente gratuita y no requiere suscripciones. Tienes acceso completo a todas las funciones sin cargos ocultos.","q3":"¿Cómo puedo ver mis progresos?","a3":"Sólo en la báscula y en el espejo. Estamos trabajando en un panel de análisis.","q4":"¿Con quién puedo ponerme en contacto para obtener ayuda?","a4":"Aquí no hay apoyo, estás solo.","q5":"¿La aplicación es adecuada para los que se inician en el ejercicio?","a5":"Por supuesto que sí. La sencillez de la interfaz lo hace ideal para principiantes. Puedes grabar fácilmente ejercicios básicos y hacer un seguimiento de tus resultados sin agobiarte con detalles innecesarios."},"workout":{"newButtonTitle":"Nuevo entrenamiento","label":"Título","default_title":"Día de piernas","default_ex":"Sentadilla búlgara dividida","name_subtitle":"Grupo muscular o nombre del entrenamiento","instructor":"Entrenamiento con instructor","training":"Entrenamiento de fuerza","exercise":"Ejercicio","new":"Añadir ejercicio","set":"Conjunto"},"cardio":{"title":"Cardio","default_ex":"Jogging","activity":"Actividad","speed":"Velocidad/Nivel","heart":"Frecuencia cardiaca","distance":"Distancia","time":"Tiempo","calories":"Calorías","new":"Añadir ejercicio"},"errorsMsg":{"setsLimit":"Número máximo de series = 10","exercisesLimit":"Número máximo de ejercicios = 10","cardiosLimit":"Número máximo de cardio = 10","failedMsg":"Fallo al enviar datos","noDataAvailable":"Aún no hay entrenamientos","exportFailed":"Error al exportar datos. Inténtalo de nuevo","cleanupFailed":"Error al borrar datos. Inténtalo de nuevo","invalidbodyFat":"El porcentaje de grasa no debe superar el 100","invalidMeasurement":"Introduzca los datos correctos"}}
+{
+    "userConf": {
+        "title": "Idioma",
+        "selectTitle": "Idioma",
+        "ru": "Русский",
+        "eng": "English",
+        "ch": "中文",
+        "esp": "Español"
+    },
+    "userActions": {
+        "title": "Acciones",
+        "danger": "Zona de peligro",
+        "wipe": "Actividad de limpieza",
+        "delete": "Eliminar cuenta y actividad",
+        "export": "Exportar datos"
+    },
+    "measurements": {
+        "title": "Medidas",
+        "date": "Fecha",
+        "bodyWeight": "Peso",
+        "bodyFat": "Grasa corporal",
+        "neck": "Cuello",
+        "chest": "Pecho",
+        "waist": "Cintura",
+        "hips": "Caderas",
+        "upperarm": "Brazo",
+        "forearm": "Antebrazo",
+        "thighs": "Muslos",
+        "calves": "Pantorrillas"
+    },
+    "buttons": {
+        "submit": "Guardar",
+        "edit": "Editar",
+        "export": "Exportar",
+        "login": "Iniciar sesión",
+        "logout": "Cerrar sesión",
+        "go": "¡Vamos!",
+        "clone": "Clonar"
+    },
+    "links": {
+        "profile": "Perfil",
+        "features": "Características",
+        "pricing": "Precio",
+        "about": "Acerca de",
+        "journal": "Diario"
+    },
+    "features": {
+        "title": "Muy sencillo",
+        "header": "diario de gimnasia para todos",
+        "read_more": "Seguir leyendo ❯",
+        "feature1_h": "Es gratis!",
+        "feature1_d": "Espera, ¿qué? - ¡Sí, es totalmente gratis!",
+        "feature2_h": "Odprta koda",
+        "feature2_d": "¡añada su propia función o ejecútelo en su infraestructura!",
+        "feature3_h": "Fácil de usar",
+        "feature3_d": "Es muy sencillo. Grabación rápida y sencilla de las sesiones de entrenamiento",
+        "feature4_h": "Sin tonterías.",
+        "feature4_d": "Sin anuncios, sin cookies de exclusión, sin pop-ups, sin chatbots, sin clickbait (vale, excepto un poco)."
+    },
+    "trends": {
+        "title": "Tendencias",
+        "chartTitle": "",
+        "pieChartTitle": "Los 5 mejores ejercicios"
+    },
+    "info": {
+        "description": "Un servicio gratuito y sencillo, sin anuncios, para llevar un diario de tus sesiones de gimnasio y analizar tus progresos en el entrenamiento de fuerza. No pierdas la oportunidad de hacer que tus entrenamientos sean aún más eficaces e interesantes!",
+        "loading": "Cargando...",
+        "okMsg": "¡Datos enviados con éxito!",
+        "actionSuccess": "¡Éxito!",
+        "updated": "¡La formación ha sido actualizada!",
+        "created": "¡El entrenamiento ha sido creado!",
+        "deleted": "¡El entrenamiento ha sido eliminado!",
+        "cleanUpQuestion": "¿Estás seguro de que quieres borrar todos los datos de la cuenta?",
+        "deleteQuestion": "¿Estás seguro de que quieres borrar tu cuenta? Esta acción no se puede deshacer"
+    },
+    "price": {
+        "description": "El plan sencillo lo desbloquea todo. Sin paquetes. Sin complementos.",
+        "p1_header": "Gratis",
+        "p1_price": "0 $",
+        "p1_period": "/mes",
+        "p1_b1": "Se suministra «tal cual».",
+        "p1_b2": "¡No hay apoyo!",
+        "p1_b3": "Sin garantías.",
+        "p1_b4": "¡Sin IA!"
+    },
+    "faq": {
+        "title": "Preguntas frecuentes",
+        "header": "A continuación encontrará respuestas a las preguntas más frecuentes",
+        "q1": "¿Qué diferencia a su aplicación de otros registros de entrenamiento?",
+        "a1": "La aplicación es minimalista, completamente gratuita y muy fácil de usar. No hay anuncios, funciones complicadas ni distracciones, solo una forma cómoda de registrar tus entrenamientos y seguir tu progreso.",
+        "q2": "¿La aplicación es realmente gratuita? ¿Hay funciones de pago?",
+        "a2": "Sí, la aplicación es completamente gratuita y no requiere suscripciones. Tienes acceso completo a todas las funciones sin cargos ocultos.",
+        "q3": "¿Cómo puedo ver mis progresos?",
+        "a3": "Sólo en la báscula y en el espejo. Estamos trabajando en un panel de análisis.",
+        "q4": "¿Con quién puedo ponerme en contacto para obtener ayuda?",
+        "a4": "Aquí no hay apoyo, estás solo.",
+        "q5": "¿La aplicación es adecuada para los que se inician en el ejercicio?",
+        "a5": "Por supuesto que sí. La sencillez de la interfaz lo hace ideal para principiantes. Puedes grabar fácilmente ejercicios básicos y hacer un seguimiento de tus resultados sin agobiarte con detalles innecesarios."
+    },
+    "workout": {
+        "newButtonTitle": "Nuevo entrenamiento",
+        "label": "Título",
+        "default_title": "Día de piernas",
+        "default_ex": "Sentadilla búlgara dividida",
+        "name_subtitle": "Grupo muscular o nombre del entrenamiento",
+        "instructor": "Entrenamiento con instructor",
+        "training": "Entrenamiento de fuerza",
+        "exercise": "Ejercicio",
+        "new": "Añadir ejercicio",
+        "set": "Conjunto"
+    },
+    "cardio": {
+        "title": "Cardio",
+        "default_ex": "Jogging",
+        "activity": "Actividad",
+        "speed": "Velocidad/Nivel",
+        "heart": "Frecuencia cardiaca",
+        "distance": "Distancia",
+        "time": "Tiempo",
+        "calories": "Calorías",
+        "new": "Añadir ejercicio"
+    },
+    "errorsMsg": {
+        "setsLimit": "Número máximo de series = 10",
+        "exercisesLimit": "Número máximo de ejercicios = 10",
+        "cardiosLimit": "Número máximo de cardio = 10",
+        "failedMsg": "Fallo al enviar datos",
+        "noDataAvailable": "Aún no hay entrenamientos",
+        "exportFailed": "Error al exportar datos. Inténtalo de nuevo",
+        "cleanupFailed": "Error al borrar datos. Inténtalo de nuevo",
+        "invalidbodyFat": "El porcentaje de grasa no debe superar el 100",
+        "invalidMeasurement": "Introduzca los datos correctos"
+    }
+}
