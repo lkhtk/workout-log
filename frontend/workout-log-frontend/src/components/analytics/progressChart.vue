@@ -1,19 +1,32 @@
 <template>
-  <div v-if="chartOptions.series.length && chartOptionsPie.series.length">
-    <apexchart
-      :options="chartOptions"
-      :series="chartOptions.series"
-      type="line"
-      height="500"
-    />
-    <apexchart
-      type="donut"
-      :options="chartOptionsPie"
-      :series="chartOptionsPie.series"
-      height="300"
-    />
+  <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 p-3">
+          <apexchart
+            class="card shadow"
+            v-if="chartOptions.series.length"
+            :options="chartOptions"
+            :series="chartOptions.series"
+            type="line"
+            height="400"
+          />
+          <div v-else class="spinner-border" role="status"></div>
+        </div>
+      <div class="row">
+        <div class="col-12 col-lg-4 p-3">
+          <apexchart
+            class="card shadow"
+            v-if="chartOptionsPie.series.length"
+            type="donut"
+            :options="chartOptionsPie"
+            :series="chartOptionsPie.series"
+            height="400"
+          />
+          <div v-else class="spinner-border" role="status"></div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="spinner-border align-items-center" role="status" v-else></div>
 </template>
 
 <script>
@@ -34,11 +47,11 @@ export default defineComponent({
       },
       labels: [],
       title: {
-        text: 'Top',
+        text: 'Top 5',
         align: 'center',
       },
       legend: {
-        position: 'right',
+        position: 'bottom',
       },
       series: [],
     });
@@ -53,6 +66,10 @@ export default defineComponent({
         zoom: {
           enabled: false,
         },
+      },
+      title: {
+        text: 'Progress trends',
+        align: 'center',
       },
       xaxis: {
         type: 'datetime',
@@ -69,7 +86,7 @@ export default defineComponent({
       },
       legend: {
         position: 'right',
-        horizontalAlign: 'center',
+        horizontalAlign: 'top',
       },
       series: [],
     });
