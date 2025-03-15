@@ -93,6 +93,11 @@ export default defineComponent({
     const fetchTrendsData = async () => {
       try {
         const response = await getTrends(100);
+        if (response.status === 401) {
+          this.user = null;
+          localStorage.removeItem('user');
+          this.$router.push('/about');
+        }
         const exerciseMap = {};
         response.data.data.forEach((entry) => {
           const date = new Date(entry.PublishedAt).getTime();

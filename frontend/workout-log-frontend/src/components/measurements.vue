@@ -1,7 +1,7 @@
 <template>
     <div class="row">
       <div class="col">
-        <div class="d-flex h-100 text-center" v-if="user">
+        <div class="d-flex h-100 text-center card shadow" v-if="user">
           <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
               <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
                   <h1 class="display-5">

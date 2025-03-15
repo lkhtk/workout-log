@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex h-100 text-center" v-if="!user">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column card shadow">
       <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
         <div class="spinner-border align-items-center" role="status" v-if="isLoading"></div>
         <h1 class="display-5" v-if="isLoading">{{ $t('info.loading') }}</h1>
@@ -22,9 +22,6 @@
           </div>
         </div>
       </main>
-      <div v-else>
-        <h1>loading</h1>
-      </div>
     </div>
   </div>
 </template>
