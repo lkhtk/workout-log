@@ -131,7 +131,7 @@ func security(c *gin.Context) {
 Expires: %sT00:00:00.000Z
 Preferred-Languages: en, ru
 Canonical: https://%s/.well-known/security.txt
-`, email, expDate, host, host)
+`, email, expDate, host)
 	c.Data(http.StatusOK, "text/plain", []byte(security))
 }
 func robots(c *gin.Context) {
