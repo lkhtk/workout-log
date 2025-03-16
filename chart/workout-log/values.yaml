@@ -6,7 +6,7 @@ imageCredentials:
 front:
   ingress:
     enabled: true
-    host: log.local.lkhtk.me
+    host: host.local.dev
     className: nginx
     annotations:
       cert-manager.io/cluster-issuer: lets-encrypt

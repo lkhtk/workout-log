@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	handlers "github.com/lkhtk/workout-log/handlers"
 	"github.com/lkhtk/workout-log/utils"
@@ -71,6 +73,8 @@ func main() {
 	router.POST("/auth/google/sigin", authHandler.GoogleAuthHandler)
 	router.POST("/auth/google/sigout", authHandler.DestroyUserSession)
 	router.GET("/health", health)
+	router.GET("/sitemap.xml", sitemap)
+	router.GET("/robots.txt", robots)
 	authorized := router.Group("/api")
 	authorized.Use(authHandler.AuthMiddleware())
 	{
@@ -96,6 +100,35 @@ func main() {
 
 func health(c *gin.Context) {
 	c.JSON(http.StatusOK, "OK")
+}
+func sitemap(c *gin.Context) {
+	currentDate := time.Now().Format("2006-01-02")
+	host := c.Request.Host
+	sitemap := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://%s/about</loc>
+        <lastmod>%s</lastmod>
+    </url>
+    <url>
+        <loc>https://%s/features</loc>
+        <lastmod>%s</lastmod>
+    </url>
+    <url>
+        <loc>https://%s/pricing</loc>
+        <lastmod>%s</lastmod>
+    </url>
+</urlset>`, host, currentDate, host, currentDate, host, currentDate)
+	c.Data(http.StatusOK, "application/xml", []byte(sitemap))
+}
+
+func robots(c *gin.Context) {
+	robots := `User-agent: *
+Disallow: /
+Allow: /features
+Allow: /pricing
+Allow: /about`
+	c.Data(http.StatusOK, "text/plain", []byte(robots))
 }
 
 func exportAccountData(c *gin.Context) {
