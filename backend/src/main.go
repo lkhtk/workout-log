@@ -75,6 +75,7 @@ func main() {
 	router.GET("/health", health)
 	router.GET("/sitemap.xml", sitemap)
 	router.GET("/robots.txt", robots)
+	router.GET("/.well-known/security.txt", security)
 	authorized := router.Group("/api")
 	authorized.Use(authHandler.AuthMiddleware())
 	{
@@ -122,6 +123,17 @@ func sitemap(c *gin.Context) {
 	c.Data(http.StatusOK, "application/xml", []byte(sitemap))
 }
 
+func security(c *gin.Context) {
+	email := os.Getenv("SECURITY_EMAIL")
+	expDate := time.Now().AddDate(100, 0, 0).Format("2006-01-02")
+	host := c.Request.Host
+	security := fmt.Sprintf(`Contact: mailto:%s
+Expires: %sT00:00:00.000Z
+Preferred-Languages: en, ru
+Canonical: https://%s/.well-known/security.txt
+`, email, expDate, host, host)
+	c.Data(http.StatusOK, "text/plain", []byte(security))
+}
 func robots(c *gin.Context) {
 	robots := `User-agent: *
 Disallow: /
