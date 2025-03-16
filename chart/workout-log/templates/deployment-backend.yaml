@@ -15,7 +15,7 @@ spec:
         app: backend
     spec:
       imagePullSecrets:
-      - name: {{ template "imagePullSecret" . }}
+      - name: {{ .Release.Name }}-registry
       containers:
       - name: backend
         image: "{{ .Values.back.image }}:{{ .Values.back.tag }}"

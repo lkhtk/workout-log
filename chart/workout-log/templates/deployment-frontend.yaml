@@ -15,7 +15,7 @@ spec:
         app: {{ .Values.front.name }}
     spec:
       imagePullSecrets:
-      - name: {{ template "imagePullSecret" . }}
+      - name: {{ .Release.Name }}-registry
       containers:
       - name: {{ .Values.front.name }}
         image: "{{ .Values.front.image }}:{{ .Values.front.tag }}"
