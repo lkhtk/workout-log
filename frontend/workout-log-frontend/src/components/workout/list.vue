@@ -24,11 +24,6 @@
               <font-awesome-icon icon="fa-solid fa-sliders" />
               {{ $t('buttons.edit') }}
             </button>
-            <!-- <button type="button" class="btn btn-outline-dark"
-              @click="exportToPdf(workoutItem.Id)">
-              <font-awesome-icon icon="fa-solid fa-file-export" />
-              {{ $t('buttons.export') }}
-            </button> -->
           </div>
         </div>
         <hr>
@@ -40,6 +35,7 @@
             :class="{ disabled: pagination.current === 1 }">
             <button
               class="page-link"
+              aria-label="first"
               @click="goToPage(pagination.current - 1)"
               :disabled="pagination.current === 1">
               <span aria-hidden="true">&laquo;</span>
@@ -61,6 +57,7 @@
             :class="{ disabled: pagination.current === pagination.last }">
             <button
               class="page-link"
+              aria-label="last"
               @click="goToPage(pagination.current + 1)"
               :disabled="pagination.current === pagination.last">
               <span aria-hidden="true">&raquo;</span>
