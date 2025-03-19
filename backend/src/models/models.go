@@ -13,22 +13,25 @@ type Workout struct {
 	MuscleGroup string             `json:"muscle_group" bson:"muscle_group"`
 	Coach       bool               `json:"coach" bson:"coach"`
 	Workout     struct {
-		Exercises []struct {
-			Name string `json:"name" bson:"name"`
-			Sets []struct {
-				Reps   *int     `json:"reps"`
-				Weight *float32 `json:"weight"`
-			} `json:"sets"`
-		} `json:"exercises"`
-		Cardio []struct {
-			Type      string  `json:"type"`
-			HeartRate int     `json:"heart"`
-			Speed     float32 `json:"speed"`
-			Distance  float32 `json:"distance"`
-			Time      int     `json:"time"`
-			Calories  int     `json:"calories"`
-		} `json:"cardio"`
+		Exercises []Exercise `json:"exercises"`
+		Cardio    []Cardio   `json:"cardio"`
 	} `json:"workout"`
+}
+
+type Exercise struct {
+	Name string `json:"name" bson:"name"`
+	Sets []struct {
+		Reps   *int     `json:"reps"`
+		Weight *float32 `json:"weight"`
+	} `json:"sets"`
+}
+type Cardio struct {
+	Type      string  `json:"type"`
+	HeartRate int     `json:"heart"`
+	Speed     float32 `json:"speed"`
+	Distance  float32 `json:"distance"`
+	Time      int     `json:"time"`
+	Calories  int     `json:"calories"`
 }
 type Measurement struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id"`

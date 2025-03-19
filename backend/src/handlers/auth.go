@@ -139,12 +139,12 @@ func getCurrentUser(c *gin.Context) (primitive.ObjectID, bson.M, error) {
 		return primitive.ObjectID{}, bson.M{}, err
 	}
 
-	user := bson.M{"user_id": objectId}
+	userAsFilter := bson.M{"user_id": objectId}
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		return primitive.ObjectID{}, bson.M{}, err
 	}
-	return userID, user, nil
+	return userID, userAsFilter, nil
 }
 
 func (handler *AuthHandler) DeleteCurrentUser(c *gin.Context) error {
