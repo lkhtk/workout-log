@@ -9,10 +9,6 @@ export function getAllWorkouts(page) {
   return api.get(url);
 }
 
-export function getWorkout(id) {
-  return api.get(`${base}/workouts/${id}`);
-}
-
 export function createWorkout(workoutData) {
   return api.post(`${base}/workouts`, workoutData);
 }
@@ -39,8 +35,8 @@ export function createMeasurement(measurement) {
   return api.post(`${base}/measurements`, measurement);
 }
 
-export function getMeasurement() {
-  return api.get(`${base}/measurement`);
+export function getLastMeasurement() {
+  return api.get(`${base}/measurements/last`);
 }
 export function getMeasurements() {
   return api.get(`${base}/measurements`);

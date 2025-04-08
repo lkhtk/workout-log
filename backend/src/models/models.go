@@ -34,7 +34,6 @@ type Cardio struct {
 	Calories  int     `json:"calories"`
 }
 type Measurement struct {
-	ID              primitive.ObjectID `json:"id" bson:"_id"`
 	UserID          primitive.ObjectID `json:"-" bson:"user_id"`
 	MeasurementDate time.Time          `json:"measurementDate" bson:"measurementDate"`
 	BodyFat         *float32           `json:"bodyFat" bson:"bodyFat"`

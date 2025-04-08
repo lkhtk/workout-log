@@ -203,37 +203,6 @@ func (handler *MongoConnectionHandler) DeleteWorkout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"acknowledged": true})
 }
 
-func (handler *MongoConnectionHandler) GetOneWorkout(c *gin.Context) {
-	id := c.Param("id")
-	objectId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid workout ID format"})
-		return
-	}
-
-	_, userID, err := getCurrentUser(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-
-	var workout models.Workout
-	filter := bson.M{"_id": objectId, "user_id": userID}
-	err = handler.collection.FindOne(handler.ctx, filter).Decode(&workout)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Workout not found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"id":          workout.ID.Hex(),
-		"muscleGroup": workout.MuscleGroup,
-		"coach":       workout.Coach,
-		"workout":     workout.Workout,
-		"publishedAt": workout.PublishedAt,
-	})
-}
-
 func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 	id := c.Param("id")
 	objectId, err := primitive.ObjectIDFromHex(id)
@@ -293,7 +262,8 @@ func (handler *MongoConnectionHandler) ExportWorkouts(ctx *gin.Context, zipWrite
 	if err != nil {
 		return err
 	}
-	cursor, err := handler.collection.Find(ctx, userID)
+	opts := options.Find().SetProjection(bson.D{{"user_id", 0}, {"_id", 0}, {"user", 0}, {"sets_count", 0}})
+	cursor, err := handler.collection.Find(ctx, userID, opts)
 	if err != nil {
 		return err
 	}

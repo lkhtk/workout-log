@@ -82,13 +82,12 @@ func main() {
 		authorized.GET("/workouts", workoutsHandler.ListWorkouts)
 		authorized.GET("/workouts/average", workoutsHandler.AverageWeight)
 		authorized.GET("/workouts/top5", workoutsHandler.Top5)
-		authorized.GET("/workouts/:id", workoutsHandler.GetOneWorkout)
 		authorized.POST("/workouts", workoutsHandler.NewWorkout)
 		authorized.PUT("/workouts/:id", workoutsHandler.UpdateWorkout)
 		authorized.DELETE("/workouts/:id", workoutsHandler.DeleteWorkout)
 
 		authorized.GET("/measurements", measurementsHandler.GetAllMeasurements)
-		authorized.GET("/measurement", measurementsHandler.GetLatestMeasurement)
+		authorized.GET("/measurements/last", measurementsHandler.GetLatestMeasurement)
 		authorized.POST("/measurements", measurementsHandler.Create)
 
 		authorized.GET("/user/export", exportAccountData)

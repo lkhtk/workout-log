@@ -74,7 +74,7 @@ import { useI18n } from 'vue-i18n';
 import { useUserStore } from '../stores/userStore';
 import userProgress from './analytics/measurementsChart.vue';
 import ToastComponent from './common/toastComponent.vue';
-import { createMeasurement, getMeasurement } from '../api/api';
+import { createMeasurement, getLastMeasurement } from '../api/api';
 
 export default {
   name: 'userMeasurement',
@@ -174,9 +174,9 @@ export default {
       this.toastMessage = message;
     },
     async loadUserMeasurement() {
-      await getMeasurement().then((response) => {
+      await getLastMeasurement().then((response) => {
         if (response.data) {
-          [this.formData] = response.data;
+          this.formData = response.data;
           this.formData.measurementDate = this.getCurrentDate();
         } else {
           this.showError('', this.$t('errorsMsg.noDataAvailable'));
@@ -198,7 +198,7 @@ export default {
         this.formData.measurementDate = dayjs(this.formData.measurementDate).format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
         if (response.status === 201 || response.status === 200) {
-          this.showError('', this.$t('info.okMsg'));
+          this.showError('Success', this.$t('info.okMsg'));
         } else {
           this.showError('Error', this.$t('errorsMsg.failedMsg'));
           return;
