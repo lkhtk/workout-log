@@ -290,7 +290,6 @@ func (handler *MongoConnectionHandler) CleanupUserWorkouts(c *gin.Context) error
 	_, err = handler.collection.DeleteMany(c, userID)
 	return err
 }
-
 func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 	_, userIdAsFilter, err := getCurrentUser(c)
 	if err != nil {
@@ -298,15 +297,28 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 		return
 	}
 
-	size, _ := strconv.ParseInt(c.Query("size"), 10, 64)
-	if size == 0 {
-		size = pageSize
+	period := c.DefaultQuery("size", "all") // all | month | week
+
+	var matchFilter bson.D
+	switch period {
+	case "month":
+		oneMonthAgo := time.Now().AddDate(0, -1, 0)
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", oneMonthAgo}}}}
+	case "week":
+		oneWeekAgo := time.Now().AddDate(0, 0, -7)
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", oneWeekAgo}}}}
+	default:
+		matchFilter = bson.D{}
 	}
 
-	pipeline := bson.A{
+	pipeline := bson.A{}
+	if len(matchFilter) > 0 {
+		pipeline = append(pipeline, bson.D{{"$match", matchFilter}})
+	}
+
+	pipeline = append(pipeline,
 		bson.D{{"$match", userIdAsFilter}},
 		bson.D{{"$sort", bson.D{{"publishedat", -1}}}},
-		bson.D{{"$limit", size}},
 		bson.D{{"$project", bson.D{
 			{"muscle_group", 1},
 			{"publishedat", 1},
@@ -356,7 +368,8 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 					}},
 				}},
 			}},
-		}}}}
+		}}})
+
 	opts := options.Aggregate().SetBatchSize(100)
 
 	cur, err := handler.collection.Aggregate(handler.ctx, pipeline, opts)
@@ -377,22 +390,33 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 
 func (handler *MongoConnectionHandler) Top5(c *gin.Context) {
 	const limitOfTopEx int64 = 5
-
 	_, userID, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	workoutsCount, err := strconv.Atoi(c.Query("size"))
-	if err != nil || workoutsCount < 3 {
-		workoutsCount = 100
+	period := c.DefaultQuery("size", "all") // 'all', 'month', 'week'
+
+	var matchFilter bson.D
+	switch period {
+	case "month":
+		oneMonthAgo := time.Now().AddDate(0, -1, 0)
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", oneMonthAgo}}}}
+	case "week":
+		oneWeekAgo := time.Now().AddDate(0, 0, -7)
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", oneWeekAgo}}}}
+	default:
+		matchFilter = bson.D{}
+	}
+	pipeline := bson.A{}
+	if len(matchFilter) > 0 {
+		pipeline = append(pipeline, bson.D{{"$match", matchFilter}})
 	}
 
-	cur, err := handler.collection.Aggregate(c, bson.A{
+	pipeline = append(pipeline,
 		bson.D{{"$match", userID}},
 		bson.D{{"$sort", bson.D{{"publishedat", -1}}}},
-		bson.D{{"$limit", workoutsCount}},
 		bson.D{{"$unwind", "$workout.exercises"}},
 		bson.D{{"$group", bson.D{
 			{"_id", "$workout.exercises.name"},
@@ -400,7 +424,9 @@ func (handler *MongoConnectionHandler) Top5(c *gin.Context) {
 		}}},
 		bson.D{{"$sort", bson.D{{"count", -1}}}},
 		bson.D{{"$limit", limitOfTopEx}},
-	})
+	)
+
+	cur, err := handler.collection.Aggregate(c, pipeline)
 	if err != nil {
 		handleDBError(c, err, "failed to execute aggregation")
 		return

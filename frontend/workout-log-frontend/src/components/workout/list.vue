@@ -170,9 +170,7 @@ export default {
       this.pagination.current = pageNumber;
       this.loadAllWorkouts(pageNumber);
     },
-    // exportToPdf(id) {
-    //   console.log('export', id);
-    // },
+
     async loadAllWorkouts(pageId) {
       this.loading = true;
       try {
