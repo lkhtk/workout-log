@@ -61,7 +61,8 @@
         "title": "发展趋势",
         "chartTitle": "",
         "pieChartTitle": "5 大运动",
-        "countTitle": "培训次数"
+        "countTitle": "培训次数",
+        "exercisesCountTitle": "独特练习的数量"
     },
     "info": {
         "description": "厌倦了在笔记本上记下你的训练？试试免费的力量训练在线日记吧！记录您的成绩，跟踪您的进展，改进您的训练计划--一切尽在一项便捷的无广告服务中。将你的健身课程变成一次激动人心的刷新纪录之旅！💪",
@@ -130,7 +131,8 @@
         "exportFailed": "导出数据失败。请重试。",
         "cleanupFailed": "清除数据失败。请重试。",
         "invalidbodyFat": "脂肪百分比不得超过 100",
-        "invalidMeasurement": "输入正确的数据"
+        "invalidMeasurement": "输入正确的数据",
+        "invalndChartData": "绘制图表的数据不足"
     },
     "periodTitles": {
         "all": "所有",

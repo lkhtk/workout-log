@@ -61,7 +61,8 @@
         "title": "Tendencias",
         "chartTitle": "",
         "pieChartTitle": "Los 5 mejores ejercicios",
-        "countTitle": "número de sesiones de formación"
+        "countTitle": "número de sesiones de formación",
+        "exercisesCountTitle": "Número de ejercicios únicos"
     },
     "info": {
         "description": "¿Estás cansado de apuntar tus entrenamientos en un cuaderno? Prueba un diario en línea gratuito para entrenamientos de fuerza. Registra tus logros, sigue tus progresos y mejora tu programa de entrenamiento todo en un cómodo servicio sin publicidad. ¡Convierte tus sesiones de gimnasio en un emocionante viaje hacia nuevos récords! 💪",
@@ -130,7 +131,8 @@
         "exportFailed": "Error al exportar datos. Inténtalo de nuevo",
         "cleanupFailed": "Error al borrar datos. Inténtalo de nuevo",
         "invalidbodyFat": "El porcentaje de grasa no debe superar el 100",
-        "invalidMeasurement": "Introduzca los datos correctos"
+        "invalidMeasurement": "Introduzca los datos correctos",
+        "invalndChartData": "Datos insuficientes para trazar el gráfico"
     },
     "periodTitles": {
         "all": "Todos",

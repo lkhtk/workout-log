@@ -297,16 +297,16 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 		return
 	}
 
-	period := c.DefaultQuery("size", "all") // all | month | week
+	period := c.DefaultQuery("size", "all") // all | year | month | week
 
 	var matchFilter bson.D
 	switch period {
+	case "year":
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", time.Now().AddDate(-1, 0, 0)}}}}
 	case "month":
-		oneMonthAgo := time.Now().AddDate(0, -1, 0)
-		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", oneMonthAgo}}}}
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", time.Now().AddDate(0, -1, 0)}}}}
 	case "week":
-		oneWeekAgo := time.Now().AddDate(0, 0, -7)
-		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", oneWeekAgo}}}}
+		matchFilter = bson.D{{"publishedat", bson.D{{"$gte", time.Now().AddDate(0, 0, -7)}}}}
 	default:
 		matchFilter = bson.D{}
 	}

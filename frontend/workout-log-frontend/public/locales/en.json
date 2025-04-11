@@ -61,7 +61,8 @@
         "title": "Trends",
         "chartTitle": "",
         "pieChartTitle": "Top 5 exercises",
-        "countTitle": "number of training sessions"
+        "countTitle": "Number of training sessions",
+        "exercisesCountTitle": "Number of unique exercises"
     },
     "info": {
         "description": "Tired of writing down your workouts in a notebook? Try a free online strength training diary! Record your achievements, track your progress and improve your training program - all in one convenient ad-free service. Turn your gym sessions into an exciting journey to new records! 💪",
@@ -130,7 +131,8 @@
         "exportFailed": "Failed to export data. Please try again.",
         "cleanupFailed": "Failed to clear data. Please try again.",
         "invalidbodyFat": "The percentage of fat should not exceed 100%",
-        "invalidMeasurement": "Enter the correct information"
+        "invalidMeasurement": "Enter the correct information",
+        "invalndChartData": "Insufficient data for plotting the graph"
     },
     "periodTitles": {
         "all": "All",

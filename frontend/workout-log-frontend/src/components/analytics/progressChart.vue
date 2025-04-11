@@ -6,6 +6,9 @@
           <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'all' }">
             <a href="#" @click.prevent="setPeriod('all')">{{ $t('periodTitles.all') }}</a>
           </li>
+          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'year' }">
+            <a href="#" @click.prevent="setPeriod('year')">{{ $t('periodTitles.year') }}</a>
+          </li>
           <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month' }">
             <a href="#" @click.prevent="setPeriod('month')">{{ $t('periodTitles.month') }}</a>
           </li>
@@ -18,7 +21,7 @@
     </div>
 
     <div class="row">
-      <div class="col-12 col-lg-4 p-3">
+        <div class="col-12 col-lg-4 p-3">
         <apexchart
           class="card shadow"
           v-if="chartOptionsPie.series.length"
@@ -30,8 +33,19 @@
         <div v-else class="spinner-border" role="status"></div>
       </div>
       <div class="col-12 col-lg-4 p-3">
-        <div class="card text-center shadow" v-if="workoutCount">
-          <div class="card-body">
+        <div class="text-center shadow border rounded" style="height: 300px;" v-if="exercisesCount">
+          <div class="position-relative top-50 start-50 translate-middle">
+            <h2 class="display-1">
+            {{ exercisesCount }}
+            </h2>
+            <p class="card-text">{{ $t('trends.exercisesCountTitle') }}</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-12 col-lg-4 p-3">
+        <div class="text-center shadow border rounded" style="height: 300px;" v-if="workoutCount">
+          <div class="position-relative top-50 start-50 translate-middle">
             <h2 class="display-1">
             {{ workoutCount }}
             </h2>
@@ -43,17 +57,18 @@
     </div>
 
     <div class="row">
-      <div class="col-12 p-3">
+      <div class="col-12 p-3" v-if="workoutCount>1">
         <apexchart
           class="card shadow"
           v-if="chartOptions.series.length"
           :options="chartOptions"
           :series="chartOptions.series"
           type="line"
-          height="400"
+          height="600"
         />
         <div v-else class="spinner-border" role="status"></div>
       </div>
+      <div class="col-12 p-3 shadow" v-else>{{ $t('errorsMsg.invalndChartData') }}</div>
     </div>
   </div>
 </template>
@@ -124,8 +139,9 @@ export default defineComponent({
       series: [],
     });
 
-    const selectedPeriod = ref('all'); // 'all', 'month', or 'week'
+    const selectedPeriod = ref('all'); // 'all', 'year','month', or 'week'
     const workoutCount = ref(0);
+    const exercisesCount = ref(0);
     const setPeriod = (period) => {
       if (selectedPeriod.value !== period) {
         selectedPeriod.value = period;
@@ -150,7 +166,7 @@ export default defineComponent({
             });
           });
         });
-
+        exercisesCount.value = Object.keys(exerciseMap).length;
         const aggregatedData = Object.keys(exerciseMap)
           .filter((exercise) => exerciseMap[exercise].length >= 2)
           .map((exercise) => ({
@@ -192,6 +208,7 @@ export default defineComponent({
       selectedPeriod,
       setPeriod,
       workoutCount,
+      exercisesCount,
     };
   },
 });
