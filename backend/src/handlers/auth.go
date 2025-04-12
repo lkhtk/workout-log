@@ -112,11 +112,17 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 		session := sessions.Default(c)
 		sessionToken := session.Get("token")
 		email := session.Get("email")
-		if env == "dev" {
-			c.Next()
-		} else if sessionToken == nil || email == nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			c.Abort()
+		if sessionToken == nil || email == nil {
+			session.Clear()
+			_ = session.Save()
+			if env == "dev" {
+				c.Next()
+				return
+			}
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "unauthorized or session expired",
+			})
+			return
 		}
 		c.Next()
 	}

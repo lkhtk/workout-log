@@ -103,6 +103,7 @@ func validateAndPrepareWorkout(c *gin.Context) (*models.Workout, error) {
 
 	userIDPrimitive, _, err := getCurrentUser(c)
 	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	workout.UserID = userIDPrimitive
@@ -260,6 +261,7 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 func (handler *MongoConnectionHandler) ExportWorkouts(ctx *gin.Context, zipWriter *utils.ZipWriter) error {
 	_, userID, err := getCurrentUser(ctx)
 	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return err
 	}
 	opts := options.Find().SetProjection(bson.D{{"user_id", 0}, {"_id", 0}, {"user", 0}, {"sets_count", 0}})
@@ -285,6 +287,7 @@ func (handler *MongoConnectionHandler) ExportWorkouts(ctx *gin.Context, zipWrite
 func (handler *MongoConnectionHandler) CleanupUserWorkouts(c *gin.Context) error {
 	_, userID, err := getCurrentUser(c)
 	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return err
 	}
 	_, err = handler.collection.DeleteMany(c, userID)

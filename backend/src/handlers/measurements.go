@@ -115,6 +115,7 @@ func validateAndPrepareMeasurement(c *gin.Context) (models.Measurement, error) {
 	}
 	userIDPrimitive, _, err := getCurrentUser(c)
 	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return measurement, err
 	}
 	measurement.UserID = userIDPrimitive
@@ -153,6 +154,7 @@ func (handler *MongoConnectionHandler) GetLatestMeasurement(c *gin.Context) {
 func (handler *MongoConnectionHandler) ExportMeasurements(ctx *gin.Context, zipWriter *utils.ZipWriter) error {
 	_, userIDAsAfilter, err := getCurrentUser(ctx)
 	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return err
 	}
 
