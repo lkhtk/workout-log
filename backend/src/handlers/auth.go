@@ -109,18 +109,29 @@ func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {
 
 func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		defer func() {
+			if r := recover(); r != nil {
+				session := sessions.Default(c)
+				session.Clear()
+				_ = session.Save()
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error": "session expired or invalid",
+				})
+			}
+		}()
 		session := sessions.Default(c)
 		sessionToken := session.Get("token")
 		email := session.Get("email")
+		if env == "dev" {
+			c.Next()
+			return
+		}
 		if sessionToken == nil || email == nil {
 			session.Clear()
 			_ = session.Save()
-			if env == "dev" {
-				c.Next()
-				return
-			}
+
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "unauthorized or session expired",
+				"error": "unauthorized or session missing",
 			})
 			return
 		}
