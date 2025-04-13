@@ -76,20 +76,12 @@
       </div>
     </div>
   </div>
-   <!-- Toast container -->
-   <ToastComponent
-      v-if="toastMessage"
-      :header="toastTitle"
-      :body="toastMessage"
-      @close-toast="clearToast"
-    />
 </template>
 
 <script>
 import { getAllWorkouts } from '@/api/api';
 import changeComponent from '@/mixin/changeComponent';
 import workoutComponent from './workout.vue';
-import ToastComponent from '../common/toastComponent.vue';
 import CreateButton from '../common/addWorkoutButton.vue';
 
 export default {
@@ -98,7 +90,6 @@ export default {
   components: {
     workoutComponent,
     CreateButton,
-    ToastComponent,
   },
   props: {
     workoutData: {
@@ -155,14 +146,6 @@ export default {
       cloned.id = null;
       this.changeComponent('view', cloned);
     },
-    showError(title, message) {
-      this.toastTitle = title;
-      this.toastMessage = message;
-    },
-    clearToast() {
-      this.toastTitle = '';
-      this.toastMessage = '';
-    },
     goToPage(pageNumber) {
       if (pageNumber === '...' || pageNumber < 1 || pageNumber > this.pagination.last) {
         return;
@@ -182,13 +165,7 @@ export default {
           total: data.data.total,
         };
       } catch (error) {
-        if (error.response?.status === 401) {
-          localStorage.removeItem('user');
-          window.location.replace('/about');
-        } else {
-          this.showError('Error', this.$t('errorsMsg.failedMsg'));
-          console.error(error);
-        }
+        window.$toast?.showToast(this.$t('errorsMsg.failedMsg'));
       } finally {
         this.loading = false;
       }

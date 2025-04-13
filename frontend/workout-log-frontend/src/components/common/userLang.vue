@@ -23,27 +23,21 @@
 </template>
 
 <script>
-import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
-import { useUserStore } from '../stores/userStore';
+import { useUserStore } from '../../stores/userStore';
 
 export default {
   name: 'userLang',
   setup() {
     const userStore = useUserStore();
-    const { user, language } = storeToRefs(userStore);
     const { locale, setLocaleMessage } = useI18n();
-
     const loadLanguage = async (lang) => {
       const messages = await fetch(`/locales/${lang}.json`).then((res) => res.json());
       setLocaleMessage(lang, messages);
       locale.value = lang;
       userStore.setLanguage(lang);
     };
-
     return {
-      user,
-      language,
       loadLanguage,
     };
   },

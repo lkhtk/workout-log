@@ -1,7 +1,7 @@
 <template>
     <div class="row">
       <div class="col">
-        <div class="d-flex h-100 text-center card shadow" v-if="user">
+        <div class="d-flex h-100 text-center card shadow">
           <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
               <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
                   <h1 class="display-5">
@@ -60,26 +60,18 @@
         <userProgress />
       </div>
     </div>
-    <ToastComponent
-      v-if="toastMessage"
-      :header="toastTitle"
-      :body="toastMessage"
-      @close-toast="clearToast"
-    />
 </template>
 <script>
-import { storeToRefs } from 'pinia';
 import dayjs from 'dayjs';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useUserStore } from '../stores/userStore';
-import userProgress from './analytics/measurementsChart.vue';
-import ToastComponent from './common/toastComponent.vue';
+// eslint-disable-next-line import/no-cycle
 import { createMeasurement, getLastMeasurement } from '../api/api';
+import userProgress from './analytics/measurementsChart.vue';
 
 export default {
   name: 'userMeasurement',
   components: {
-    ToastComponent,
     userProgress,
   },
   data() {
@@ -102,10 +94,8 @@ export default {
     };
   },
   setup() {
-    const userStore = useUserStore();
-    const { user } = storeToRefs(userStore);
     const { t } = useI18n();
-    const measurements = {
+    const measurements = computed(() => ({
       bodyWeight: t('measurements.bodyWeight'),
       bodyFat: t('measurements.bodyFat'),
       neck: t('measurements.neck'),
@@ -116,24 +106,13 @@ export default {
       forearm: t('measurements.forearm'),
       thighs: t('measurements.thighs'),
       calves: t('measurements.calves'),
-    };
+    }));
+
     return {
-      user,
       measurements,
     };
   },
-  computed: {
-    currentUser() {
-      return this.user || {
-        id: 0,
-      };
-    },
-  },
   methods: {
-    clearToast() {
-      this.toastTitle = '';
-      this.toastMessage = '';
-    },
     validateForm() {
       const {
         bodyWeight, bodyFat, neck, chest,
@@ -141,7 +120,7 @@ export default {
       } = this.formData;
 
       if (bodyFat >= 100 || bodyFat < 0) {
-        this.showError('', this.$t('errorsMsg.invalidbodyFat'));
+        window.$toast?.showToast(this.$t('errorsMsg.invalidbodyFat'));
         return false;
       }
 
@@ -158,7 +137,7 @@ export default {
       };
       const invalidMeasurement = Object.entries(measurementsToValidate).some(([value]) => {
         if (value < 0 || value > 350) {
-          this.showError('', this.$t('errorsMsg.invalidMeasurement'));
+          window.$toast?.showToast(this.$t('errorsMsg.invalidMeasurement'));
           return true;
         }
         return false;
@@ -168,26 +147,16 @@ export default {
       }
       return true;
     },
-
-    showError(title, message) {
-      this.toastTitle = title;
-      this.toastMessage = message;
-    },
     async loadUserMeasurement() {
       await getLastMeasurement().then((response) => {
         if (response.data) {
           this.formData = response.data;
           this.formData.measurementDate = this.getCurrentDate();
         } else {
-          this.showError('', this.$t('errorsMsg.noDataAvailable'));
+          window.$toast?.showToast(this.$t('errorsMsg.noDataAvailable'));
         }
       }).catch((error) => {
-        if (error.response?.status === 401) {
-          this.user = null;
-          localStorage.removeItem('user');
-          this.$router.push('/about');
-        }
-        this.showError(error.code, error.message);
+        window.$toast?.showToast(error.message);
       });
     },
     async submitData() {
@@ -195,17 +164,17 @@ export default {
         return;
       }
       try {
-        this.formData.measurementDate = dayjs(this.formData.measurementDate).format('YYYY-MM-DDTHH:mm:ssZ');
+        this.formData.measurementDate = dayjs(this.formData.measurementDate)
+          .format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
         if (response.status === 201 || response.status === 200) {
-          this.showError('Success', this.$t('info.okMsg'));
+          window.$toast?.showToast(this.$t('info.okMsg'));
         } else {
-          this.showError('Error', this.$t('errorsMsg.failedMsg'));
+          window.$toast?.showToast(this.$t('errorsMsg.failedMsg'));
           return;
         }
       } catch (error) {
-        this.showError('Error', this.$t('errorsMsg.failedMsg'));
-        console.error(error);
+        window.$toast?.showToast(this.$t('errorsMsg.failedMsg'));
       }
     },
     resetForm() {

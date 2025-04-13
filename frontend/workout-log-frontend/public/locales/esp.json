@@ -130,6 +130,7 @@
         "noDataAvailable": "Aún no hay entrenamientos",
         "exportFailed": "Error al exportar datos. Inténtalo de nuevo",
         "cleanupFailed": "Error al borrar datos. Inténtalo de nuevo",
+        "deleteFailed": "No se ha podido eliminar la cuenta. Inténtelo de nuevo.",
         "invalidbodyFat": "El porcentaje de grasa no debe superar el 100",
         "invalidMeasurement": "Introduzca los datos correctos",
         "invalndChartData": "Datos insuficientes para trazar el gráfico"

@@ -80,16 +80,24 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	} else {
 		userId = existingUser.ID.Hex()
 	}
-	session := sessions.Default(c)
+	session := getSafeSession(c)
+
+	if session.Get("token") == nil || session.Get("email") == nil {
+		session.Clear()
+		_ = session.Save()
+	}
+
 	session.Options(sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
+		MaxAge:   2592000,
 	})
 	sessionToken := xid.New().String()
 	session.Set("token", sessionToken)
 	session.Set("email", payload["email"].(string))
 	session.Set("user_id", userId)
 	if err = session.Save(); err != nil {
+		log.Println("Failed to save session:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -122,10 +130,6 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 		session := sessions.Default(c)
 		sessionToken := session.Get("token")
 		email := session.Get("email")
-		if env == "dev" {
-			c.Next()
-			return
-		}
 		if sessionToken == nil || email == nil {
 			session.Clear()
 			_ = session.Save()
@@ -142,12 +146,7 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 func getCurrentUser(c *gin.Context) (primitive.ObjectID, bson.M, error) {
 	user_id := ""
 	ok := false
-	if env == "dev" {
-		user_id = os.Getenv("TEST_USER_ID")
-		ok = true
-	} else {
-		user_id, ok = sessions.Default(c).Get("user_id").(string)
-	}
+	user_id, ok = sessions.Default(c).Get("user_id").(string)
 	if !ok || user_id == "" {
 		return primitive.ObjectID{}, bson.M{}, errors.New("user is not authenticated")
 	}
@@ -180,4 +179,12 @@ func (handler *AuthHandler) DeleteCurrentUser(c *gin.Context) error {
 	})
 	session.Save()
 	return nil
+}
+func getSafeSession(c *gin.Context) sessions.Session {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Recovered from session panic:", r)
+		}
+	}()
+	return sessions.Default(c)
 }

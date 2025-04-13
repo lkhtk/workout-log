@@ -47,10 +47,9 @@ export default {
   },
   setup() {
     const userStore = useUserStore();
-    const { user, language } = storeToRefs(userStore);
+    const { user } = storeToRefs(userStore);
     return {
       user,
-      language,
     };
   },
   computed: {

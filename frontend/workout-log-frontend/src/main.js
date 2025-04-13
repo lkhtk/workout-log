@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import GoogleSignInPlugin from 'vue3-google-signin';
 import { createI18n } from 'vue-i18n';
+import * as bootstrap from 'bootstrap';
 import App from './App.vue';
 import router from './router';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -30,6 +31,7 @@ const i18n = createI18n({
 });
 
 library.add(fas);
+window.bootstrap = bootstrap;
 
 app.use(i18n)
   .component('font-awesome-icon', FontAwesomeIcon)

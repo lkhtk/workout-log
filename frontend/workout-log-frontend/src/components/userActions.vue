@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="user">
+  <div class="container">
     <form @submit.prevent="" class="mb-4">
       <div class="d-grid gap-2">
         <div class="container d-grid gap-2 col-6 mx-auto">
@@ -23,33 +23,13 @@
       </div>
     </form>
   </div>
-  <ToastComponent
-      v-if="toastMessage"
-      :header="toastTitle"
-      :body="toastMessage"
-      @close-toast="clearToast"
-  />
 </template>
 
 <script>
-import { storeToRefs } from 'pinia';
-import { Modal } from 'bootstrap';
-import { useUserStore } from '../stores/userStore';
-import ToastComponent from './common/toastComponent.vue';
 import { exportData as apiExportData, wipeData, deleteUser } from '../api/api';
 
 export default {
   name: 'userActions',
-  components: {
-    ToastComponent,
-  },
-  setup() {
-    const userStore = useUserStore();
-    const { user } = storeToRefs(userStore);
-    return {
-      user,
-    };
-  },
   data() {
     return {
       toastTitle: '',
@@ -79,16 +59,15 @@ export default {
         </div>
       `;
       document.body.appendChild(modalTemplate);
+
       const modalElement = modalTemplate.querySelector('.modal');
-      const modalInstance = new Modal(modalElement);
+      const modalInstance = new window.bootstrap.Modal(modalElement);
       modalInstance.show();
+
       const confirmButton = modalTemplate.querySelector('#confirmBtn');
       confirmButton.addEventListener('click', () => {
         onConfirm();
         modalInstance.hide();
-        modalElement.addEventListener('hidden.bs.modal', () => {
-          document.body.removeChild(modalTemplate);
-        });
       });
 
       modalElement.addEventListener('hidden.bs.modal', () => {
@@ -112,10 +91,9 @@ export default {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        this.showError('', this.$t('info.actionSuccess'));
+        window.$toast?.showToast(this.$t('info.actionSuccess'));
       } catch (error) {
-        console.error('Export failed:', error.message);
-        this.showError('', this.$t('errorsMsg.exportFailed'));
+        window.$toast?.showToast(this.$t('errorsMsg.exportFailed'));
       }
     },
     clearData() {
@@ -124,9 +102,9 @@ export default {
         async () => {
           try {
             await wipeData();
-            this.showError('', this.$t('info.actionSuccess'));
+            window.$toast?.showToast(this.$t('info.actionSuccess'));
           } catch (error) {
-            this.showError('', this.$t('errorsMsg.cleanupFailed'));
+            window.$toast?.showToast(this.$t('errorsMsg.cleanupFailed'));
           }
         },
       );
@@ -137,29 +115,20 @@ export default {
         async () => {
           try {
             await deleteUser();
-            this.userStore.clearUser();
-            this.showError('', this.$t('info.deleteSuccess'));
+            this.userStore.logout();
+            window.$toast?.showToast(this.$t('info.deleteSuccess'));
             setTimeout(() => {
               window.location.replace('/about');
             }, 2000);
           } catch (error) {
-            console.error('Delete failed:', error.message);
-            this.showError('', this.$t('errorsMsg.deleteFailed'));
-            this.userStore.clearUser();
+            window.$toast?.showToast(this.$t('errorsMsg.deleteFailed'));
+            this.userStore.logout();
             setTimeout(() => {
               window.location.replace('/about');
             }, 2000);
           }
         },
       );
-    },
-    showError(title, message) {
-      this.toastTitle = title;
-      this.toastMessage = message;
-    },
-    clearToast() {
-      this.toastTitle = '';
-      this.toastMessage = '';
     },
   },
 };

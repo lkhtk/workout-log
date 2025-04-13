@@ -310,28 +310,17 @@
         </button>
       </div>
     </div>
-    <!-- Toast container -->
-    <ToastComponent
-      v-if="toastMessage"
-      :header="toastTitle"
-      :body="toastMessage"
-      @close-toast="clearToast"
-    />
-
 </template>
 
 <script>
 import dayjs from 'dayjs';
 import { ref } from 'vue';
 import { updateWorkout, deleteWorkout, createWorkout } from '../../api/api';
-import ToastComponent from '../common/toastComponent.vue';
+
 import { useUserStore } from '../../stores/userStore';
 
 export default {
   name: 'WorkoutComponent',
-  components: {
-    ToastComponent,
-  },
   props: {
     workoutData: {
       type: Object,
@@ -355,7 +344,7 @@ export default {
     try {
       localData = JSON.parse(JSON.stringify(this.workoutData));
     } catch (e) {
-      console.error('Invalid JSON in propsName:', e);
+      window.$toast?.showToast('Invalid JSON');
       localData = {};
     }
     return {
@@ -379,20 +368,6 @@ export default {
         return max;
       }, 0);
     },
-    showError(title, message) {
-      this.toastTitle = title;
-      this.toastMessage = '';
-      this.$nextTick(() => {
-        this.toastMessage = message;
-        setTimeout(() => {
-          this.clearToast();
-        }, 3000);
-      });
-    },
-    clearToast() {
-      this.toastTitle = '';
-      this.toastMessage = '';
-    },
     formatDate(dateString) {
       return dayjs(dateString).format('DD.MM.YYYY');
     },
@@ -400,14 +375,14 @@ export default {
     addSet(exerciseIndex) {
       const exercise = this.localWorkoutData.workout.exercises[exerciseIndex];
       if (!exercise) {
-        console.error(`Exercise at index ${exerciseIndex} not found.`);
+        window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`);
         return;
       }
       if (!exercise.sets) {
         exercise.sets = [];
       }
       if (exercise.sets.length >= 10) {
-        this.showError('', this.$t('errorsMsg.setsLimit'));
+        window.$toast?.showToast(this.$t('errorsMsg.setsLimit'));
         return;
       }
       exercise.sets.push({
@@ -418,7 +393,7 @@ export default {
     },
     addExercise() {
       if (this.localWorkoutData.workout.exercises.length >= 10) {
-        this.showError('', this.$t('errorsMsg.exercisesLimit'));
+        window.$toast?.showToast(this.$t('errorsMsg.exercisesLimit'));
         return;
       }
       const emptySets = [];
@@ -434,7 +409,7 @@ export default {
 
     addCardio() {
       if (this.localWorkoutData.workout.cardio.length >= 10) {
-        this.showError('', this.$t('errorsMsg.cardiosLimit'));
+        window.$toast?.showToast(this.$t('errorsMsg.cardiosLimit'));
         return;
       }
       this.localWorkoutData.workout.cardio.push({});
@@ -454,7 +429,7 @@ export default {
     removeSet(exerciseIndex) {
       const exercise = this.localWorkoutData.workout.exercises[exerciseIndex];
       if (!exercise) {
-        console.error(`Exercise at index ${exerciseIndex} not found.`);
+        window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`);
         return;
       }
       if (exercise.sets.length <= 1) {
@@ -477,43 +452,31 @@ export default {
       });
       if (this.localWorkoutData.id) {
         await updateWorkout(this.localWorkoutData).then(() => {
-          this.showError('', this.$t('info.updated'));
+          window.$toast?.showToast(this.$t('info.updated'));
         }).catch((error) => {
-          if (error.response?.status === 401) {
-            this.userStore.clearUser();
-            this.$router.push('/about');
-          }
-          this.showError(error.code, error.message);
+          window.$toast?.showToast(error.message);
         });
       } else {
         await createWorkout(this.localWorkoutData).then(() => {
-          this.showError('', this.$t('info.created'));
+          window.$toast?.showToast(this.$t('info.created'));
           this.errorData = {};
           this.localWorkoutData.workout = {};
           window.location.reload();
         })
           .catch((error) => {
-            if (error.response?.status === 401) {
-              this.userStore.clearUser();
-              window.location.replace('/about');
-            }
-            this.showError(error.message, error.code);
+            window.$toast?.showToast(error.message);
           });
       }
     },
     async deleteWorkoutById(id) {
       await deleteWorkout(id).then(() => {
-        this.showError('', this.$t('info.deleted'));
+        window.$toast?.showToast(this.$t('info.deleted'));
         this.errorData = {};
         this.localWorkoutData.workout = {};
         window.location.reload();
       })
         .catch((error) => {
-          if (error.response?.status === 401) {
-            this.userStore.clearUser();
-            window.location.replace('/about');
-          }
-          this.showError(error.message, error.code);
+          window.$toast?.showToast(error.message);
         });
     },
   },

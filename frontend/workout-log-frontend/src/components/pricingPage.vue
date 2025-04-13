@@ -22,14 +22,9 @@
                   <li>{{ $t('price.p1_b3') }}</li>
                   <li>{{ $t('price.p1_b4') }}</li>
                 </ul>
-                <div v-if="!user">
-                  <auth-button
-                  loginButtonClass="btn btn-outline-dark"
-                  logoutButtonClass="btn btn-outline-dark" />
-                </div>
-                <div v-else>
+                <div>
                   <button class="btn btn-dark btn-lg"
-                    @click="$router.push('/')">
+                    @click="$router.push('/profile')">
                     <font-awesome-icon icon="fa-solid fa-dumbbell" />
                     {{ $t('buttons.go') }}
                   </button>
@@ -42,13 +37,3 @@
     </div>
   </div>
 </template>
-<script setup>
-import { storeToRefs } from 'pinia';
-
-import { useUserStore } from '../stores/userStore';
-import AuthButton from './common/AuthButton.vue';
-
-document.title = 'Gym Log';
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-</script>

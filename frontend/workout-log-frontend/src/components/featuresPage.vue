@@ -9,14 +9,9 @@
           <div class="col d-flex flex-column align-items-start gap-2">
             <h2 class="fw-bold text-body-emphasis">{{ $t('features.title') }}</h2>
             <p class="text-body-secondary">{{ $t('features.header') }}</p>
-            <div v-if="!user">
-              <auth-button
-                loginButtonClass="btn btn-outline-dark"
-                logoutButtonClass="btn btn-outline-dark"/>
-            </div>
-            <div v-else>
+            <div>
               <button class="btn btn-dark btn-lg"
-                @click="$router.push('/')">
+                @click="$router.push('/profile')">
                 <font-awesome-icon icon="fa-solid fa-dumbbell" />
                 {{ $t('buttons.go') }}
               </button>
@@ -69,13 +64,3 @@
     </div>
   </div>
 </template>
-<script setup>
-import { storeToRefs } from 'pinia';
-
-import { useUserStore } from '../stores/userStore';
-import AuthButton from './common/AuthButton.vue';
-
-document.title = 'Gym Log';
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-</script>

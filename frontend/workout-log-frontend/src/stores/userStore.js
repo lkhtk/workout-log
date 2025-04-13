@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', {
       this.user = userData;
       localStorage.setItem('user', JSON.stringify(userData));
     },
-    clearUser() {
+    logout() {
       this.user = null;
       localStorage.removeItem('user');
       localStorage.setItem('lang', JSON.stringify(this.lang));

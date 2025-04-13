@@ -1,98 +1,40 @@
 <template>
   <div
+    v-if="visible"
     class="toast-container position-fixed bottom-0 end-0 p-3"
-    style="z-index: 1050;">
-    <div
-      ref="toast"
-      class="toast align-items-center text-bg-dark border-0"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true">
-      <div class="toast-header" v-if="header">
-        <strong class="me-auto">{{ header }}</strong>
+    style="z-index: 1100;"
+  >
+    <div class="toast show align-items-center text-white bg-danger border-0">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ message }}
+        </div>
         <button
           type="button"
-          class="btn-close"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-          @click="closeToast"></button>
-      </div>
-      <div class="toast-body">
-        {{ body }}
+          class="btn-close btn-close-white me-2 m-auto"
+          @click="visible = false"
+        ></button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import { Toast } from 'bootstrap';
+<script setup>
+import { ref, defineExpose } from 'vue';
 
-export default {
-  name: 'ToastComponent',
-  props: {
-    header: {
-      type: String,
-      required: true,
-    },
-    body: {
-      type: String,
-      required: true,
-    },
-    autohide: {
-      type: Boolean,
-      default: true,
-    },
-    delay: {
-      type: Number,
-      default: 3000,
-    },
-  },
-  data() {
-    return {
-      toastInstance: null,
-    };
-  },
-  methods: {
-    showToast() {
-      if (this.toastInstance) {
-        this.toastInstance.show();
-      }
-    },
-    closeToast() {
-      if (this.toastInstance) {
-        this.toastInstance.hide();
-      }
-      this.$emit('close-toast');
-    },
-  },
-  watch: {
-    body: {
-      immediate: true,
-      handler() {
-        this.showToast();
-      },
-    },
-  },
-  mounted() {
-    const toastEl = this.$refs.toast;
-    if (toastEl) {
-      this.toastInstance = new Toast(toastEl, {
-        autohide: this.autohide,
-        delay: this.delay,
-      });
-      this.showToast();
-    }
-  },
-  beforeUnmount() {
-    if (this.toastInstance) {
-      this.toastInstance.dispose();
-    }
-  },
-};
-</script>
+const visible = ref(false);
+const message = ref('');
 
-<style scoped>
-.toast-container {
-  max-width: 300px;
+function showToast(msg) {
+  message.value = msg;
+  visible.value = true;
+
+  setTimeout(() => {
+    visible.value = false;
+  }, 4000);
 }
-</style>
+
+defineExpose({
+  showToast,
+});
+</script>

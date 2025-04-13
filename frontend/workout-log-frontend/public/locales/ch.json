@@ -130,6 +130,7 @@
         "noDataAvailable": "目前还没有锻炼计划",
         "exportFailed": "导出数据失败。请重试。",
         "cleanupFailed": "清除数据失败。请重试。",
+        "deleteFailed": "删除账户失败。请重试。",
         "invalidbodyFat": "脂肪百分比不得超过 100",
         "invalidMeasurement": "输入正确的数据",
         "invalndChartData": "绘制图表的数据不足"

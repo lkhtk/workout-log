@@ -5,7 +5,7 @@
       alt="Bootstrap Themes" width="500" height="300" loading="lazy">
     </div>
     <div class="col-lg-6">
-      <h1 class="display-1">Wokrout log</h1>
+      <h1 class="display-1">Gym log</h1>
       <p class="lead">{{ $t('info.description') }}</p>
       <div class="d-grid gap-2 d-md-flex justify-content-md-start">
         <button type="button" class="btn btn-dark btn-lg px-4 me-md-2"

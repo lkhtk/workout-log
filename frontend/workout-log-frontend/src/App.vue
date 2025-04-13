@@ -12,26 +12,27 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item" v-if="user">
-            <a aria-current="page" href="#" class="nav-link">
-              <router-link to="/" class="link-light">
-                {{ $t('links.journal') }}</router-link>
-            </a>
-          </li>
-          <li class="nav-item" v-if="user">
-            <a aria-current="page" href="#" class="nav-link">
-              <router-link to="/measurements" class="link-light">
-                {{ $t('measurements.title') }}</router-link>
-            </a>
-          </li>
-          <li class="nav-item" v-if="user">
-            <a aria-current="page" href="#" class="nav-link">
-              <router-link to="/trends" class="link-light">
-                {{ $t('trends.title') }}</router-link>
-            </a>
-          </li>
-        </ul>
+        <!-- AUTH -->
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item" v-if="user">
+              <a aria-current="page" href="#" class="nav-link">
+                <router-link to="/" class="link-light">
+                  {{ $t('links.journal') }}</router-link>
+              </a>
+            </li>
+            <li class="nav-item" v-if="user">
+              <a aria-current="page" href="#" class="nav-link">
+                <router-link to="/measurements" class="link-light">
+                  {{ $t('measurements.title') }}</router-link>
+              </a>
+            </li>
+            <li class="nav-item" v-if="user">
+              <a aria-current="page" href="#" class="nav-link">
+                <router-link to="/trends" class="link-light">
+                  {{ $t('trends.title') }}</router-link>
+              </a>
+            </li>
+          </ul>
         <ul class="navbar-nav d-flex">
           <li class="nav-item d-flex">
             <auth-button loginButtonClass="btn btn-outline-light"
@@ -68,6 +69,7 @@
     </div>
   </nav>
 </header>
+  <ToastComponent ref="toastRef" />
   <div class="shadow-lg p-3 bg-body-tertiary rounded">
     <div class="container">
       <router-view />
@@ -92,6 +94,7 @@
             {{ $t('trends.title') }}
           </router-link>
         </li>
+      <!-- UNAUTH -->
         <li class="breadcrumb-item">
           <router-link class="nav-item link-body-emphasis" to="/features">
             {{ $t('links.features') }}</router-link>
@@ -114,15 +117,20 @@
     </nav>
   </footer>
 </template>
-
 <script setup>
 import { storeToRefs } from 'pinia';
-
+import { onMounted, ref } from 'vue';
 import { useUserStore } from './stores/userStore';
 import AuthButton from './components/common/AuthButton.vue';
-import userLang from './components/userLang.vue';
+import userLang from './components/common/userLang.vue';
+import ToastComponent from './components/common/toastComponent.vue';
+
+const toastRef = ref(null);
 
 document.title = 'Gym Log';
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+onMounted(() => {
+  window.$toast = toastRef.value;
+});
 </script>

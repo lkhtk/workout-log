@@ -173,10 +173,9 @@ export default defineComponent({
             name: exercise,
             data: exerciseMap[exercise].sort((a, b) => a.x - b.x),
           }));
-
         chartOptions.value.series = aggregatedData;
       } catch (error) {
-        console.error(error.message);
+        window.$toast?.showToast(error.message);
       }
     };
 
@@ -186,7 +185,7 @@ export default defineComponent({
         chartOptionsPie.value.labels = response.data.data.map((item) => item.name);
         chartOptionsPie.value.series = response.data.data.map((item) => item.count);
       } catch (error) {
-        console.error(error);
+        window.$toast?.showToast(error.message);
       }
     };
 
