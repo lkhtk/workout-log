@@ -114,6 +114,10 @@ func sitemap(c *gin.Context) {
         <loc>https://%s/features</loc>
         <lastmod>%s</lastmod>
     </url>
+	<url>
+        <loc>https://%s/faq</loc>
+        <lastmod>%s</lastmod>
+    </url>
     <url>
         <loc>https://%s/pricing</loc>
         <lastmod>%s</lastmod>
@@ -137,6 +141,7 @@ func robots(c *gin.Context) {
 	robots := `User-agent: *
 Disallow: /
 Allow: /features
+Allow: /faq
 Allow: /pricing
 Allow: /about`
 	c.Data(http.StatusOK, "text/plain", []byte(robots))

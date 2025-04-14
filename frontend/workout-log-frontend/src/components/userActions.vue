@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="user">
     <form @submit.prevent="" class="mb-4">
       <div class="d-grid gap-2">
         <div class="container d-grid gap-2 col-6 mx-auto">
@@ -26,14 +26,17 @@
 </template>
 
 <script>
+import { storeToRefs } from 'pinia';
 import { exportData as apiExportData, wipeData, deleteUser } from '../api/api';
+import { useUserStore } from '../stores/userStore';
 
 export default {
   name: 'userActions',
-  data() {
+  setup() {
+    const userStore = useUserStore();
+    const { user } = storeToRefs(userStore);
     return {
-      toastTitle: '',
-      toastMessage: '',
+      user,
     };
   },
   methods: {

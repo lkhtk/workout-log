@@ -56,6 +56,12 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	payload, err := verifyGoogleToken(token.Token)
 	if err != nil {
 		log.Println(err)
+		session := sessions.Default(c)
+		session.Clear()
+		session.Options(sessions.Options{
+			MaxAge: -1,
+		})
+		session.Save()
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
@@ -121,7 +127,10 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 			if r := recover(); r != nil {
 				session := sessions.Default(c)
 				session.Clear()
-				_ = session.Save()
+				session.Options(sessions.Options{
+					MaxAge: -1,
+				})
+				session.Save()
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 					"error": "session expired or invalid",
 				})
@@ -132,8 +141,10 @@ func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 		email := session.Get("email")
 		if sessionToken == nil || email == nil {
 			session.Clear()
-			_ = session.Save()
-
+			session.Options(sessions.Options{
+				MaxAge: -1,
+			})
+			session.Save()
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": "unauthorized or session missing",
 			})

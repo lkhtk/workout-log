@@ -13,32 +13,32 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <!-- AUTH -->
-          <ul class="navbar-nav me-auto mb-2 mb-md-0">
-            <li class="nav-item" v-if="user">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0" v-if="user">
+            <li class="nav-item">
               <a aria-current="page" href="#" class="nav-link">
-                <router-link to="/" class="link-light">
+                <router-link to="/dairy" class="link-light">
                   {{ $t('links.journal') }}</router-link>
               </a>
             </li>
-            <li class="nav-item" v-if="user">
+            <li class="nav-item">
               <a aria-current="page" href="#" class="nav-link">
                 <router-link to="/measurements" class="link-light">
                   {{ $t('measurements.title') }}</router-link>
               </a>
             </li>
-            <li class="nav-item" v-if="user">
+            <li class="nav-item">
               <a aria-current="page" href="#" class="nav-link">
                 <router-link to="/trends" class="link-light">
                   {{ $t('trends.title') }}</router-link>
               </a>
             </li>
           </ul>
-        <ul class="navbar-nav d-flex">
-          <li class="nav-item d-flex">
-            <auth-button loginButtonClass="btn btn-outline-light"
-            logoutButtonClass="btn btn-outline-light"/>
-          </li>
-        </ul>
+          <ul class="navbar-nav d-flex">
+            <li class="nav-item d-flex">
+              <auth-button loginButtonClass="btn btn-outline-light"
+              logoutButtonClass="btn btn-outline-light"/>
+            </li>
+          </ul>
         <div
           class="dropdown ms-auto ms-md-0"
           v-if="user">
@@ -81,7 +81,7 @@
     <nav style="--bs-breadcrumb-divider: '';" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item" v-if="user">
-          <router-link class="nav-item link-body-emphasis" to="/">
+          <router-link class="nav-item link-body-emphasis" to="/dairy">
             {{ $t('links.journal') }}</router-link>
         </li>
         <li class="breadcrumb-item" v-if="user">
@@ -94,7 +94,7 @@
             {{ $t('trends.title') }}
           </router-link>
         </li>
-      <!-- UNAUTH -->
+        <!-- UNAUTH -->
         <li class="breadcrumb-item">
           <router-link class="nav-item link-body-emphasis" to="/features">
             {{ $t('links.features') }}</router-link>
