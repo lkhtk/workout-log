@@ -46,22 +46,26 @@ func verifyGoogleToken(token string) (map[string]interface{}, error) {
 	}
 	return payload.Claims, nil
 }
-
 func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	var token TokenRequest
+	session := sessions.Default(c)
+	if session == nil || session.Get("token") == nil {
+		log.Println("Session is nil or expired — resetting cookie")
+		http.SetCookie(c.Writer, &http.Cookie{
+			Name:     "client_session",
+			Value:    "",
+			Path:     "/",
+			HttpOnly: true,
+			MaxAge:   -1,
+		})
+		session = sessions.Default(c)
+	}
 	if err := c.ShouldBindJSON(&token); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	payload, err := verifyGoogleToken(token.Token)
 	if err != nil {
-		log.Println(err)
-		session := sessions.Default(c)
-		session.Clear()
-		session.Options(sessions.Options{
-			MaxAge: -1,
-		})
-		session.Save()
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
@@ -82,29 +86,26 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		userId = res.InsertedID.(primitive.ObjectID).String()
+		userId = res.InsertedID.(primitive.ObjectID).Hex()
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	} else {
 		userId = existingUser.ID.Hex()
 	}
-	session := getSafeSession(c)
-
-	if session.Get("token") == nil || session.Get("email") == nil {
-		session.Clear()
-		_ = session.Save()
-	}
-
-	session.Options(sessions.Options{
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   2592000,
-	})
 	sessionToken := xid.New().String()
 	session.Set("token", sessionToken)
 	session.Set("email", payload["email"].(string))
 	session.Set("user_id", userId)
+	session.Options(sessions.Options{
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		MaxAge:   60 * 60 * 24 * 30,
+	})
 	if err = session.Save(); err != nil {
 		log.Println("Failed to save session:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "User authenticated successfully", "User": payload})
@@ -190,12 +191,4 @@ func (handler *AuthHandler) DeleteCurrentUser(c *gin.Context) error {
 	})
 	session.Save()
 	return nil
-}
-func getSafeSession(c *gin.Context) sessions.Session {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Println("Recovered from session panic:", r)
-		}
-	}()
-	return sessions.Default(c)
 }
