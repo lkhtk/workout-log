@@ -58,6 +58,7 @@ func main() {
 	store := mongodriver.NewStore(c, 3600, true, []byte(os.Getenv("SESSION_SECRET")))
 	store.Options(sessions.Options{Path: "/", Domain: "localhost"})
 	server.Use(sessions.Sessions("client_session", store))
+	server.Use(ClearCorruptedSessionMiddleware())
 	server.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:8080"},
 		AllowMethods:     []string{"GET", "POST"},
@@ -201,4 +202,17 @@ func deleteAccount(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, nil)
 	return
+}
+
+func ClearCorruptedSessionMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("Recovered from session panic:", r)
+				c.SetCookie("client_session", "", -1, "/", "", false, true)
+			}
+		}()
+		_ = sessions.Default(c).Get("token")
+		c.Next()
+	}
 }

@@ -48,54 +48,47 @@ func verifyGoogleToken(token string) (map[string]interface{}, error) {
 }
 func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 	var token TokenRequest
-	session := sessions.Default(c)
-	if session == nil || session.Get("token") == nil {
-		log.Println("Session is nil or expired — resetting cookie")
-		http.SetCookie(c.Writer, &http.Cookie{
-			Name:     "client_session",
-			Value:    "",
-			Path:     "/",
-			HttpOnly: true,
-			MaxAge:   -1,
-		})
-		session = sessions.Default(c)
-	}
 	if err := c.ShouldBindJSON(&token); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	payload, err := verifyGoogleToken(token.Token)
 	if err != nil {
+		log.Println("Token verification failed:", err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
-	var userId string
+	email := payload["email"].(string)
 	var existingUser models.User
-	err = handler.collection.FindOne(context.TODO(), bson.M{"email": payload["email"].(string)}).Decode(&existingUser)
-	if err == mongo.ErrNoDocuments {
+	err = handler.collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&existingUser)
+	var userId string
+	switch {
+	case err == mongo.ErrNoDocuments:
 		user := models.User{
 			Name:      payload["name"].(string),
-			Email:     payload["email"].(string),
+			Email:     email,
 			Picture:   payload["picture"].(string),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-
 		res, err := handler.collection.InsertOne(context.TODO(), user)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.Println("Failed to create user:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 			return
 		}
 		userId = res.InsertedID.(primitive.ObjectID).Hex()
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	case err != nil:
+		log.Println("Failed to fetch user:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
-	} else {
+	default:
 		userId = existingUser.ID.Hex()
 	}
+	session := sessions.Default(c)
 	sessionToken := xid.New().String()
 	session.Set("token", sessionToken)
-	session.Set("email", payload["email"].(string))
+	session.Set("email", email)
 	session.Set("user_id", userId)
 	session.Options(sessions.Options{
 		Path:     "/",
@@ -108,7 +101,11 @@ func (handler *AuthHandler) GoogleAuthHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "User authenticated successfully", "User": payload})
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User authenticated successfully",
+		"user":    payload,
+	})
 }
 
 func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {
