@@ -1,27 +1,33 @@
 <template>
-  <div class="container" v-if="user">
-    <form @submit.prevent="" class="mb-4">
-      <div class="d-grid gap-2">
-        <div class="container d-grid gap-2 col-6 mx-auto">
-          <h1 class="display-5">{{ $t('userActions.title') }}</h1>
-          <button type="button" class="btn btn-outline-dark" @click="exportData">
-            <font-awesome-icon icon="fa-solid fa-file-arrow-down" />
-            {{ $t('userActions.export') }}
-          </button>
-          <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger">
-            {{ $t('userActions.danger') }}
+  <div class="container py-5" v-if="user">
+    <div class="row justify-content-center">
+      <div class="">
+        <div class="card shadow rounded">
+          <div class="card-body p-5">
+            <h2 class="card-title text-center mb-4">
+              {{ $t('userActions.title') }}
+            </h2>
+            <div class="d-grid gap-3">
+              <button type="button" class="btn btn-outline-primary" @click="exportData">
+                <font-awesome-icon icon="fa-solid fa-file-arrow-down" class="me-2" />
+                {{ $t('userActions.export') }}
+              </button>
+              <div class="text-danger text-center fw-bold border-top pt-4 mt-3">
+                {{ $t('userActions.danger') }}
+              </div>
+              <button class="btn btn-outline-warning" @click="clearData">
+                <font-awesome-icon icon="fa-solid fa-triangle-exclamation" class="me-2" />
+                {{ $t('userActions.wipe') }}
+              </button>
+              <button class="btn btn-outline-danger" @click="deleteAccount">
+                <font-awesome-icon icon="fa-solid fa-skull" class="me-2" />
+                {{ $t('userActions.delete') }}
+              </button>
+            </div>
           </div>
-          <button class="btn btn-outline-dark" @click="clearData">
-            <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
-            {{ $t('userActions.wipe') }}
-          </button>
-          <button class="btn btn-outline-danger" @click="deleteAccount">
-            <font-awesome-icon icon="fa-solid fa-skull" />
-           {{ $t('userActions.delete') }}
-          </button>
         </div>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -94,9 +100,9 @@ export default {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        window.$toast?.showToast(this.$t('info.actionSuccess'));
+        window.$toast?.showToast(this.$t('info.actionSuccess'), 'success');
       } catch (error) {
-        window.$toast?.showToast(this.$t('errorsMsg.exportFailed'));
+        window.$toast?.showToast(this.$t('errorsMsg.exportFailed'), 'danger');
       }
     },
     clearData() {
@@ -105,9 +111,9 @@ export default {
         async () => {
           try {
             await wipeData();
-            window.$toast?.showToast(this.$t('info.actionSuccess'));
+            window.$toast?.showToast(this.$t('info.actionSuccess'), 'success');
           } catch (error) {
-            window.$toast?.showToast(this.$t('errorsMsg.cleanupFailed'));
+            window.$toast?.showToast(this.$t('errorsMsg.cleanupFailed'), 'danger');
           }
         },
       );
@@ -119,12 +125,12 @@ export default {
           try {
             await deleteUser();
             this.userStore.logout();
-            window.$toast?.showToast(this.$t('info.deleteSuccess'));
+            window.$toast?.showToast(this.$t('info.deleteSuccess'), 'success');
             setTimeout(() => {
               window.location.replace('/about');
             }, 2000);
           } catch (error) {
-            window.$toast?.showToast(this.$t('errorsMsg.deleteFailed'));
+            window.$toast?.showToast(this.$t('errorsMsg.deleteFailed'), 'danger');
             this.userStore.logout();
             setTimeout(() => {
               window.location.replace('/about');
@@ -136,3 +142,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+</style>

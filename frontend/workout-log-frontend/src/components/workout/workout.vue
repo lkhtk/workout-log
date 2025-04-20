@@ -344,7 +344,7 @@ export default {
     try {
       localData = JSON.parse(JSON.stringify(this.workoutData));
     } catch (e) {
-      window.$toast?.showToast('Invalid JSON');
+      window.$toast?.showToast('Invalid JSON', 'danger');
       localData = {};
     }
     return {
@@ -375,14 +375,14 @@ export default {
     addSet(exerciseIndex) {
       const exercise = this.localWorkoutData.workout.exercises[exerciseIndex];
       if (!exercise) {
-        window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`);
+        window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`, 'danger');
         return;
       }
       if (!exercise.sets) {
         exercise.sets = [];
       }
       if (exercise.sets.length >= 10) {
-        window.$toast?.showToast(this.$t('errorsMsg.setsLimit'));
+        window.$toast?.showToast(this.$t('errorsMsg.setsLimit'), 'info');
         return;
       }
       exercise.sets.push({
@@ -393,7 +393,7 @@ export default {
     },
     addExercise() {
       if (this.localWorkoutData.workout.exercises.length >= 10) {
-        window.$toast?.showToast(this.$t('errorsMsg.exercisesLimit'));
+        window.$toast?.showToast(this.$t('errorsMsg.exercisesLimit'), 'info');
         return;
       }
       const emptySets = [];
@@ -409,7 +409,7 @@ export default {
 
     addCardio() {
       if (this.localWorkoutData.workout.cardio.length >= 10) {
-        window.$toast?.showToast(this.$t('errorsMsg.cardiosLimit'));
+        window.$toast?.showToast(this.$t('errorsMsg.cardiosLimit'), 'info');
         return;
       }
       this.localWorkoutData.workout.cardio.push({});
@@ -429,7 +429,7 @@ export default {
     removeSet(exerciseIndex) {
       const exercise = this.localWorkoutData.workout.exercises[exerciseIndex];
       if (!exercise) {
-        window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`);
+        window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`, 'danger');
         return;
       }
       if (exercise.sets.length <= 1) {
@@ -452,31 +452,31 @@ export default {
       });
       if (this.localWorkoutData.id) {
         await updateWorkout(this.localWorkoutData).then(() => {
-          window.$toast?.showToast(this.$t('info.updated'));
+          window.$toast?.showToast(this.$t('info.updated'), 'success');
         }).catch((error) => {
-          window.$toast?.showToast(error.message);
+          window.$toast?.showToast(error.message, 'danger');
         });
       } else {
         await createWorkout(this.localWorkoutData).then(() => {
-          window.$toast?.showToast(this.$t('info.created'));
+          window.$toast?.showToast(this.$t('info.created'), 'success');
           this.errorData = {};
           this.localWorkoutData.workout = {};
           window.location.reload();
         })
           .catch((error) => {
-            window.$toast?.showToast(error.message);
+            window.$toast?.showToast(error.message, 'danger');
           });
       }
     },
     async deleteWorkoutById(id) {
       await deleteWorkout(id).then(() => {
-        window.$toast?.showToast(this.$t('info.deleted'));
+        window.$toast?.showToast(this.$t('info.deleted'), 'success');
         this.errorData = {};
         this.localWorkoutData.workout = {};
         window.location.reload();
       })
         .catch((error) => {
-          window.$toast?.showToast(error.message);
+          window.$toast?.showToast(error.message, 'danger');
         });
     },
   },
@@ -492,8 +492,3 @@ export default {
   },
 };
 </script>
-<style>
-.toast-container {
-  z-index: 1050;
-}
-</style>

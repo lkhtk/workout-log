@@ -46,7 +46,7 @@ const fetchMeasurements = async () => {
       measurements.value = response.data.data;
     }
   } catch (error) {
-    window.$toast?.showToast(error.message);
+    window.$toast?.showToast(error.message, 'danger');
   } finally {
     isLoading.value = false;
   }

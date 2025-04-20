@@ -120,7 +120,7 @@ export default {
       } = this.formData;
 
       if (bodyFat >= 100 || bodyFat < 0) {
-        window.$toast?.showToast(this.$t('errorsMsg.invalidbodyFat'));
+        window.$toast?.showToast(this.$t('errorsMsg.invalidbodyFat'), 'warning');
         return false;
       }
 
@@ -137,7 +137,7 @@ export default {
       };
       const invalidMeasurement = Object.entries(measurementsToValidate).some(([value]) => {
         if (value < 0 || value > 350) {
-          window.$toast?.showToast(this.$t('errorsMsg.invalidMeasurement'));
+          window.$toast?.showToast(this.$t('errorsMsg.invalidMeasurement', 'warning'));
           return true;
         }
         return false;
@@ -153,10 +153,10 @@ export default {
           this.formData = response.data;
           this.formData.measurementDate = this.getCurrentDate();
         } else {
-          window.$toast?.showToast(this.$t('errorsMsg.noDataAvailable'));
+          window.$toast?.showToast(this.$t('errorsMsg.noDataAvailable'), 'warning');
         }
       }).catch((error) => {
-        window.$toast?.showToast(error.message);
+        window.$toast?.showToast(error.message, 'danger');
       });
     },
     async submitData() {
@@ -168,13 +168,13 @@ export default {
           .format('YYYY-MM-DDTHH:mm:ssZ');
         const response = await createMeasurement(this.formData);
         if (response.status === 201 || response.status === 200) {
-          window.$toast?.showToast(this.$t('info.okMsg'));
+          window.$toast?.showToast(this.$t('info.okMsg'), 'success');
         } else {
-          window.$toast?.showToast(this.$t('errorsMsg.failedMsg'));
+          window.$toast?.showToast(this.$t('errorsMsg.failedMsg'), 'danger');
           return;
         }
       } catch (error) {
-        window.$toast?.showToast(this.$t('errorsMsg.failedMsg'));
+        window.$toast?.showToast(this.$t('errorsMsg.failedMsg'), 'danger');
       }
     },
     resetForm() {

@@ -58,7 +58,7 @@ const { login } = useOneTap({
       };
       userStore.setUser(userData);
     } catch (error) {
-      window.$toast?.showToast(error.message);
+      window.$toast?.showToast(error.message, 'danger');
     }
   },
   onError: () => console.error('Error with One Tap Login'),
@@ -73,7 +73,7 @@ const handleLogout = async () => {
     await new Promise((resolve, reject) => {
       idRevoke(user.value.id, (done) => {
         if (done.error) {
-          window.$toast?.showToast(done.error);
+          window.$toast?.showToast(done.error, 'danger');
           reject(new Error(done.error));
         } else {
           resolve();
@@ -85,7 +85,7 @@ const handleLogout = async () => {
       throw new Error('Server logout failed');
     }
   } catch (error) {
-    window.$toast?.showToast(error.message);
+    window.$toast?.showToast(error.message, 'danger');
   }
   userStore.logout();
   router.push('/about');

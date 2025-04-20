@@ -165,7 +165,7 @@ export default {
           total: data.data.total,
         };
       } catch (error) {
-        window.$toast?.showToast(this.$t('errorsMsg.failedMsg'));
+        window.$toast?.showToast(this.$t('errorsMsg.failedMsg'), 'danger');
       } finally {
         this.loading = false;
       }

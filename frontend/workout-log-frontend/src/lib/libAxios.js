@@ -19,13 +19,13 @@ api.interceptors.response.use(
         router.push('/about');
         break;
       case 400:
-        window.$toast?.showToast('Bad request');
+        window.$toast?.showToast('Bad request', 'danger');
         break;
       case 500:
-        window.$toast?.showToast('Internal Server Error');
+        window.$toast?.showToast('Internal Server Error', 'danger');
         break;
       default:
-        window.$toast?.showToast(status);
+        window.$toast?.showToast(status, 'info');
         break;
     }
     return Promise.reject(error);

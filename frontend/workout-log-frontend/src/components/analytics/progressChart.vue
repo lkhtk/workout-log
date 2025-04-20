@@ -175,7 +175,7 @@ export default defineComponent({
           }));
         chartOptions.value.series = aggregatedData;
       } catch (error) {
-        window.$toast?.showToast(error.message);
+        window.$toast?.showToast(error.message, 'danger');
       }
     };
 
@@ -185,7 +185,7 @@ export default defineComponent({
         chartOptionsPie.value.labels = response.data.data.map((item) => item.name);
         chartOptionsPie.value.series = response.data.data.map((item) => item.count);
       } catch (error) {
-        window.$toast?.showToast(error.message);
+        window.$toast?.showToast(error.message, 'danger');
       }
     };
 
