@@ -1,0 +1,172 @@
+<template>
+  <div v-if="exercises.length > 0 || edit">
+    <h1 class="display-6">
+      <font-awesome-icon icon="fa-solid fa-anchor" />
+      {{ $t('workout.training') }}
+    </h1>
+    <table class="table table-hover align-middle table-bordered table-striped table-light">
+      <thead>
+        <tr>
+          <th scope="row" colspan="3">
+            <font-awesome-icon icon="fa-solid fa-medal" />
+            {{ $t('workout.exercise') }}</th>
+            <th
+              scope="col"
+              v-for="(set, index) in getMaxSets(exercises)"
+              :key="'set-' + index"
+            >
+            <font-awesome-icon icon="fa-solid fa-fire-flame-curved" />
+            {{ $t('workout.set') }} {{ index + 1 }}
+          </th>
+        </tr>
+      </thead>
+      <tbody v-for="(ex, exIndex) in exercises" :key="exIndex">
+        <tr>
+          <td rowspan="2" v-if="edit">
+            <div v-if="edit" style="border: 0px solid #ccc; width: 50px;"
+          class="d-flex flex-column align-items-center">
+            <font-awesome-icon icon="fa-solid fa-trash" style="color: #838383;
+              cursor: pointer;" class="mb-2"
+              @keydown.enter="removeExercise(exIndex)" @click="removeExercise(exIndex)" />
+            <font-awesome-icon icon="fa-solid fa-circle-plus" style="color: #454545;
+              cursor: pointer;" class="mb-2" @keydown.enter="addSet(exIndex)"
+              @click="addSet(exIndex)" />
+            <font-awesome-icon icon="fa-solid fa-circle-minus"
+              style="color: #454545; cursor: pointer;"
+              @keydown.enter="removeSet(exIndex)" @click="removeSet(exIndex)" />
+            </div>
+          </td>
+          <td rowspan="2" v-else>
+            {{ exIndex + 1 }}
+          </td>
+          <td rowspan="2" v-if="edit">
+            <input type="text" class="form-control mb-2"
+              :placeholder="$t('workout.default_ex')" v-model="ex.name"
+              maxlength="150" size="50" required />
+          </td>
+          <td rowspan="2" v-else>
+            {{ex.name}}
+          </td>
+          <td><font-awesome-icon icon="fa-solid fa-weight-hanging" /></td>
+          <td v-for="(set, setIndex) in ex.sets" :key="'weight-' + setIndex">
+            <div class="col-7" v-if="edit">
+              <label for="weight">
+                <input id="weight"
+                  :placeholder="$t('workout.weight')" v-model="set.weight"
+                  class="form-control col-sm-10" type="number" min="0" step="0.1"
+                  maxlength="6" required />
+              </label>
+            </div>
+            <span v-else>{{set.weight}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td><font-awesome-icon icon="fa-solid fa-repeat" /></td>
+          <td v-for="(set, setIndex) in ex.sets" :key="'reps-' + setIndex">
+            <div class="col-7" v-if="edit">
+              <label for="reps">
+                <input v-model="set.reps"
+                  :placeholder="$t('workout.reps')"
+                  maxlength="6" class="form-control"
+                  type="number" min="0" required />
+              </label>
+            </div>
+            <span v-else>{{set.reps}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button v-if="edit" type="button" class="btn btn-outline-dark" @click="addExercise()">
+      <font-awesome-icon icon="fa-solid fa-circle-plus" />
+      {{ $t('workout.new') }}
+    </button>
+  </div>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue';
+
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    required: true,
+  },
+  edit: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(['update:modelValue']);
+const exercises = ref(props.modelValue);
+
+watch(() => props.modelValue, (newValue) => {
+  exercises.value = newValue;
+});
+function getMaxSets(exSet) {
+  if (!exSet || !Array.isArray(exSet)) {
+    return 0;
+  }
+  return exSet.reduce((max, ex) => {
+    if (ex.sets && Array.isArray(ex.sets)) {
+      return Math.max(max, ex.sets.length);
+    }
+    return max;
+  }, 0);
+}
+function syncData() {
+  emit('update:modelValue', exercises.value);
+}
+function addSet(exerciseIndex) {
+  const exercise = exercises.value[exerciseIndex];
+  if (!exercise) {
+    window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`, 'danger');
+    return;
+  }
+  if (!exercise.sets) {
+    exercise.sets = [];
+  }
+  if (exercise.sets.length >= 10) {
+    window.$toast?.showToast(this.$t('errorsMsg.setsLimit'), 'info');
+    return;
+  }
+  exercise.sets.push({
+    reps: 0,
+    weight: 0,
+  });
+  syncData();
+}
+function addExercise() {
+  if (exercises.value.length >= 10) {
+    window.$toast?.showToast(this.$t('errorsMsg.exercisesLimit'), 'info');
+    return;
+  }
+  const emptySets = [];
+  for (let i = 0; i <= 2; i += 1) {
+    emptySets.push({});
+  }
+  exercises.value.push({
+    name: '',
+    sets: emptySets,
+  });
+  syncData();
+}
+
+function removeExercise(index) {
+  exercises.value.splice(index, 1);
+  syncData();
+}
+
+function removeSet(exerciseIndex) {
+  const exercise = exercises.value[exerciseIndex];
+  if (!exercise) {
+    window.$toast?.showToast(`Exercise at index ${exerciseIndex} not found.`, 'danger');
+    return;
+  }
+  if (exercise.sets.length <= 1) {
+    return;
+  }
+  exercise.sets.splice(exercise.sets.length - 1, 1);
+  syncData();
+}
+</script>

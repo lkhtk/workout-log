@@ -109,7 +109,26 @@
         "training": "Entrenamiento de fuerza",
         "exercise": "Ejercicio",
         "new": "Añadir ejercicio",
-        "set": "Conjunto"
+        "set": "Conjunto",
+        "alone": "Autoformación",
+        "weight":"Peso",
+        "reps":"Repite"
+    },
+    "review": {
+        "title": "Consulte",
+        "intensity": "intensidad",
+        "duration": "duración",
+        "slept": "dormía"
+    },
+    "units":{
+        "min": "minutos", 
+        "hrs": "horas",
+        "SI": {
+            "weight": "kilo"
+        },
+        "GB": {
+            "weight": "libra"
+        }
     },
     "cardio": {
         "title": "Cardio",

@@ -3,7 +3,7 @@
       <workoutComponent :workoutData="userData" v-if="userData" :edit='true'/>
   </div>
   <button type="button" class="btn btn-outline-dark"
-    @click="changeComponent('list', {})">
+    @click="changeComponent('all', {})">
     <font-awesome-icon icon="fa-solid fa-angles-left" />
   </button>
 </template>

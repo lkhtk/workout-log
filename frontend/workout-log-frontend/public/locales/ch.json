@@ -109,10 +109,29 @@
         "training": "力量训练 “力量训练",
         "exercise": "锻炼 “锻炼",
         "new": "添加练习",
-        "set": "设置"
+        "set": "设置",
+        "alone": "自我培训",
+        "weight":"重量",
+        "reps":"重复"
+    },
+    "review": {
+        "title": "审查",
+        "intensity": "强度",
+        "duration": "会期",
+        "slept": "锻炼前睡觉"
+    },
+    "units":{
+        "min": "分钟", 
+        "hrs": "时数",
+        "SI": {
+            "weight": "公斤"
+        },
+        "GB": {
+            "weight": "重击"
+        }
     },
     "cardio": {
-        "title": "Cardio",
+        "title": "有氧运动",
         "default_ex": "慢跑",
         "activity": "活动",
         "speed": "速度/水平",

@@ -228,6 +228,7 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 		"$set": bson.M{
 			"muscle_group":      newWorkout.MuscleGroup,
 			"coach":             newWorkout.Coach,
+			"review":            newWorkout.Review,
 			"workout.exercises": newWorkout.Workout.Exercises,
 			"workout.cardio":    newWorkout.Workout.Cardio,
 		},

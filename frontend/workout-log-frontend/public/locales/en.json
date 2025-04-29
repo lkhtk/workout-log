@@ -106,10 +106,29 @@
         "default_ex": "Bulgarian Split Squat",
         "name_subtitle": "Muscle group or name of workout",
         "instructor": "Training with an instructor",
-        "training": "Strength training",
+        "training": "Strength",
         "exercise": "Exercise",
         "new": "Add exercise",
-        "set": "Set"
+        "set": "Set",
+        "alone": "Self-training",
+        "weight": "Weight",
+        "reps": "Repeats"
+    },
+    "review": {
+        "title": "Review",
+        "intensity": "Intensity",
+        "duration": "Training duration (min)",
+        "slept": "Sleep before training (hours)"
+    },
+    "units":{
+        "min": "min", 
+        "hrs": "hours",
+        "SI": {
+            "weight": "kilogram"
+        },
+        "GB": {
+            "weight": "pound"
+        }
     },
     "cardio": {
         "title": "Cardio",

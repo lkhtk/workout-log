@@ -6,13 +6,13 @@
 
 <script>
 import Create from '@/components/workout/create.vue';
-import View from '@/components/workout/view.vue';
-import List from '@/components/workout/list.vue';
+import Edit from '@/components/workout/edit.vue';
+import All from '@/components/workout/all.vue';
 
 export default {
   name: 'HomeView',
   data: () => ({
-    componentId: 'list',
+    componentId: 'all',
     data: {},
   }),
   provide() {
@@ -25,12 +25,12 @@ export default {
   computed: {
     component() {
       switch (this.componentId) {
-        case 'list':
-          return List;
+        case 'all':
+          return All;
         case 'create':
           return Create;
-        case 'view':
-          return View;
+        case 'edit':
+          return Edit;
         default:
           return undefined;
       }

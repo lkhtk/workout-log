@@ -12,7 +12,12 @@ type Workout struct {
 	UserID      primitive.ObjectID `json:"-" bson:"user_id"`
 	MuscleGroup string             `json:"muscle_group" bson:"muscle_group"`
 	Coach       bool               `json:"coach" bson:"coach"`
-	Workout     struct {
+	Review      struct {
+		PerceivedIntensity *int     `json:"intensity"`
+		Duration           *int     `json:"duration"`
+		HrsSlept           *float32 `json:"slept"`
+	} `json:"review"`
+	Workout struct {
 		Exercises []Exercise `json:"exercises"`
 		Cardio    []Cardio   `json:"cardio"`
 	} `json:"workout"`

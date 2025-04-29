@@ -8,11 +8,11 @@
     </div>
   <div>
     <CreateButton :label="$t('workout.newButtonTitle')" @action="changeComponent('create', {})"/>
-    <div v-if="workoutsList">
+    <div v-if="workoutsList && workoutsList.length>0">
       <div class="container-lg p-3 bg-body-tertiary rounded"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
         <workoutComponent :workoutData="workoutItem" />
-        <div class="d-flex flex-row-reverse">
+        <div class="d-flex flex-row-reverse p-3">
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-outline-dark"
               @click="cloneWorkout(workoutItem)">
@@ -20,16 +20,15 @@
               {{ $t('buttons.clone') }}
             </button>
             <button type="button" class="btn btn-outline-dark"
-              @click="changeComponent('view', workoutItem)">
+              @click="changeComponent('edit', workoutItem)">
               <font-awesome-icon icon="fa-solid fa-sliders" />
               {{ $t('buttons.edit') }}
             </button>
           </div>
         </div>
-        <hr>
       </div>
-      <nav aria-label="Page navigation" v-if="pagination.last > 1">
-        <ul class="pagination justify-content-center" data-bs-theme="dark">
+      <nav aria-label="Page navigation" v-if="pagination.last > 1" class="p-3">
+        <ul class="pagination justify-content-center" data-bs-theme="light">
           <li
             class="page-item"
             :class="{ disabled: pagination.current === 1 }">
@@ -144,7 +143,7 @@ export default {
     cloneWorkout(w) {
       const cloned = w;
       cloned.id = null;
-      this.changeComponent('view', cloned);
+      this.changeComponent('edit', cloned);
     },
     goToPage(pageNumber) {
       if (pageNumber === '...' || pageNumber < 1 || pageNumber > this.pagination.last) {
