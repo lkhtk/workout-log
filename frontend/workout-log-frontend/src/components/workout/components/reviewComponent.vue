@@ -1,71 +1,93 @@
 <template>
-  <div v-if="review.duration || review.intensity || review.slept || edit">
-    <h1 class="display-6">
-      <font-awesome-icon icon="fa-solid fa-square-poll-vertical" />
-      {{ $t('review.title') }}
-    </h1>
-    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-      <div class="feature col">
-        <p class="text-body-emphasis">
-          <font-awesome-icon icon="fa-solid fa-stopwatch" />
-          {{ $t('review.duration') }}
-        </p>
-        <input v-if="edit"
-          v-model.number="review.duration"
-          type="number"
-          class="form-control"
-          :placeholder="$t('review.duration')"
-          @input="updateValue"
-        />
-        <div v-else-if="review.duration">
-          <div class="feature-icon d-inline-flex align-items-center
-          justify-content-center">
-            {{ review.duration }} {{ $t('units.min') }}
+  <div v-if="review.duration || review.intensity || review.slept || edit" class="container my-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+      <!-- Duration -->
+      <div class="col" v-if="edit || review.duration">
+        <div class="card h-100 border-1 rounded-4 text-center p-4">
+          <div class="mb-2">
+            <font-awesome-icon icon="fa-solid fa-stopwatch" class="fs-2" />
+          </div>
+          <div class="text-muted mb-2">
+            {{ $t('review.duration') }} ({{ $t('units.min') }})
+          </div>
+          <div v-if="edit">
+            <input
+              v-model.number="review.duration"
+              type="number"
+              min="0"
+              step="1"
+              class="form-control text-center"
+              :placeholder="$t('review.duration')"
+              @input="updateValue"
+            />
+          </div>
+          <div v-else-if="review.duration" class="fs-4 fw-bold">
+            {{ review.duration }}
           </div>
         </div>
       </div>
-      <div class="feature col" v-if="edit || review.duration">
-        <p class="text-body-emphasis">
-          <font-awesome-icon icon="fa-solid fa-rocket" />
-          {{ $t('review.intensity') }}
-        </p>
-        <button
-          v-for="star in 10"
-          id="start"
-          :key="star"
-          :disabled="!edit"
-          type="button"
-          class="btn p-0"
-          :class="{ 'text-warning': review.intensity >= star }"
-          @click="review.intensity = star"
-          @keydown.enter="review.intensity = star"
-          @keydown.space.prevent="review.intensity = star"
-          style="cursor: pointer; font-size: 0.7rem; border: 0;">
-          <font-awesome-icon icon="fa-solid fa-star" />
-        </button>
-      </div>
-      <div class="feature col">
-        <p class="text-body-emphasis">
-          <font-awesome-icon icon="fa-solid fa-bed" />
-          {{ $t('review.slept') }}
-        </p>
-        <input v-if="edit"
-          v-model.number="review.slept"
-          type="number"
-          class="form-control"
-          :placeholder="$t('review.slept')"
-          @input="updateValue"
-        />
-        <div v-else-if="review.slept"
-        class="feature-icon d-inline-flex align-items-center
-        justify-content-center">
-          {{ review.slept }} {{ $t('units.hrs') }}
+
+      <!-- Intensity -->
+      <div class="col" v-if="edit || review.intensity">
+        <div class="card h-100 border-1 rounded-4 text-center p-4">
+          <div class="mb-2">
+            <font-awesome-icon icon="fa-solid fa-rocket" class="fs-2" />
+          </div>
+          <div class="text-muted mb-2">
+            {{ $t('review.intensity') }}
+          </div>
+          <div>
+            <div>
+              <button
+                v-for="star in 10"
+                :key="star"
+                :disabled="!edit"
+                type="button"
+                class="btn p-0"
+                :class="{ 'text-warning': review.intensity >= star,
+                'text-muted': review.intensity < star }"
+                @click="review.intensity = star"
+                @keydown.enter="review.intensity = star"
+                @keydown.space.prevent="review.intensity = star"
+                style="cursor: pointer; font-size: 1.2rem; border: none;">
+                <font-awesome-icon icon="fa-solid fa-star" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- Sleep -->
+      <div class="col" v-if="edit || review.slept">
+        <div class="card h-100 border-1 rounded-4 text-center p-4">
+          <div class="mb-2">
+            <font-awesome-icon icon="fa-solid fa-bed" class="fs-2" />
+          </div>
+          <div class="text-muted mb-2">
+            {{ $t('review.slept') }} ({{ $t('units.hrs') }})
+          </div>
+          <div v-if="edit">
+            <input
+              v-model.number="review.slept"
+              type="number"
+              min="0"
+              step="0.1"
+              max="24"
+              class="form-control text-center"
+              :placeholder="$t('review.slept')"
+              @input="updateValue"
+            />
+          </div>
+          <div v-else-if="review.slept" class="fs-4 fw-bold">
+            {{ review.slept }}
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, watch } from 'vue';
 

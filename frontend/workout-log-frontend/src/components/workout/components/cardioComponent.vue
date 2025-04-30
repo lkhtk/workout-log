@@ -1,143 +1,172 @@
 <template>
-  <div class="mb-5" v-if="cardios.length>0 || edit">
-    <h1 class="display-6">
-      <font-awesome-icon icon="fa-solid fa-heart-pulse" />
-      {{ $t('cardio.title') }}
-    </h1>
-    <table class="table table-hover align-middle table-bordered table-striped table-light">
-      <thead>
-          <tr>
+  <div v-if="cardios.length > 0 || edit" class="mb-5">
+    <div class="card shadow-sm rounded p-4">
+      <h2 class="display-6 mb-4 d-flex align-items-center gap-2">
+        <font-awesome-icon icon="fa-solid fa-heart-pulse" />
+        {{ $t('cardio.title') }}
+      </h2>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+          <thead class="table-light">
+            <tr>
               <th>#</th>
-              <th><font-awesome-icon icon="fa-solid fa-solid fa-person-swimming" />
-                {{ $t('cardio.activity') }}</th>
-              <th><font-awesome-icon icon="fa-solid fa-gauge-high" />
-                {{ $t('cardio.speed') }}</th>
-              <th><font-awesome-icon icon="fa-solid fa-wave-square" />
-                {{ $t('cardio.heart') }}</th>
-              <th><font-awesome-icon icon="fa-solid fa-infinity" />
-                {{ $t('cardio.distance') }}</th>
-              <th><font-awesome-icon icon="fa-solid fa-stopwatch-20" />
-                {{ $t('cardio.time') }}</th>
-              <th><font-awesome-icon icon="fa-solid fa-fire" />
-                {{ $t('cardio.calories') }}</th>
-          </tr>
-        </thead>
-      <tbody v-for="cardio, index in cardios" v-bind:key="cardio">
-        <tr>
-          <td v-if="edit">
-            <button type="button" class="btn-close"
-            aria-label="Close" @click="removeCardio(exIndex)" tabindex="-1"></button>
-          </td>
-          <td v-else>{{ index + 1 }}</td>
-          <td v-if="edit">
-            <input
-            v-model="cardio.type"
-            type="text"
-            maxlength="150"
-            class="form-control"
-            :readonly="!edit"
-            :placeholder="$t('cardio.activity')"
-            required
-            @input="updateValue"
-          /></td>
-          <td v-else>
-            {{cardio.type}}
-          </td>
-          <td v-if="edit">
-            <input
-            v-model.number="cardio.speed"
-            type="number"
-            min="0"
-            step="0.1"
-            maxlength="6"
-            required
-            class="form-control"
-            :placeholder="$t('cardio.speed')"
-            @input="updateValue"
-          /></td>
-          <td v-else>
-            {{cardio.speed}}
-          </td>
-          <td v-if="edit">
-            <input
-            v-model.number="cardio.heart"
-            type="number"
-            min="60"
-            maxlength="3"
-            step="1"
-            required
-            class="form-control"
-            :readonly="!edit"
-            :placeholder="$t('cardio.heart')"
-            @input="updateValue"
-            />
-          </td>
-          <td v-else>
-            {{cardio.heart}}
-          </td>
-          <td v-if="edit">
-            <input
-            v-model.number="cardio.distance"
-            type="number"
-            min="0"
-            required
-            maxlength="6"
-            step="0.1"
-            class="form-control"
-            :readonly="!edit"
-            :placeholder="$t('cardio.distance')"
-            @input="updateValue"
-            />
-          </td>
-          <td v-else>
-            {{cardio.distance}}
-          </td>
-          <td v-if="edit">
-            <input
-            v-model.number="cardio.time"
-            type="number"
-            min="0"
-            required
-            maxlength="6"
-            class="form-control"
-            :readonly="!edit"
-            :placeholder="$t('cardio.time')"
-            @input="updateValue"
-            />
-          </td>
-          <td v-else>
-            {{cardio.time}}
-          </td>
-          <td v-if="edit">
-            <input
-            v-model.number="cardio.calories"
-            type="number"
-            min="0"
-            maxlength="6"
-            required
-            class="form-control"
-            :readonly="!edit"
-            :placeholder="$t('cardio.calories')"
-            @input="updateValue"
-            />
-          </td>
-          <td v-else>
-            {{cardio.calories}}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-if="edit">
-      <button type="button" class="btn btn-outline-dark" @click="addCardio()">
-        <font-awesome-icon icon="fa-solid fa-circle-plus"/>
-        {{ $t('cardio.new') }}
-      </button>
+              <th>
+                <font-awesome-icon icon="fa-solid fa-person-swimming" />
+                {{ $t('cardio.activity') }}
+              </th>
+              <th>
+                <font-awesome-icon icon="fa-solid fa-gauge-high" />
+                {{ $t('cardio.speed') }}
+              </th>
+              <th>
+                <font-awesome-icon icon="fa-solid fa-wave-square" />
+                {{ $t('cardio.heart') }}
+              </th>
+              <th>
+                <font-awesome-icon icon="fa-solid fa-infinity" />
+                {{ $t('cardio.distance') }}
+              </th>
+              <th>
+                <font-awesome-icon icon="fa-solid fa-stopwatch-20" />
+                {{ $t('cardio.time') }}
+              </th>
+              <th>
+                <font-awesome-icon icon="fa-solid fa-fire" />
+                {{ $t('cardio.calories') }}
+              </th>
+              <th v-if="edit" />
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(cardio, index) in cardios" :key="index">
+              <td>{{ index + 1 }}</td>
+
+              <td>
+                <input
+                  v-if="edit"
+                  v-model="cardio.type"
+                  type="text"
+                  maxlength="150"
+                  class="form-control"
+                  :placeholder="$t('cardio.activity')"
+                  required
+                  @input="updateValue"
+                />
+                <span v-else>{{ cardio.type }}</span>
+              </td>
+
+              <td>
+                <input
+                  v-if="edit"
+                  v-model.number="cardio.speed"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  maxlength="6"
+                  class="form-control"
+                  :placeholder="$t('cardio.speed')"
+                  required
+                  @input="updateValue"
+                />
+                <span v-else>{{ cardio.speed }}</span>
+              </td>
+
+              <td>
+                <input
+                  v-if="edit"
+                  v-model.number="cardio.heart"
+                  type="number"
+                  min="60"
+                  max="220"
+                  class="form-control"
+                  :placeholder="$t('cardio.heart')"
+                  required
+                  @input="updateValue"
+                />
+                <span v-else>{{ cardio.heart }}</span>
+              </td>
+
+              <td>
+                <input
+                  v-if="edit"
+                  v-model.number="cardio.distance"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  maxlength="6"
+                  class="form-control"
+                  :placeholder="$t('cardio.distance')"
+                  required
+                  @input="updateValue"
+                />
+                <span v-else>{{ cardio.distance }}</span>
+              </td>
+
+              <td>
+                <input
+                  v-if="edit"
+                  v-model.number="cardio.time"
+                  type="number"
+                  min="0"
+                  maxlength="6"
+                  class="form-control"
+                  :placeholder="$t('cardio.time')"
+                  required
+                  @input="updateValue"
+                />
+                <span v-else>{{ cardio.time }}</span>
+              </td>
+
+              <td>
+                <input
+                  v-if="edit"
+                  v-model.number="cardio.calories"
+                  type="number"
+                  min="0"
+                  maxlength="6"
+                  class="form-control"
+                  :placeholder="$t('cardio.calories')"
+                  required
+                  @input="updateValue"
+                />
+                <span v-else>{{ cardio.calories }}</span>
+              </td>
+
+              <td v-if="edit">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  aria-label="Remove"
+                  @click="removeCardio(index)"
+                >
+                  <font-awesome-icon icon="fa-solid fa-trash" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div v-if="edit" class="mt-3 text-center">
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          @click="addCardio"
+        >
+          <font-awesome-icon icon="fa-solid fa-circle-plus" />
+          {{ $t('cardio.new') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: {
@@ -150,20 +179,15 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
 const cardios = ref(props.modelValue);
 
 watch(() => props.modelValue, (newValue) => {
   cardios.value = newValue;
 });
 
-function updateValue() {
-  emit('update:modelValue', cardios.value);
-}
-
 function addCardio() {
   if (cardios.value.length >= 10) {
-    window.$toast?.showToast(this.$t('errorsMsg.cardiosLimit'), 'info');
+    window.$toast?.showToast(t('errorsMsg.cardiosLimit'), 'dark');
     return;
   }
   cardios.value.push({});

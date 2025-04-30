@@ -1,5 +1,5 @@
 <template>
-  <div class="container p-3 shadow">
+  <div class="container p-3">
     <p class="font-monospace" v-if="edit && localWorkoutData.id">
       <font-awesome-icon icon="fa-solid fa-fingerprint" />
       {{ localWorkoutData.id }}
@@ -21,13 +21,13 @@
       </div>
       <div class="mb-4">
         <div class="btn-group" role="group" v-if="edit">
-          <label :class="(localWorkoutData.coach) ? 'btn btn-primary' : 'btn btn-outline-primary'"
+          <label :class="(localWorkoutData.coach) ? 'btn btn-dark' : 'btn btn-outline-dark'"
             for="withCoach">
             <input type="checkbox" id="withCoach" class="btn-check" role="switch" aria-checked
               v-model="localWorkoutData.coach" />
             {{ $t('workout.instructor') }}
           </label>
-          <label :class="(!localWorkoutData.coach) ? 'btn btn-primary' : 'btn btn-outline-primary'"
+          <label :class="(!localWorkoutData.coach) ? 'btn btn-dark' : 'btn btn-outline-dark'"
             for="withCoach">
             <input type="checkbox" id="withCoach" class="btn-check" role="switch" aria-checked />
             {{ $t('workout.alone') }}
@@ -49,7 +49,7 @@
         <button type="button" class="btn btn-outline-dark" @click="saveWorkout()">
           <font-awesome-icon icon="fa-solid fa-floppy-disk" />
         </button>
-        <button type="button" class="btn btn-outline-dark"
+        <button type="button" class="btn btn-outline-danger"
           @click="deleteWorkoutById(localWorkoutData.id)"
           :disabled="localWorkoutData.id == null">
           <font-awesome-icon icon="fa-solid fa-trash-can" />

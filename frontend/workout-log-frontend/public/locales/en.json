@@ -159,6 +159,8 @@
         "day": "Day",
         "week": "Week",
         "month": "Month",
+        "month-3": "3 Month",
+        "month-6": "6 Month",
         "year": "Year"
     }
 }

@@ -159,6 +159,8 @@
         "day": "Día",
         "week": "Semana",
         "month": "Mesaño",
+        "month-3": "3 Mesaño",
+        "month-6": "6 Mesaño",
         "year": "Año"
     }
 }

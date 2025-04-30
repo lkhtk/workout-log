@@ -6,15 +6,17 @@
           <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'all' }">
             <a href="#" @click.prevent="setPeriod('all')">{{ $t('periodTitles.all') }}</a>
           </li>
-          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'year' }">
-            <a href="#" @click.prevent="setPeriod('year')">{{ $t('periodTitles.year') }}</a>
+          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-12' }">
+            <a href="#" @click.prevent="setPeriod('month-12')">{{ $t('periodTitles.year') }}</a>
           </li>
-          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month' }">
-            <a href="#" @click.prevent="setPeriod('month')">{{ $t('periodTitles.month') }}</a>
+          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-6' }">
+            <a href="#" @click.prevent="setPeriod('month-6')">{{ $t('periodTitles.month-6') }}</a>
           </li>
-          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'week' }"
-          aria-current="page">
-            <a href="#" @click.prevent="setPeriod('week')">{{ $t('periodTitles.week') }}</a>
+          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-3' }">
+            <a href="#" @click.prevent="setPeriod('month-3')">{{ $t('periodTitles.month-3') }}</a>
+          </li>
+          <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-1' }">
+            <a href="#" @click.prevent="setPeriod('month-1')">{{ $t('periodTitles.month') }}</a>
           </li>
         </ol>
       </nav>
