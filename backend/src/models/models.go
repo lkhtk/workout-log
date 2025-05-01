@@ -12,17 +12,17 @@ type Workout struct {
 	UserID      primitive.ObjectID `json:"-" bson:"user_id"`
 	MuscleGroup string             `json:"muscle_group" bson:"muscle_group"`
 	Coach       bool               `json:"coach" bson:"coach"`
-	Review      struct {
-		PerceivedIntensity *int     `json:"intensity"`
-		Duration           *int     `json:"duration"`
-		HrsSlept           *float32 `json:"slept"`
-	} `json:"review"`
-	Workout struct {
+	Review      Review             `json:"review"`
+	Workout     struct {
 		Exercises []Exercise `json:"exercises"`
 		Cardio    []Cardio   `json:"cardio"`
 	} `json:"workout"`
 }
-
+type Review struct {
+	PerceivedIntensity *int     `json:"intensity"`
+	Duration           *int     `json:"duration"`
+	HrsSlept           *float32 `json:"slept"`
+}
 type Exercise struct {
 	Name string `json:"name" bson:"name"`
 	Sets []struct {
@@ -62,9 +62,11 @@ type User struct {
 	UpdatedAt time.Time          `bson:"updated_at"`
 }
 
-type AverageWeight struct {
+type Stats struct {
 	PublishedAt time.Time
 	MuscleGroup string `json:"muscle_group" bson:"muscle_group"`
+	Coach       bool   `json:"coach" bson:"coach"`
+	Review      Review `json:"review"`
 	Exercises   []struct {
 		Name                        string   `json:"name" bson:"name"`
 		Average_weight_per_exercise *float64 `json:"average_weight_per_exercise" bson:"average_weight_per_exercise"`

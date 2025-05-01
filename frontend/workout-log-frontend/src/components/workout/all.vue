@@ -167,6 +167,7 @@ export default {
         window.$toast?.showToast(this.$t('errorsMsg.failedMsg'), 'danger');
       } finally {
         this.loading = false;
+        window.scrollTo(0, 0);
       }
     },
   },

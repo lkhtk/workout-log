@@ -62,7 +62,11 @@
         "chartTitle": "",
         "pieChartTitle": "Top 5 exercises",
         "countTitle": "Number of training sessions",
-        "exercisesCountTitle": "Number of unique exercises"
+        "exercisesCountTitle": "Number of unique exercises",
+        "avg_duration": "Average training duration",
+        "avg_intensity": "Average intensity",
+        "avg_slept": "Average sleep duration",
+        "time_total": "Total time in the hall"
     },
     "info": {
         "description": "Tired of writing down your workouts in a notebook? Try a free online strength training diary! Record your achievements, track your progress and improve your training program - all in one convenient ad-free service. Turn your gym sessions into an exciting journey to new records! 💪",
@@ -105,7 +109,7 @@
         "default_title": "Leg day",
         "default_ex": "Bulgarian Split Squat",
         "name_subtitle": "Muscle group or name of workout",
-        "instructor": "Training with an instructor",
+        "instructor": "With personal trainer",
         "training": "Strength",
         "exercise": "Exercise",
         "new": "Add exercise",
@@ -117,8 +121,8 @@
     "review": {
         "title": "Review",
         "intensity": "Intensity",
-        "duration": "Training duration (min)",
-        "slept": "Sleep before training (hours)"
+        "duration": "Training duration",
+        "slept": "Sleep before training"
     },
     "units":{
         "min": "min", 

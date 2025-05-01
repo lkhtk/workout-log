@@ -294,7 +294,7 @@ func (handler *MongoConnectionHandler) CleanupUserWorkouts(c *gin.Context) error
 	_, err = handler.collection.DeleteMany(c, userID)
 	return err
 }
-func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
+func (handler *MongoConnectionHandler) Stats(c *gin.Context) {
 	_, userIdAsFilter, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -330,6 +330,8 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 		bson.D{{"$project", bson.D{
 			{"muscle_group", 1},
 			{"publishedat", 1},
+			{"coach", 1},
+			{"review", 1},
 			{"exercises", bson.D{
 				{"$map", bson.D{
 					{"input", "$workout.exercises"},
@@ -378,7 +380,7 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 			}},
 		}}})
 
-	opts := options.Aggregate().SetBatchSize(100)
+	opts := options.Aggregate().SetBatchSize(500)
 
 	cur, err := handler.collection.Aggregate(handler.ctx, pipeline, opts)
 	if err != nil {
@@ -387,7 +389,7 @@ func (handler *MongoConnectionHandler) AverageWeight(c *gin.Context) {
 	}
 	defer cur.Close(handler.ctx)
 
-	var workouts []models.AverageWeight
+	var workouts []models.Stats
 	if err := cur.All(handler.ctx, &workouts); err != nil {
 		handleDBError(c, err, "error decoding workouts")
 		return

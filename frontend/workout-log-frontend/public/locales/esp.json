@@ -62,7 +62,11 @@
         "chartTitle": "",
         "pieChartTitle": "Los 5 mejores ejercicios",
         "countTitle": "número de sesiones de formación",
-        "exercisesCountTitle": "Número de ejercicios únicos"
+        "exercisesCountTitle": "Número de ejercicios únicos",
+        "avg_duration": "Duración media de la formación",
+        "avg_intensity": "Intensidad media",
+        "avg_slept": "Duración media del sueño",
+        "time_total": "Tiempo total en el pasillo"
     },
     "info": {
         "description": "¿Estás cansado de apuntar tus entrenamientos en un cuaderno? Prueba un diario en línea gratuito para entrenamientos de fuerza. Registra tus logros, sigue tus progresos y mejora tu programa de entrenamiento todo en un cómodo servicio sin publicidad. ¡Convierte tus sesiones de gimnasio en un emocionante viaje hacia nuevos récords! 💪",
@@ -105,7 +109,7 @@
         "default_title": "Día de piernas",
         "default_ex": "Sentadilla búlgara dividida",
         "name_subtitle": "Grupo muscular o nombre del entrenamiento",
-        "instructor": "Entrenamiento con instructor",
+        "instructor": "Con entrenador personal",
         "training": "Entrenamiento de fuerza",
         "exercise": "Ejercicio",
         "new": "Añadir ejercicio",
