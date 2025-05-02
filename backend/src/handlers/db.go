@@ -13,4 +13,5 @@ func handleDBError(c *gin.Context, err error, notFoundMessage string) {
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+	return
 }

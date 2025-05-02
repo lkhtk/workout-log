@@ -41,9 +41,12 @@
                 {{ exIndex + 1 }}
               </td>
               <td rowspan="2" v-if="edit">
-                <input type="text" class="form-control mb-2"
+                <input type="text"
+                  class="form-control mb-2"
+                  :class="{ 'is-invalid': ex.errors?.name }"
                   :placeholder="$t('workout.default_ex')" v-model="ex.name"
-                  maxlength="150" size="50" required />
+                  maxlength="150" size="50" required
+                  @input="updateValue"/>
               </td>
               <td rowspan="2" v-else>
                 {{ ex.name }}
@@ -54,7 +57,9 @@
                   <label for="weight">
                     <input id="weight" :placeholder="$t('workout.weight')"
                       v-model="set.weight" class="form-control col-sm-10"
-                      type="number" min="0" step="0.1" maxlength="6" required />
+                      :class="{ 'is-invalid': ex.errors?.weight[setIndex] }"
+                      type="number" min="0" step="0.1" max="999" required
+                      @input="updateValue"/>
                   </label>
                 </div>
                 <span v-else>{{ set.weight }}</span>
@@ -66,8 +71,10 @@
                 <div class="col-7" v-if="edit">
                   <label for="reps">
                     <input v-model="set.reps" :placeholder="$t('workout.reps')"
-                      maxlength="6" class="form-control"
-                      type="number" min="0" required />
+                      max="99" class="form-control col-sm-10"
+                      :class="{ 'is-invalid': ex.errors?.reps[setIndex] }"
+                      type="number" min="0" required
+                      @input="updateValue"/>
                   </label>
                 </div>
                 <span v-else>{{ set.reps }}</span>
@@ -178,5 +185,58 @@ function removeSet(exerciseIndex) {
   }
   exercise.sets.splice(exercise.sets.length - 1, 1);
   syncData();
+}
+
+function validateEx() {
+  let isValid = true;
+
+  const updated = exercises.value.map((entry) => {
+    const newEntry = {
+      ...entry,
+      errors: {
+        name: false,
+        reps: [],
+        weight: [],
+      },
+    };
+
+    if (!newEntry.name?.trim() || newEntry.name.length < 3) {
+      newEntry.errors.name = true;
+      isValid = false;
+    }
+
+    newEntry.sets = newEntry.sets.map((set, index) => {
+      const reps = Number(set.reps) || 0;
+      const weight = Number(set.weight) || 0;
+      if (!(typeof reps === 'number' && reps > 0 && reps < 99)) {
+        newEntry.errors.reps[index] = true;
+        isValid = false;
+      } else {
+        newEntry.errors.reps[index] = false;
+      }
+      if (!(typeof weight === 'number' && weight >= 0 && weight < 999)) {
+        newEntry.errors.weight[index] = true;
+        isValid = false;
+      } else {
+        newEntry.errors.weight[index] = false;
+      }
+
+      return {
+        ...set,
+        reps,
+        weight,
+      };
+    });
+
+    return newEntry;
+  });
+
+  exercises.value = updated;
+  return isValid;
+}
+
+function updateValue() {
+  validateEx();
+  emit('update:modelValue', exercises.value);
 }
 </script>

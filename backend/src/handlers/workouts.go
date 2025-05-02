@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,8 @@ const minFieldLength = 3
 const pageSize int64 = 4
 const maxSetsCount = 10
 const maxExsCount = 10
+const minIntValue = 0
+const minFloatValue = 0.1
 
 type MongoConnectionHandler struct {
 	collection *mongo.Collection
@@ -97,33 +100,36 @@ func validateAndPrepareWorkout(c *gin.Context) (*models.Workout, error) {
 	if err := c.ShouldBindJSON(&workout); err != nil {
 		return nil, errors.New("invalid workout data")
 	}
-
 	workout.ID = primitive.NewObjectID()
 	workout.PublishedAt = time.Now()
-
 	userIDPrimitive, _, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	workout.UserID = userIDPrimitive
-
 	if err := validateWorkoutFields(&workout); err != nil {
 		return nil, err
 	}
-
 	return &workout, nil
 }
 
 func validateWorkoutFields(workout *models.Workout) error {
 	var errs []error
-
 	if len(workout.MuscleGroup) > maxFieldLength || len(workout.MuscleGroup) < minFieldLength {
-		errs = append(errs, fmt.Errorf("invalid MuscleGroup: %q", workout.MuscleGroup))
+		errs = append(errs, errors.New("Workout: invalid MuscleGroup"))
+	}
+
+	if len(workout.Workout.Exercises) <= minIntValue && len(workout.Workout.Cardio) <= minIntValue {
+		errs = append(errs, errors.New("Workout: exercises or cardio required"))
 	}
 
 	if len(workout.Workout.Exercises) > maxExsCount || len(workout.Workout.Cardio) > maxExsCount {
-		errs = append(errs, errors.New("too many exercises or cardio workouts"))
+		errs = append(errs, errors.New("Workout: too many exercises or cardio workouts"))
+	}
+
+	if err := validateReview(workout.Review); err != nil {
+		errs = append(errs, err)
 	}
 
 	for _, ex := range workout.Workout.Exercises {
@@ -131,37 +137,97 @@ func validateWorkoutFields(workout *models.Workout) error {
 			errs = append(errs, err)
 		}
 	}
-
 	for _, cardio := range workout.Workout.Cardio {
 		if err := validateCardio(cardio); err != nil {
 			errs = append(errs, err)
 		}
 	}
-
 	return errors.Join(errs...)
 }
 
-func validateExercise(ex models.Exercise) error {
-	if len(ex.Name) > maxFieldLength || len(ex.Name) < minFieldLength {
-		return fmt.Errorf("invalid exercise name: %q", ex.Name)
+func validateReview(rev models.Review) error {
+	const maxDurationMin = 480
+	const maxSleepHrs = 24
+	const maxIntensity = 10
+	var errs []string
+	if (models.Review{}) == rev {
+		return errors.New("Review is required")
 	}
-	if len(ex.Sets) > maxSetsCount {
-		return fmt.Errorf("too many sets in exercise: %q", ex.Name)
+	if rev.PerceivedIntensity == nil {
+		errs = append(errs, "Review: invalid is required")
+	} else if *rev.PerceivedIntensity < minIntValue || *rev.PerceivedIntensity > maxIntensity {
+		errs = append(errs, fmt.Sprintf("Review: invalid intensity: %d", *rev.PerceivedIntensity))
+	}
+	if rev.Duration == nil {
+		errs = append(errs, "Review: duration is required")
+	} else if *rev.Duration < minIntValue || *rev.Duration > maxDurationMin {
+		errs = append(errs, fmt.Sprintf("Review: invalid duration: %d", *rev.Duration))
+	}
+	if rev.HrsSlept == nil {
+		errs = append(errs, "Review: hrs is required")
+	} else if *rev.HrsSlept > maxSleepHrs || *rev.HrsSlept < minIntValue {
+		errs = append(errs, "Review: invalid sleep hours")
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("Review validation errors: %s", strings.Join(errs, "; "))
+	}
+	return nil
+}
+
+func validateExercise(ex models.Exercise) error {
+	var errs []string
+	minSet := 1
+	if len(ex.Name) > maxFieldLength || len(ex.Name) < minFieldLength {
+		errs = append(errs, fmt.Sprintf("invalid exercise name: %q", ex.Name))
+	}
+	if len(ex.Sets) > maxSetsCount || len(ex.Sets) < minSet {
+		errs = append(errs, fmt.Sprintf("invalid sets in exercise: %q", ex.Name))
 	}
 	for _, set := range ex.Sets {
-		if set.Reps == nil || *set.Reps <= 0 {
-			return fmt.Errorf("invalid reps in exercise: %q", ex.Name)
+		if set.Reps == nil || *set.Reps <= minIntValue {
+			errs = append(errs, fmt.Sprintf("invalid reps in exercise: %q", ex.Name))
 		}
+		if set.Weight == nil || *set.Weight < minIntValue {
+			errs = append(errs, fmt.Sprintf("invalid weight in exercise: %q", ex.Name))
+		}
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("Exercise validation errors: %s", strings.Join(errs, "; "))
 	}
 	return nil
 }
 
 func validateCardio(cardio models.Cardio) error {
-	if len(cardio.Type) > maxFieldLength || len(cardio.Type) < minFieldLength {
-		return fmt.Errorf("invalid cardio name: %q", cardio.Type)
+	var errs []string
+	const (
+		minHeart     = 60
+		maxHeartRate = 220
+		maxSpeed     = 200.0
+	)
+	if len(cardio.Type) < minFieldLength || len(cardio.Type) > maxFieldLength {
+		errs = append(errs, fmt.Sprintf("invalid cardio type length: %q", cardio.Type))
 	}
-	if cardio.Time <= 0 {
-		return fmt.Errorf("cardio time should be greater than zero: %q", cardio.Type)
+	if cardio.Time < minIntValue {
+		errs = append(errs, fmt.Sprintf("cardio time must be >= %d", minIntValue))
+	}
+	if cardio.HeartRate < minHeart {
+		errs = append(errs, fmt.Sprintf("heart rate too low: %d", cardio.HeartRate))
+	} else if cardio.HeartRate > maxHeartRate {
+		errs = append(errs, fmt.Sprintf("heart rate too high: %d", cardio.HeartRate))
+	}
+	if cardio.Distance < minFloatValue {
+		errs = append(errs, fmt.Sprintf("distance too low: %.2f", cardio.Distance))
+	}
+	if cardio.Speed < minFloatValue {
+		errs = append(errs, fmt.Sprintf("speed too low: %.2f", cardio.Speed))
+	} else if cardio.Speed >= maxSpeed {
+		errs = append(errs, fmt.Sprintf("speed too high: %.2f", cardio.Speed))
+	}
+	if cardio.Calories < 0 {
+		errs = append(errs, fmt.Sprintf("calories cannot be negative: %d", cardio.Calories))
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("cardio validation errors: %s", strings.Join(errs, "; "))
 	}
 	return nil
 }

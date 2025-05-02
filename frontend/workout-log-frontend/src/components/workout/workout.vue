@@ -7,7 +7,10 @@
     <div>
       <div class="mb-3">
         <input v-if="edit" v-model="localWorkoutData.muscle_group" type="text"
-          class="form-control" maxlength="150"
+          class="form-control"
+          :class="{ 'is-invalid': errors.muscle_group }"
+          maxlength="150"
+          @input="updateValue"
           :placeholder="$t('workout.name_subtitle')" required />
         <div v-else class="grid text-center">
           <h1 class="display-2">
@@ -40,13 +43,20 @@
         </div>
       </div>
     </div>
-    <exercisesComponent v-model="localWorkoutData.workout.exercises" :edit="edit" />
-    <cardioComponent v-model="localWorkoutData.workout.cardio" :edit="edit"/>
-    <reviewComponent v-model="localWorkoutData.review" :edit="edit"/>
+    <exercisesComponent v-if="localWorkoutData.workout.exercises || edit"
+      v-model="localWorkoutData.workout.exercises" :edit="edit" />
+    <cardioComponent v-if="localWorkoutData.workout.cardio || edit"
+      v-model="localWorkoutData.workout.cardio" :edit="edit" />
+    <reviewComponent v-if="localWorkoutData.review || edit"
+      v-model="localWorkoutData.review" :edit="edit" />
     <!-- Buttons -->
     <div class="container mx-auto p-2" style="width: 200px;" v-if="edit">
       <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-        <button type="button" class="btn btn-outline-dark" @click="saveWorkout()">
+        <button type="button"
+          class="btn btn-outline-dark"
+          @click="saveWorkout()"
+          :disabled="errors.muscle_group || !localWorkoutData.muscle_group"
+          >
           <font-awesome-icon icon="fa-solid fa-floppy-disk" />
         </button>
         <button type="button" class="btn btn-outline-danger"
@@ -87,6 +97,9 @@ export default {
   },
   data() {
     let localData;
+    const errors = ref({
+      muscle_group: false,
+    });
     const userStore = useUserStore();
     try {
       localData = JSON.parse(JSON.stringify(this.workoutData));
@@ -97,6 +110,7 @@ export default {
       isAddButtonDisabled: ref(false),
       localWorkoutData: localData,
       userStore,
+      errors,
     };
   },
   methods: {
@@ -115,7 +129,7 @@ export default {
         await updateWorkout(this.localWorkoutData).then(() => {
           window.$toast?.showToast(this.$t('info.updated'), 'success');
         }).catch((error) => {
-          window.$toast?.showToast(error.message, 'danger');
+          window.$toast?.showToast(error.response.data.error, 'danger');
         });
       } else {
         await createWorkout(this.localWorkoutData).then(() => {
@@ -125,7 +139,7 @@ export default {
           window.location.reload();
         })
           .catch((error) => {
-            window.$toast?.showToast(error.message, 'danger');
+            window.$toast?.showToast(error.response.data.error, 'danger');
           });
       }
     },
@@ -137,8 +151,19 @@ export default {
         window.location.reload();
       })
         .catch((error) => {
-          window.$toast?.showToast(error.message, 'danger');
+          window.$toast?.showToast(error.response.data.error, 'danger');
         });
+    },
+    validateReview() {
+      const result = {
+        muscle_group: !(typeof this.localWorkoutData.muscle_group === 'string' && this.localWorkoutData.muscle_group.length >= 3),
+      };
+      this.errors = result;
+      return !result.muscle_group;
+    },
+
+    updateValue() {
+      this.validateReview();
     },
   },
 

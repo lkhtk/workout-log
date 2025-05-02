@@ -10,7 +10,11 @@
     >
       <div class="d-flex">
         <div class="toast-body">
-          {{ message }}
+          <ul class="mb-0 ps-3">
+            <li v-for="(line, index) in messageLines" :key="index">
+              {{ line }}
+            </li>
+          </ul>
         </div>
         <button
           type="button"
@@ -26,7 +30,7 @@
 import { ref, computed } from 'vue';
 
 const visible = ref(false);
-const message = ref('');
+const messageLines = ref([]);
 const type = ref('danger');
 
 const toastClass = computed(() => ({
@@ -38,14 +42,20 @@ const toastClass = computed(() => ({
   'bg-secondary': type.value === 'secondary',
   'bg-dark': type.value === 'dark',
 }));
-function showToast(msg, toastType = 'danger') {
-  message.value = msg;
+
+function showToast(msg, toastType = 'dark') {
+  try {
+    messageLines.value = msg.split(/\n|;/).map((line) => line.trim()).filter(Boolean);
+  } catch (e) {
+    messageLines.value = [msg];
+  }
+
   type.value = toastType;
   visible.value = true;
 
   setTimeout(() => {
     visible.value = false;
-  }, 4000);
+  }, 5000);
 }
 
 defineExpose({

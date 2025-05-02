@@ -49,6 +49,7 @@
                   type="text"
                   maxlength="150"
                   class="form-control"
+                  :class="{ 'is-invalid': cardio.errors?.type }"
                   :placeholder="$t('cardio.activity')"
                   required
                   @input="updateValue"
@@ -65,6 +66,7 @@
                   step="0.1"
                   maxlength="6"
                   class="form-control"
+                  :class="{ 'is-invalid': cardio.errors?.speed }"
                   :placeholder="$t('cardio.speed')"
                   required
                   @input="updateValue"
@@ -80,6 +82,7 @@
                   min="60"
                   max="220"
                   class="form-control"
+                  :class="{ 'is-invalid': cardio.errors?.heart }"
                   :placeholder="$t('cardio.heart')"
                   required
                   @input="updateValue"
@@ -96,6 +99,7 @@
                   step="0.1"
                   maxlength="6"
                   class="form-control"
+                  :class="{ 'is-invalid': cardio.errors?.distance }"
                   :placeholder="$t('cardio.distance')"
                   required
                   @input="updateValue"
@@ -111,6 +115,7 @@
                   min="0"
                   maxlength="6"
                   class="form-control"
+                  :class="{ 'is-invalid': cardio.errors?.time }"
                   :placeholder="$t('cardio.time')"
                   required
                   @input="updateValue"
@@ -126,6 +131,7 @@
                   min="0"
                   maxlength="6"
                   class="form-control"
+                  :class="{ 'is-invalid': cardio.errors?.calories }"
                   :placeholder="$t('cardio.calories')"
                   required
                   @input="updateValue"
@@ -167,7 +173,6 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -180,6 +185,7 @@ const props = defineProps({
 });
 
 const cardios = ref(props.modelValue);
+const emit = defineEmits(['update:modelValue']);
 
 watch(() => props.modelValue, (newValue) => {
   cardios.value = newValue;
@@ -196,4 +202,54 @@ function addCardio() {
 function removeCardio(index) {
   cardios.value.splice(index, 1);
 }
+
+function validateCardios() {
+  let isValid = true;
+
+  const updated = cardios.value.map((entry) => {
+    const newEntry = { ...entry, errors: {} };
+
+    if (!newEntry.type?.trim() || newEntry.type.length < 3) {
+      newEntry.errors.type = true;
+      isValid = false;
+    }
+
+    if (typeof newEntry.speed !== 'number' || newEntry.speed <= 0) {
+      newEntry.errors.speed = true;
+      isValid = false;
+    }
+
+    if (typeof newEntry.heart !== 'number' || newEntry.heart < 60 || newEntry.heart > 220) {
+      newEntry.errors.heart = true;
+      isValid = false;
+    }
+
+    if (typeof newEntry.distance !== 'number' || newEntry.distance <= 0) {
+      newEntry.errors.distance = true;
+      isValid = false;
+    }
+
+    if (typeof newEntry.time !== 'number' || newEntry.time <= 0) {
+      newEntry.errors.time = true;
+      isValid = false;
+    }
+
+    if (typeof newEntry.calories !== 'number' || newEntry.calories <= 0) {
+      newEntry.errors.calories = true;
+      isValid = false;
+    }
+
+    return newEntry;
+  });
+
+  cardios.value = updated;
+
+  return isValid;
+}
+
+function updateValue() {
+  validateCardios();
+  emit('update:modelValue', cardios.value);
+}
+
 </script>

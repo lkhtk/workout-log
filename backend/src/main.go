@@ -55,7 +55,7 @@ func main() {
 	server = gin.Default()
 	c := client.Database(os.Getenv("MONGO_DATABASE")).Collection("sessions")
 
-	store := mongodriver.NewStore(c, 3600, true, []byte(os.Getenv("SESSION_SECRET")))
+	store := mongodriver.NewStore(c, 86400, true, []byte(os.Getenv("SESSION_SECRET")))
 	store.Options(sessions.Options{Path: "/", Domain: "localhost"})
 	server.Use(sessions.Sessions("client_session", store))
 	server.Use(ClearCorruptedSessionMiddleware())
@@ -140,7 +140,7 @@ Canonical: https://%s/.well-known/security.txt
 }
 func robots(c *gin.Context) {
 	robots := `User-agent: *
-Disallow: /
+Allow: /
 Allow: /features
 Allow: /faq
 Allow: /pricing

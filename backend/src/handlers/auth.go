@@ -121,28 +121,27 @@ func (handler *AuthHandler) DestroyUserSession(c *gin.Context) {
 
 func (handler *AuthHandler) AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		defer func() {
-			if r := recover(); r != nil {
-				session := sessions.Default(c)
-				session.Clear()
-				session.Options(sessions.Options{
-					MaxAge: -1,
-				})
-				session.Save()
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"error": "session expired or invalid",
-				})
-			}
-		}()
 		session := sessions.Default(c)
-		sessionToken := session.Get("token")
-		email := session.Get("email")
-		if sessionToken == nil || email == nil {
-			session.Clear()
-			session.Options(sessions.Options{
-				MaxAge: -1,
+		if session == nil {
+			log.Println("Session object is nil")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "session object missing",
 			})
-			session.Save()
+			return
+		}
+
+		tokenRaw := session.Get("token")
+		emailRaw := session.Get("email")
+
+		token, ok1 := tokenRaw.(string)
+		email, ok2 := emailRaw.(string)
+
+		if !ok1 || !ok2 || token == "" || email == "" {
+			log.Printf("Invalid session data: token=%v, email=%v", tokenRaw, emailRaw)
+
+			session.Clear()
+			session.Options(sessions.Options{MaxAge: -1})
+			_ = session.Save()
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": "unauthorized or session missing",
 			})

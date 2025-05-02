@@ -90,7 +90,7 @@
           :cardData="{
             icon: 'fa-solid fa-stopwatch-20',
             count: avgDuration.toFixed(2),
-            text: $t('trends.avg_duration'),
+            text: $t('trends.avg_duration')  + ' (' + $t('units.min') + ')',
           }"
         />
       </div>
@@ -101,7 +101,7 @@
           :cardData="{
             icon: 'fa-solid fa-bed',
             count: avgSlept.toFixed(2),
-            text: $t('trends.avg_slept'),
+            text: $t('trends.avg_slept') + ' (' + $t('units.hrs') + ')',
           }"
         />
       </div>
@@ -236,15 +236,17 @@ export default defineComponent({
             intensCount.value += 1;
           }
           const date = new Date(entry.PublishedAt).getTime();
-          entry.exercises.forEach((exercise) => {
-            if (!exerciseMap[exercise.name]) {
-              exerciseMap[exercise.name] = [];
-            }
-            exerciseMap[exercise.name].push({
-              x: date,
-              y: parseFloat(exercise.average_weight_per_exercise.toFixed(2)),
+          if (entry.exercises) {
+            entry.exercises.forEach((exercise) => {
+              if (!exerciseMap[exercise.name]) {
+                exerciseMap[exercise.name] = [];
+              }
+              exerciseMap[exercise.name].push({
+                x: date,
+                y: parseFloat(exercise.average_weight_per_exercise.toFixed(2)),
+              });
             });
-          });
+          }
         });
 
         timeTotal.value = (avgDuration.value * 1.0) / 60;
