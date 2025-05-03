@@ -10,12 +10,12 @@ type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	PublishedAt time.Time
 	UserID      primitive.ObjectID `json:"-" bson:"user_id"`
-	MuscleGroup string             `json:"muscle_group" bson:"muscle_group"`
 	Coach       bool               `json:"coach" bson:"coach"`
 	Review      Review             `json:"review"`
 	Workout     struct {
-		Exercises []Exercise `json:"exercises"`
-		Cardio    []Cardio   `json:"cardio"`
+		MuscleGroups []string   `json:"muscleGroups" bson:"muscleGroups"`
+		Exercises    []Exercise `json:"exercises"`
+		Cardio       []Cardio   `json:"cardio"`
 	} `json:"workout"`
 }
 type Review struct {

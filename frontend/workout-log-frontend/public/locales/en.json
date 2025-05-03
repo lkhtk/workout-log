@@ -116,7 +116,22 @@
         "set": "Set",
         "alone": "Self-training",
         "weight": "Weight",
-        "reps": "Repeats"
+        "reps": "Repeats",
+        "type": {
+            "strength": "Strength",
+            "hypertrophy": "Hypertrophy",
+            "recovery": "Recovery",
+            "cardio": "Cardio"
+        },
+        "focus": {
+            "header": "Accent",
+            "fullbody": "Fullbody",
+            "legs": "Legs",
+            "biceps": "Biceps",
+            "triceps": "Triceps",
+            "back": "Back",
+            "chest": "Chest"
+        }
     },
     "review": {
         "title": "Review",

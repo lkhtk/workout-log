@@ -1,5 +1,5 @@
 <template>
-  <div v-if="cardios.length > 0 || edit" class="mb-5">
+  <div v-if="(cardios && cardios.length > 0) || edit" class="mb-5">
     <div class="card shadow-sm rounded p-4">
       <h2 class="display-6 mb-4 d-flex align-items-center gap-2">
         <font-awesome-icon icon="fa-solid fa-heart-pulse" />
@@ -41,111 +41,60 @@
           <tbody>
             <tr v-for="(cardio, index) in cardios" :key="index">
               <td>{{ index + 1 }}</td>
-
               <td>
-                <input
-                  v-if="edit"
-                  v-model="cardio.type"
-                  type="text"
-                  maxlength="150"
-                  class="form-control"
+                <input v-if="edit" v-model="cardio.type" type="text"
+                  maxlength="150" class="form-control"
                   :class="{ 'is-invalid': cardio.errors?.type }"
-                  :placeholder="$t('cardio.activity')"
-                  required
-                  @input="updateValue"
-                />
+                  :placeholder="$t('cardio.activity')" required
+                  @input="updateValue" />
                 <span v-else>{{ cardio.type }}</span>
               </td>
 
               <td>
-                <input
-                  v-if="edit"
-                  v-model.number="cardio.speed"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  maxlength="6"
-                  class="form-control"
-                  :class="{ 'is-invalid': cardio.errors?.speed }"
+                <input v-if="edit" v-model.number="cardio.speed"
+                type="number" min="0" step="0.1" maxlength="6"
+                  class="form-control" :class="{ 'is-invalid': cardio.errors?.speed }"
                   :placeholder="$t('cardio.speed')"
-                  required
-                  @input="updateValue"
-                />
+                  required @input="updateValue" />
                 <span v-else>{{ cardio.speed }}</span>
               </td>
 
               <td>
-                <input
-                  v-if="edit"
-                  v-model.number="cardio.heart"
-                  type="number"
-                  min="60"
-                  max="220"
-                  class="form-control"
+                <input v-if="edit" v-model.number="cardio.heart"
+                type="number" min="60" max="220" class="form-control"
                   :class="{ 'is-invalid': cardio.errors?.heart }"
-                  :placeholder="$t('cardio.heart')"
-                  required
-                  @input="updateValue"
-                />
+                  :placeholder="$t('cardio.heart')" required
+                  @input="updateValue" />
                 <span v-else>{{ cardio.heart }}</span>
               </td>
-
               <td>
-                <input
-                  v-if="edit"
-                  v-model.number="cardio.distance"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  maxlength="6"
-                  class="form-control"
-                  :class="{ 'is-invalid': cardio.errors?.distance }"
-                  :placeholder="$t('cardio.distance')"
-                  required
-                  @input="updateValue"
-                />
+                <input v-if="edit" v-model.number="cardio.distance" type="number"
+                min="0" step="0.1" maxlength="6"
+                  class="form-control" :class="{ 'is-invalid': cardio.errors?.distance }"
+                  :placeholder="$t('cardio.distance')" required @input="updateValue" />
                 <span v-else>{{ cardio.distance }}</span>
               </td>
 
               <td>
-                <input
-                  v-if="edit"
-                  v-model.number="cardio.time"
-                  type="number"
-                  min="0"
-                  maxlength="6"
-                  class="form-control"
+                <input v-if="edit" v-model.number="cardio.time"
+                type="number" min="0" maxlength="6" class="form-control"
                   :class="{ 'is-invalid': cardio.errors?.time }"
-                  :placeholder="$t('cardio.time')"
-                  required
-                  @input="updateValue"
-                />
+                  :placeholder="$t('cardio.time')" required
+                  @input="updateValue" />
                 <span v-else>{{ cardio.time }}</span>
               </td>
 
               <td>
-                <input
-                  v-if="edit"
-                  v-model.number="cardio.calories"
-                  type="number"
-                  min="0"
-                  maxlength="6"
-                  class="form-control"
-                  :class="{ 'is-invalid': cardio.errors?.calories }"
-                  :placeholder="$t('cardio.calories')"
-                  required
-                  @input="updateValue"
-                />
+                <input v-if="edit" v-model.number="cardio.calories"
+                type="number" min="0" maxlength="6"
+                  class="form-control" :class="{ 'is-invalid': cardio.errors?.calories }"
+                  :placeholder="$t('cardio.calories')" required @input="updateValue" />
                 <span v-else>{{ cardio.calories }}</span>
               </td>
 
               <td v-if="edit">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger"
-                  aria-label="Remove"
-                  @click="removeCardio(index)"
-                >
+                <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Remove"
+                  @click="removeCardio(index)">
                   <font-awesome-icon icon="fa-solid fa-trash" />
                 </button>
               </td>
@@ -155,11 +104,7 @@
       </div>
 
       <div v-if="edit" class="mt-3 text-center">
-        <button
-          type="button"
-          class="btn btn-outline-dark"
-          @click="addCardio"
-        >
+        <button type="button" class="btn btn-outline-dark" @click="addCardio">
           <font-awesome-icon icon="fa-solid fa-circle-plus" />
           {{ $t('cardio.new') }}
         </button>
@@ -185,7 +130,7 @@ const props = defineProps({
 });
 
 const cardios = ref(props.modelValue);
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:isValid']);
 
 watch(() => props.modelValue, (newValue) => {
   cardios.value = newValue;
@@ -205,7 +150,6 @@ function removeCardio(index) {
 
 function validateCardios() {
   let isValid = true;
-
   const updated = cardios.value.map((entry) => {
     const newEntry = { ...entry, errors: {} };
 
@@ -243,13 +187,13 @@ function validateCardios() {
   });
 
   cardios.value = updated;
-
   return isValid;
 }
 
 function updateValue() {
-  validateCardios();
+  const valid = validateCardios();
   emit('update:modelValue', cardios.value);
+  emit('update:isValid', valid);
 }
 
 </script>

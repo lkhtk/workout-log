@@ -116,7 +116,22 @@
         "set": "Conjunto",
         "alone": "Autoformación",
         "weight":"Peso",
-        "reps":"Repite"
+        "reps":"Repite",
+        "type": {
+            "strength": "Fuerza",
+            "hypertrophy": "Hipertrofia",
+            "recovery": "Recuperación",
+            "cardio": "Cardio"
+        },
+        "focus": {
+            "header": "Acento",
+            "fullbody": "Fullbody",
+            "legs": "Piernas",
+            "biceps": "Bíceps",
+            "triceps": "Tríceps",
+            "back": "Espalda",
+            "chest": "Pecho"
+        }
     },
     "review": {
         "title": "Consulte",

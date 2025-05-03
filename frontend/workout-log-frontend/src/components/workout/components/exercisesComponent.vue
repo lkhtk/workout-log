@@ -1,6 +1,6 @@
 <template>
-  <div v-if="exercises.length > 0 || edit">
-    <div class="card shadow-sm rounded p-4 mb-2">
+  <div v-if="(exercises && exercises.length > 0) || edit">
+    <div class="card shadow-sm rounded p-4 mb-5">
       <h2 class="display-6 mb-4 d-flex align-items-center gap-2">
         <font-awesome-icon icon="fa-solid fa-anchor" />
         {{ $t('workout.training') }}
@@ -22,19 +22,13 @@
           <tbody v-for="(ex, exIndex) in exercises" :key="exIndex">
             <tr>
               <td rowspan="2" v-if="edit">
-                <div v-if="edit" style="border: 0px solid #ccc; width: 50px;"
+                <div style="border: 0px solid #ccc; width: 50px;"
                   class="d-flex flex-column align-items-center">
                   <font-awesome-icon icon="fa-solid fa-trash"
                     class="btn btn-sm btn-outline-danger mb-2"
                     style="cursor: pointer;"
                     @keydown.enter="removeExercise(exIndex)"
                     @click="removeExercise(exIndex)" />
-                  <font-awesome-icon icon="fa-solid fa-circle-plus" style="color: #454545;
-                    cursor: pointer;" class="mb-2" @keydown.enter="addSet(exIndex)"
-                    @click="addSet(exIndex)" />
-                  <font-awesome-icon icon="fa-solid fa-circle-minus"
-                    style="color: #454545; cursor: pointer;"
-                    @keydown.enter="removeSet(exIndex)" @click="removeSet(exIndex)" />
                 </div>
               </td>
               <td rowspan="2" v-else>
@@ -53,31 +47,36 @@
               </td>
               <td><font-awesome-icon icon="fa-solid fa-weight-hanging" /></td>
               <td v-for="(set, setIndex) in ex.sets" :key="'weight-' + setIndex">
-                <div class="col-7" v-if="edit">
-                  <label for="weight">
-                    <input id="weight" :placeholder="$t('workout.weight')"
-                      v-model="set.weight" class="form-control col-sm-10"
-                      :class="{ 'is-invalid': ex.errors?.weight[setIndex] }"
-                      type="number" min="0" step="0.1" max="999" required
-                      @input="updateValue"/>
-                  </label>
+                <div class="" v-if="edit">
+                  <input id="weight" :placeholder="$t('workout.weight')"
+                    v-model="set.weight" class="form-control"
+                    :class="{ 'is-invalid': ex.errors?.weight[setIndex] }"
+                    type="number" min="0" step="0.1" max="999" required
+                    @input="updateValue"/>
                 </div>
                 <span v-else>{{ set.weight }}</span>
+              </td>
+              <td v-if="edit">
+                <font-awesome-icon icon="fa-solid fa-circle-plus" style="cursor: pointer;"
+                  class="mb-2" @keydown.enter="addSet(exIndex)" @click="addSet(exIndex)" />
               </td>
             </tr>
             <tr>
               <td><font-awesome-icon icon="fa-solid fa-repeat" /></td>
               <td v-for="(set, setIndex) in ex.sets" :key="'reps-' + setIndex">
-                <div class="col-7" v-if="edit">
-                  <label for="reps">
-                    <input v-model="set.reps" :placeholder="$t('workout.reps')"
-                      max="99" class="form-control col-sm-10"
-                      :class="{ 'is-invalid': ex.errors?.reps[setIndex] }"
-                      type="number" min="0" required
-                      @input="updateValue"/>
-                  </label>
+                <div class="" v-if="edit">
+                  <input v-model="set.reps" :placeholder="$t('workout.reps')"
+                    max="999" class="form-control"
+                    :class="{ 'is-invalid': ex.errors?.reps[setIndex] }"
+                    type="number" min="0" required
+                    @input="updateValue"/>
                 </div>
                 <span v-else>{{ set.reps }}</span>
+              </td>
+              <td v-if="edit">
+                <font-awesome-icon icon="fa-solid fa-circle-minus"
+                  style="cursor: pointer;"
+                  @keydown.enter="removeSet(exIndex)" @click="removeSet(exIndex)" />
               </td>
             </tr>
           </tbody>
@@ -113,7 +112,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:isValid']);
 const exercises = ref(props.modelValue);
 
 watch(() => props.modelValue, (newValue) => {
@@ -148,8 +147,8 @@ function addSet(exerciseIndex) {
     return;
   }
   exercise.sets.push({
-    reps: 0,
-    weight: 0,
+    reps: exercise.sets[exercise.sets.length - 1].reps,
+    weight: exercise.sets[exercise.sets.length - 1].weight,
   });
   syncData();
 }
@@ -193,6 +192,7 @@ function validateEx() {
   const updated = exercises.value.map((entry) => {
     const newEntry = {
       ...entry,
+      isValid: true,
       errors: {
         name: false,
         reps: [],
@@ -230,13 +230,14 @@ function validateEx() {
 
     return newEntry;
   });
-
+  updated.isValid = !isValid;
   exercises.value = updated;
   return isValid;
 }
 
 function updateValue() {
-  validateEx();
+  const valid = validateEx();
   emit('update:modelValue', exercises.value);
+  emit('update:isValid', valid);
 }
 </script>

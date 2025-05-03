@@ -80,7 +80,7 @@
 <script>
 import { getAllWorkouts } from '@/api/api';
 import changeComponent from '@/mixin/changeComponent';
-import workoutComponent from './workout.vue';
+import workoutComponent from './workoutPage.vue';
 import CreateButton from '../common/addWorkoutButton.vue';
 
 export default {

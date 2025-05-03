@@ -105,7 +105,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:isValid']);
 const review = ref({ ...props.modelValue });
 const errors = ref({
   duration: false,
@@ -133,10 +133,10 @@ function validateReview() {
 }
 
 function updateValue() {
-  validateReview();
+  const valid = validateReview();
   emit('update:modelValue', review.value);
+  emit('update:isValid', valid);
 }
-
 function setIntensity(star) {
   review.value.intensity = star;
   updateValue();

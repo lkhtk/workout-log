@@ -116,10 +116,12 @@ func validateAndPrepareWorkout(c *gin.Context) (*models.Workout, error) {
 
 func validateWorkoutFields(workout *models.Workout) error {
 	var errs []error
-	if len(workout.MuscleGroup) > maxFieldLength || len(workout.MuscleGroup) < minFieldLength {
-		errs = append(errs, errors.New("Workout: invalid MuscleGroup"))
+	if len(workout.Workout.MuscleGroups) <= minIntValue {
+		errs = append(errs, errors.New("Workout: musclegroups required"))
 	}
-
+	if len(workout.Workout.MuscleGroups) >= maxExsCount {
+		errs = append(errs, errors.New("Workout: too many musclegroups"))
+	}
 	if len(workout.Workout.Exercises) <= minIntValue && len(workout.Workout.Cardio) <= minIntValue {
 		errs = append(errs, errors.New("Workout: exercises or cardio required"))
 	}
@@ -130,6 +132,12 @@ func validateWorkoutFields(workout *models.Workout) error {
 
 	if err := validateReview(workout.Review); err != nil {
 		errs = append(errs, err)
+	}
+
+	for _, group := range workout.Workout.MuscleGroups {
+		if len(group) <= minFieldLength || len(group) > maxFieldLength {
+			errs = append(errs, fmt.Errorf("Invalid muscle group: %s", group))
+		}
 	}
 
 	for _, ex := range workout.Workout.Exercises {
@@ -292,11 +300,11 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 
 	update := bson.M{
 		"$set": bson.M{
-			"muscle_group":      newWorkout.MuscleGroup,
-			"coach":             newWorkout.Coach,
-			"review":            newWorkout.Review,
-			"workout.exercises": newWorkout.Workout.Exercises,
-			"workout.cardio":    newWorkout.Workout.Cardio,
+			"coach":                newWorkout.Coach,
+			"review":               newWorkout.Review,
+			"workout.exercises":    newWorkout.Workout.Exercises,
+			"workout.cardio":       newWorkout.Workout.Cardio,
+			"workout.muscleGroups": newWorkout.Workout.MuscleGroups,
 		},
 	}
 

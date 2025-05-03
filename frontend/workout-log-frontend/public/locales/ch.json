@@ -116,7 +116,22 @@
         "set": "设置",
         "alone": "自我培训",
         "weight":"重量",
-        "reps":"重复"
+        "reps":"重复",
+        "type": {
+            "strength": "力量",
+            "hypertrophy": "增肌",
+            "recovery": "恢复",
+            "cardio": "有氧运动"
+        },
+        "focus": {
+            "header":  "重音",
+            "fullbody": "全身",
+            "legs": "腿部",
+            "biceps": "二头肌",
+            "triceps": "三头肌",
+            "back": "背部",
+            "chest": "胸部"
+        }
     },
     "review": {
         "title": "审查",

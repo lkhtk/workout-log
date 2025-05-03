@@ -9,7 +9,7 @@
 </template>
 <script>
 import changeComponent from '../../mixin/changeComponent';
-import workoutComponent from './workout.vue';
+import workoutComponent from './workoutPage.vue';
 
 export default {
   name: 'CreateWorkout',
