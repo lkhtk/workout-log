@@ -105,6 +105,7 @@
     },
     "workout": {
         "newButtonTitle": "Nuevo entrenamiento",
+        "dateLabel": "Fecha de la formación",
         "label": "Título",
         "default_title": "Día de piernas",
         "default_ex": "Sentadilla búlgara dividida",

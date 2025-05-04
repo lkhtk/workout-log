@@ -105,6 +105,7 @@
     },
     "workout": {
         "newButtonTitle": "New workout",
+        "dateLabel": "Training date",
         "label": "Title",
         "default_title": "Leg day",
         "default_ex": "Bulgarian Split Squat",

@@ -8,7 +8,7 @@ import (
 
 type Workout struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
-	PublishedAt time.Time
+	PublishedAt time.Time          `json:"PublishedAt"`
 	UserID      primitive.ObjectID `json:"-" bson:"user_id"`
 	Coach       bool               `json:"coach" bson:"coach"`
 	Review      Review             `json:"review"`

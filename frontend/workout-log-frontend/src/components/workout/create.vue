@@ -16,7 +16,6 @@ export default {
   data: () => ({
     newWorkout: {
       id: null,
-      muscle_group: null,
       coach: false,
       review: {},
       workout: {

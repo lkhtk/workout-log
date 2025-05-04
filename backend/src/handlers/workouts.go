@@ -101,7 +101,9 @@ func validateAndPrepareWorkout(c *gin.Context) (*models.Workout, error) {
 		return nil, errors.New("invalid workout data")
 	}
 	workout.ID = primitive.NewObjectID()
-	workout.PublishedAt = time.Now()
+	if workout.PublishedAt.IsZero() {
+		workout.PublishedAt = time.Now()
+	}
 	userIDPrimitive, _, err := getCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -339,6 +341,7 @@ func (handler *MongoConnectionHandler) UpdateWorkout(c *gin.Context) {
 
 	update := bson.M{
 		"$set": bson.M{
+			"publishedat":          newWorkout.PublishedAt,
 			"coach":                newWorkout.Coach,
 			"review":               newWorkout.Review,
 			"workout.exercises":    newWorkout.Workout.Exercises,
