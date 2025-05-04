@@ -1,10 +1,6 @@
 <template>
- <div class="container-lg p-3 bg-body-tertiary rounded">
+  <div class="container-lg p-3 bg-body-tertiary rounded">
     <workoutComponent :edit="true" :workoutData="newWorkout" />
-    <button type="button" class="btn btn-dark"
-      @click="changeComponent('all', {})">
-    <font-awesome-icon icon="fa-solid fa-angles-left" />
-  </button>
   </div>
 </template>
 <script>

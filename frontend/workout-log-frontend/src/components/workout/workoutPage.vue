@@ -7,9 +7,14 @@
 
     <div>
       <div class="mb-4">
-        <div class="grid text-center">
+        <div class="grid text-center" v-if="localWorkoutData.PublishedAt">
           <h1 class="display-2">
             {{ formatDate(localWorkoutData.PublishedAt) }}
+          </h1>
+        </div>
+        <div class="grid text-center" v-else>
+          <h1 class="display-2">
+            {{ $t('workout.newButtonTitle') }}
           </h1>
         </div>
         <div v-if="edit" class="btn-group btn-group-lg" role="group" aria-label="Тип тренировки">
@@ -81,6 +86,10 @@
 
     <div class="container mt-3 text-center" v-if="edit">
       <div class="btn-group" role="group" aria-label="label">
+        <button type="button" class="btn btn-outline-dark btn-lg"
+          @click="$router.go($router.currentRoute)">
+          <font-awesome-icon icon="fa-solid fa-angles-left" />
+        </button>
         <button
           type="button"
           class="btn btn-outline-dark btn-lg"
@@ -119,7 +128,6 @@ const props = defineProps({
   workoutData: { type: Object, required: true },
   edit: { type: Boolean, default: false },
 });
-
 const { t } = useI18n();
 const isReviewValid = ref(true);
 const isCardioValid = ref(true);

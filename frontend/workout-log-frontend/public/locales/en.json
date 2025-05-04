@@ -118,6 +118,7 @@
         "weight": "Weight",
         "reps": "Repeats",
         "type": {
+            "header": "Type",
             "strength": "Strength",
             "hypertrophy": "Hypertrophy",
             "recovery": "Recovery",

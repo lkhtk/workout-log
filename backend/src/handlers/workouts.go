@@ -116,17 +116,30 @@ func validateAndPrepareWorkout(c *gin.Context) (*models.Workout, error) {
 
 func validateWorkoutFields(workout *models.Workout) error {
 	var errs []error
-	if len(workout.Workout.MuscleGroups) <= minIntValue {
-		errs = append(errs, errors.New("Workout: musclegroups required"))
-	}
-	if len(workout.Workout.MuscleGroups) >= maxExsCount {
-		errs = append(errs, errors.New("Workout: too many musclegroups"))
-	}
-	if len(workout.Workout.Exercises) <= minIntValue && len(workout.Workout.Cardio) <= minIntValue {
-		errs = append(errs, errors.New("Workout: exercises or cardio required"))
+	w := workout.Workout
+	mg := w.MuscleGroups
+
+	typeLen := len(mg.Type)
+	musclesLen := len(mg.Muscles)
+	exercisesLen := len(w.Exercises)
+	cardioLen := len(w.Cardio)
+
+	if typeLen < minFieldLength {
+		errs = append(errs, errors.New("Workout: type is required"))
+	} else if typeLen > maxFieldLength {
+		errs = append(errs, errors.New("Workout: type is too long"))
 	}
 
-	if len(workout.Workout.Exercises) > maxExsCount || len(workout.Workout.Cardio) > maxExsCount {
+	if musclesLen <= minIntValue {
+		errs = append(errs, errors.New("Workout: musclegroups required"))
+	} else if musclesLen > maxExsCount {
+		errs = append(errs, errors.New("Workout: too many musclegroups"))
+	}
+
+	if exercisesLen <= minIntValue && cardioLen <= minIntValue {
+		errs = append(errs, errors.New("Workout: exercises or cardio required"))
+	}
+	if exercisesLen > maxExsCount || cardioLen > maxExsCount {
 		errs = append(errs, errors.New("Workout: too many exercises or cardio workouts"))
 	}
 
@@ -134,106 +147,132 @@ func validateWorkoutFields(workout *models.Workout) error {
 		errs = append(errs, err)
 	}
 
-	for _, group := range workout.Workout.MuscleGroups {
-		if len(group) <= minFieldLength || len(group) > maxFieldLength {
+	for _, group := range mg.Muscles {
+		if l := len(group); l < minFieldLength || l > maxFieldLength {
 			errs = append(errs, fmt.Errorf("Invalid muscle group: %s", group))
 		}
 	}
 
-	for _, ex := range workout.Workout.Exercises {
+	for _, ex := range w.Exercises {
 		if err := validateExercise(ex); err != nil {
 			errs = append(errs, err)
 		}
 	}
-	for _, cardio := range workout.Workout.Cardio {
+
+	for _, cardio := range w.Cardio {
 		if err := validateCardio(cardio); err != nil {
 			errs = append(errs, err)
 		}
 	}
+
 	return errors.Join(errs...)
 }
 
 func validateReview(rev models.Review) error {
-	const maxDurationMin = 480
-	const maxSleepHrs = 24
-	const maxIntensity = 10
-	var errs []string
+	const (
+		maxDurationMin = 480
+		maxSleepHrs    = 24
+		maxIntensity   = 10
+	)
+
 	if (models.Review{}) == rev {
 		return errors.New("Review is required")
 	}
+
+	var errs []string
+
 	if rev.PerceivedIntensity == nil {
-		errs = append(errs, "Review: invalid is required")
-	} else if *rev.PerceivedIntensity < minIntValue || *rev.PerceivedIntensity > maxIntensity {
-		errs = append(errs, fmt.Sprintf("Review: invalid intensity: %d", *rev.PerceivedIntensity))
+		errs = append(errs, "Review: perceived intensity is required")
+	} else if val := *rev.PerceivedIntensity; val < minIntValue || val > maxIntensity {
+		errs = append(errs, fmt.Sprintf("Review: invalid intensity: %d", val))
 	}
+
 	if rev.Duration == nil {
 		errs = append(errs, "Review: duration is required")
-	} else if *rev.Duration < minIntValue || *rev.Duration > maxDurationMin {
-		errs = append(errs, fmt.Sprintf("Review: invalid duration: %d", *rev.Duration))
+	} else if val := *rev.Duration; val < minIntValue || val > maxDurationMin {
+		errs = append(errs, fmt.Sprintf("Review: invalid duration: %d", val))
 	}
+
 	if rev.HrsSlept == nil {
-		errs = append(errs, "Review: hrs is required")
-	} else if *rev.HrsSlept > maxSleepHrs || *rev.HrsSlept < minIntValue {
-		errs = append(errs, "Review: invalid sleep hours")
+		errs = append(errs, "Review: hours slept is required")
+	} else if val := *rev.HrsSlept; val < minIntValue || val > maxSleepHrs {
+		errs = append(errs, fmt.Sprintf("Review: invalid sleep hours: %d", val))
 	}
+
 	if len(errs) > 0 {
-		return fmt.Errorf("Review validation errors: %s", strings.Join(errs, "; "))
+		return fmt.Errorf("review validation errors: %s", strings.Join(errs, "; "))
 	}
 	return nil
 }
 
 func validateExercise(ex models.Exercise) error {
+	const minSet = 1
 	var errs []string
-	minSet := 1
-	if len(ex.Name) > maxFieldLength || len(ex.Name) < minFieldLength {
-		errs = append(errs, fmt.Sprintf("invalid exercise name: %q", ex.Name))
+
+	nameLen := len(ex.Name)
+	if nameLen < minFieldLength || nameLen > maxFieldLength {
+		errs = append(errs, fmt.Sprintf("Invalid exercise name: %q", ex.Name))
 	}
-	if len(ex.Sets) > maxSetsCount || len(ex.Sets) < minSet {
-		errs = append(errs, fmt.Sprintf("invalid sets in exercise: %q", ex.Name))
+
+	setsLen := len(ex.Sets)
+	if setsLen < minSet || setsLen > maxSetsCount {
+		errs = append(errs, fmt.Sprintf("Invalid number of sets in exercise: %q", ex.Name))
 	}
+
 	for _, set := range ex.Sets {
 		if set.Reps == nil || *set.Reps <= minIntValue {
-			errs = append(errs, fmt.Sprintf("invalid reps in exercise: %q", ex.Name))
+			errs = append(errs, fmt.Sprintf("Invalid reps in exercise: %q", ex.Name))
 		}
 		if set.Weight == nil || *set.Weight < minIntValue {
-			errs = append(errs, fmt.Sprintf("invalid weight in exercise: %q", ex.Name))
+			errs = append(errs, fmt.Sprintf("Invalid weight in exercise: %q", ex.Name))
 		}
 	}
+
 	if len(errs) > 0 {
-		return fmt.Errorf("Exercise validation errors: %s", strings.Join(errs, "; "))
+		return fmt.Errorf("exercise validation errors: %s", strings.Join(errs, "; "))
 	}
 	return nil
 }
 
 func validateCardio(cardio models.Cardio) error {
-	var errs []string
 	const (
 		minHeart     = 60
 		maxHeartRate = 220
 		maxSpeed     = 200.0
 	)
-	if len(cardio.Type) < minFieldLength || len(cardio.Type) > maxFieldLength {
-		errs = append(errs, fmt.Sprintf("invalid cardio type length: %q", cardio.Type))
+
+	var errs []string
+	typeLen := len(cardio.Type)
+	if typeLen < minFieldLength || typeLen > maxFieldLength {
+		errs = append(errs, fmt.Sprintf("Invalid cardio type length: %q", cardio.Type))
 	}
+
 	if cardio.Time < minIntValue {
-		errs = append(errs, fmt.Sprintf("cardio time must be >= %d", minIntValue))
+		errs = append(errs, fmt.Sprintf("Cardio time must be >= %d", minIntValue))
 	}
-	if cardio.HeartRate < minHeart {
-		errs = append(errs, fmt.Sprintf("heart rate too low: %d", cardio.HeartRate))
-	} else if cardio.HeartRate > maxHeartRate {
-		errs = append(errs, fmt.Sprintf("heart rate too high: %d", cardio.HeartRate))
+
+	switch {
+	case cardio.HeartRate < minHeart:
+		errs = append(errs, fmt.Sprintf("Heart rate too low: %d", cardio.HeartRate))
+	case cardio.HeartRate > maxHeartRate:
+		errs = append(errs, fmt.Sprintf("Heart rate too high: %d", cardio.HeartRate))
 	}
+
 	if cardio.Distance < minFloatValue {
-		errs = append(errs, fmt.Sprintf("distance too low: %.2f", cardio.Distance))
+		errs = append(errs, fmt.Sprintf("Distance too low: %.2f", cardio.Distance))
 	}
-	if cardio.Speed < minFloatValue {
-		errs = append(errs, fmt.Sprintf("speed too low: %.2f", cardio.Speed))
-	} else if cardio.Speed >= maxSpeed {
-		errs = append(errs, fmt.Sprintf("speed too high: %.2f", cardio.Speed))
+
+	switch {
+	case cardio.Speed < minFloatValue:
+		errs = append(errs, fmt.Sprintf("Speed too low: %.2f", cardio.Speed))
+	case cardio.Speed >= maxSpeed:
+		errs = append(errs, fmt.Sprintf("Speed too high: %.2f", cardio.Speed))
 	}
+
 	if cardio.Calories < 0 {
-		errs = append(errs, fmt.Sprintf("calories cannot be negative: %d", cardio.Calories))
+		errs = append(errs, fmt.Sprintf("Calories cannot be negative: %d", cardio.Calories))
 	}
+
 	if len(errs) > 0 {
 		return fmt.Errorf("cardio validation errors: %s", strings.Join(errs, "; "))
 	}

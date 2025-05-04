@@ -118,6 +118,7 @@
         "weight":"重量",
         "reps":"重复",
         "type": {
+            "header": "类型",
             "strength": "力量",
             "hypertrophy": "增肌",
             "recovery": "恢复",

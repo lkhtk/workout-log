@@ -143,6 +143,7 @@ export default {
     cloneWorkout(w) {
       const cloned = w;
       cloned.id = null;
+      cloned.PublishedAt = null;
       this.changeComponent('edit', cloned);
     },
     goToPage(pageNumber) {

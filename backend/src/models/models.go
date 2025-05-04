@@ -13,10 +13,14 @@ type Workout struct {
 	Coach       bool               `json:"coach" bson:"coach"`
 	Review      Review             `json:"review"`
 	Workout     struct {
-		MuscleGroups []string   `json:"muscleGroups" bson:"muscleGroups"`
-		Exercises    []Exercise `json:"exercises"`
-		Cardio       []Cardio   `json:"cardio"`
+		MuscleGroups MuscleGroup `json:"muscleGroups" bson:"muscleGroups"`
+		Exercises    []Exercise  `json:"exercises"`
+		Cardio       []Cardio    `json:"cardio"`
 	} `json:"workout"`
+}
+type MuscleGroup struct {
+	Muscles []string `json:"muscles"`
+	Type    string   `json:"type"`
 }
 type Review struct {
 	PerceivedIntensity *int     `json:"intensity"`
