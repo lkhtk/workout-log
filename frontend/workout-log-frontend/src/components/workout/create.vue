@@ -19,7 +19,9 @@ export default {
       coach: false,
       review: {},
       workout: {
-        cardio: [{}],
+        cardio: [{
+          heart: 60,
+        }],
         exercises: [{
           name: null,
           sets: [

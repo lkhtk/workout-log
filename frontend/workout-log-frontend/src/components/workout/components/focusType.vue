@@ -86,7 +86,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'update:isValid']);
 
-const musclesGroup = ['legs', 'biceps', 'triceps', 'back', 'chest'];
+const musclesGroup = ['legs', 'biceps', 'triceps', 'back', 'chest', 'glutes'];
 const gymTypes = ['recovery', 'cardio', 'hypertrophy', 'strength'];
 
 const selectedMuscles = ref([]);

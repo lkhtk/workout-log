@@ -7,7 +7,7 @@
       </h2>
       <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle text-center">
-          <thead>
+          <thead v-if="(exercises && exercises.length > 0)">
             <tr>
               <th scope="row" colspan="3">
                 <font-awesome-icon icon="fa-solid fa-medal" />
@@ -58,7 +58,7 @@
               </td>
               <td v-if="edit">
                 <font-awesome-icon icon="fa-solid fa-circle-plus" style="cursor: pointer;"
-                  class="mb-2" @keydown.enter="addSet(exIndex)" @click="addSet(exIndex)" />
+                  @keydown.enter="addSet(exIndex)" @click="addSet(exIndex)" />
               </td>
             </tr>
             <tr>

@@ -7,7 +7,8 @@
       </h2>
 
       <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle text-center">
+        <table class="table table-bordered table-striped align-middle text-center"
+          v-if="(cardios && cardios.length > 0)">
           <thead class="table-light">
             <tr>
               <th>#</th>

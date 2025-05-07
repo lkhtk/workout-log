@@ -35,7 +35,8 @@
         "login": "Login",
         "logout": "Logout",
         "go": "Let's go!",
-        "clone": "Clone"
+        "clone": "Clone",
+        "back": "Back"
     },
     "links": {
         "profile": "Profile",
@@ -69,6 +70,7 @@
         "time_total": "Total time in the hall"
     },
     "info": {
+        "header": "STRN.GR — Track Your Strength",
         "description": "Tired of writing down your workouts in a notebook? Try a free online strength training diary! Record your achievements, track your progress and improve your training program - all in one convenient ad-free service. Turn your gym sessions into an exciting journey to new records! 💪",
         "loading": "Loading...",
         "okMsg": "Data submitted successfully!",
@@ -132,7 +134,8 @@
             "biceps": "Biceps",
             "triceps": "Triceps",
             "back": "Back",
-            "chest": "Chest"
+            "chest": "Chest",
+            "glutes": "Gluteal muscles"
         }
     },
     "review": {

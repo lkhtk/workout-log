@@ -35,7 +35,8 @@
         "login": "Iniciar sesión",
         "logout": "Cerrar sesión",
         "go": "¡Vamos!",
-        "clone": "Clonar"
+        "clone": "Clonar",
+        "back": "Indietro"
     },
     "links": {
         "profile": "Perfil",
@@ -69,6 +70,7 @@
         "time_total": "Tiempo total en el pasillo"
     },
     "info": {
+        "header": "STRN.GR — Track Your Strength",
         "description": "¿Estás cansado de apuntar tus entrenamientos en un cuaderno? Prueba un diario en línea gratuito para entrenamientos de fuerza. Registra tus logros, sigue tus progresos y mejora tu programa de entrenamiento todo en un cómodo servicio sin publicidad. ¡Convierte tus sesiones de gimnasio en un emocionante viaje hacia nuevos récords! 💪",
         "loading": "Cargando...",
         "okMsg": "¡Datos enviados con éxito!",
@@ -132,7 +134,8 @@
             "biceps": "Bíceps",
             "triceps": "Tríceps",
             "back": "Espalda",
-            "chest": "Pecho"
+            "chest": "Pecho",
+            "glutes": "Ягодичные мышцы"
         }
     },
     "review": {

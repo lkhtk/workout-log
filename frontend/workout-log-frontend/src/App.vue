@@ -4,20 +4,15 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
           <font-awesome-icon icon="fa-solid fa-dumbbell" />
-          Gym Log
+          STRN.GR
         </a>
 
-        <!-- Burger button -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse"
-          aria-controls="navbarCollapse"
-          aria-expanded="false"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    <!-- Burger button -->
+    <button class="navbar-toggler" type="button"
+      data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+      aria-controls="navbarCollapse" aria-expanded="false">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <!-- LEFT SIDE NAV (auth only) -->
@@ -42,10 +37,8 @@
           <!-- COLLAPSED AREA (auth button always shown here on small screens) -->
           <ul class="navbar-nav d-md-none ms-auto mt-2">
             <li class="nav-item">
-              <auth-button
-                loginButtonClass="btn btn-outline-light w-100"
-                logoutButtonClass="btn btn-outline-light w-100"
-              />
+              <auth-button loginButtonClass="btn btn-outline-light w-100"
+                logoutButtonClass="btn btn-outline-light w-100" />
             </li>
           </ul>
         </div>
@@ -54,19 +47,10 @@
         <div class="d-none d-md-flex align-items-center ms-auto">
           <!-- Avatar dropdown if user -->
           <div class="dropdown me-2" v-if="user">
-            <a
-              href="#"
-              class="dropdown-toggle d-flex align-items-center text-white text-decoration-none"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <img
-                :src="user.picture"
-                alt="pic"
-                width="32"
-                height="32"
-                class="rounded-circle"
-              />
+            <a href="#" class="dropdown-toggle d-flex align-items-center
+              text-white text-decoration-none"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <img :src="user.picture" alt="pic" width="32" height="32" class="rounded-circle" />
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
@@ -75,7 +59,9 @@
                   {{ $t('links.profile') }}
                 </router-link>
               </li>
-              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
               <li>
                 <auth-button />
               </li>
@@ -99,11 +85,10 @@
     </div>
   </div>
 
-  <footer
-    class="container d-flex flex-wrap justify-content-between
+  <footer class="container d-flex flex-wrap justify-content-between
     align-items-center py-3 my-4 border-top">
     <p class="col-md-4 mb-0 text-body-secondary">
-      Copyright &copy; Gym log
+      Copyright &copy; STRN.GR
     </p>
     <nav style="--bs-breadcrumb-divider: '';" aria-label="breadcrumb">
       <ol class="breadcrumb">
@@ -160,10 +145,20 @@ import ToastComponent from './components/common/toastComponent.vue';
 
 const toastRef = ref(null);
 
-document.title = 'Gym Log';
+document.title = 'STRN.GR';
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 onMounted(() => {
   window.$toast = toastRef.value;
 });
 </script>
+<style>
+  .display-1,
+  .display-2,
+  .display-3,
+  .display-4,
+  .display-5,
+  .display-6 {
+    font-family: 'Space Grotesk', sans-serif !important;
+  }
+</style>

@@ -35,7 +35,8 @@
         "login": "登录",
         "logout": "注销",
         "go": "出发",
-        "clone": "克隆"
+        "clone": "克隆",
+        "back": "后"
     },
     "links": {
         "profile": "简介",
@@ -69,6 +70,7 @@
         "time_total": "在大厅的总时间"
     },
     "info": {
+        "header": "STRN.GR — Track Your Strength",
         "description": "厌倦了在笔记本上记下你的训练？试试免费的力量训练在线日记吧！记录您的成绩，跟踪您的进展，改进您的训练计划--一切尽在一项便捷的无广告服务中。将你的健身课程变成一次激动人心的刷新纪录之旅！💪",
         "loading": "正在加载",
         "okMsg": "数据提交成功",
@@ -132,7 +134,8 @@
             "biceps": "二头肌",
             "triceps": "三头肌",
             "back": "背部",
-            "chest": "胸部"
+            "chest": "胸部",
+            "glutes": "臀部肌肉"
         }
     },
     "review": {

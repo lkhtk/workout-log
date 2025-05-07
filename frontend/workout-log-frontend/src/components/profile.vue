@@ -25,7 +25,7 @@
             </p>
 
             <auth-button
-              loginButtonClass="btn btn-outline-primary me-2"
+              loginButtonClass="btn btn-outline-dark"
               logoutButtonClass="btn btn-outline-danger"
             />
           </div>

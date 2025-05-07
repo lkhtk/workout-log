@@ -8,7 +8,7 @@
               {{ $t('userActions.title') }}
             </h2>
             <div class="d-grid gap-3">
-              <button type="button" class="btn btn-outline-primary" @click="exportData">
+              <button type="button" class="btn btn-outline-dark" @click="exportData">
                 <font-awesome-icon icon="fa-solid fa-file-arrow-down" class="me-2" />
                 {{ $t('userActions.export') }}
               </button>

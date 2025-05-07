@@ -96,15 +96,18 @@
           @click="$router.go($router.currentRoute)"
         >
           <font-awesome-icon icon="fa-solid fa-angles-left" />
+          {{ $t('buttons.back')}}
         </button>
-        <button
-          type="button"
-          class="btn btn-outline-dark btn-lg"
-          @click="handleSave"
-          :disabled="!isFormValid"
-        >
-          <font-awesome-icon icon="fa-solid fa-floppy-disk" />
-        </button>
+          <button
+            type="button"
+            class="btn btn-outline-dark btn-lg"
+            @click="handleSave"
+            :disabled="!isFormValid"
+          >
+            <font-awesome-icon icon="fa-solid fa-floppy-disk" />
+            {{ $t('buttons.submit')}}
+          </button>
+
         <button
           type="button"
           class="btn btn-outline-danger btn-lg"
