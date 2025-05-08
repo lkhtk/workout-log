@@ -1,9 +1,5 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <userProgress />
-    </div>
-  </div>
+  <userProgress />
 </template>
 
 <script setup>

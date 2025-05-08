@@ -36,7 +36,8 @@
         "logout": "注销",
         "go": "出发",
         "clone": "克隆",
-        "back": "后"
+        "back": "后",
+        "cleanFilters": "清洁过滤器"
     },
     "links": {
         "profile": "简介",
@@ -182,9 +183,9 @@
         "all": "所有",
         "day": "天",
         "week": "週",
-        "month": "月",
+        "month-1": "月",
         "month-3": "3 月",
         "month-6": "6 月",
-        "year": "年"
+        "month-12": "年"
     }
 }

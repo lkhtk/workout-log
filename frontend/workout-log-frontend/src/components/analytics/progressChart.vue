@@ -7,7 +7,7 @@
             <a href="#" @click.prevent="setPeriod('all')">{{ $t('periodTitles.all') }}</a>
           </li>
           <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-12' }">
-            <a href="#" @click.prevent="setPeriod('month-12')">{{ $t('periodTitles.year') }}</a>
+            <a href="#" @click.prevent="setPeriod('month-12')">{{ $t('periodTitles.month-12') }}</a>
           </li>
           <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-6' }">
             <a href="#" @click.prevent="setPeriod('month-6')">{{ $t('periodTitles.month-6') }}</a>
@@ -16,7 +16,7 @@
             <a href="#" @click.prevent="setPeriod('month-3')">{{ $t('periodTitles.month-3') }}</a>
           </li>
           <li class="breadcrumb-item" :class="{ active: selectedPeriod === 'month-1' }">
-            <a href="#" @click.prevent="setPeriod('month-1')">{{ $t('periodTitles.month') }}</a>
+            <a href="#" @click.prevent="setPeriod('month-1')">{{ $t('periodTitles.month-1') }}</a>
           </li>
         </ol>
       </nav>
@@ -24,60 +24,41 @@
 
     <div class="row">
       <div class="col-12 col-lg-3 p-3">
-        <apexchart
-          class="card"
-          v-if="chartOptionsPie.series.length"
-          type="donut"
-          :options="chartOptionsPie"
-          :series="chartOptionsPie.series"
-          height="300"
-        />
+        <apexchart class="card" v-if="chartOptionsPie.series.length"
+          type="donut" :options="chartOptionsPie"
+          :series="chartOptionsPie.series" height="300" />
       </div>
 
       <div class="col-12 col-lg-3 p-3">
-        <card
-          v-if="exercisesCount"
-          :cardData="{
-            icon: 'fa-solid fa-person-swimming',
-            count: exercisesCount,
-            text: $t('trends.exercisesCountTitle'),
-          }"
-        />
+        <card v-if="exercisesCount" :cardData="{
+          icon: 'fa-solid fa-person-swimming',
+          count: exercisesCount,
+          text: $t('trends.exercisesCountTitle'),
+        }" />
       </div>
 
       <div class="col-12 col-lg-3 p-3">
-        <card
-          v-if="workoutCount"
-          :cardData="{
-            icon: 'fa-solid fa-person-chalkboard',
-            count: workoutCount + ' / ' + coachCount,
-            text: $t('trends.countTitle') + '/' + $t('workout.instructor'),
-          }"
-        />
+        <card v-if="workoutCount" :cardData="{
+          icon: 'fa-solid fa-person-chalkboard',
+          count: workoutCount + ' / ' + coachCount,
+          text: $t('trends.countTitle') + '/' + $t('workout.instructor'),
+        }" />
       </div>
 
       <div class="col-12 col-lg-3 p-3">
-        <card
-          v-if="timeTotal"
-          :cardData="{
-            icon: 'fa-solid fa-clock',
-            count: timeTotal.toFixed(2),
-            text: $t('trends.time_total') + ' (' + $t('units.hrs') + ')',
-          }"
-        />
+        <card v-if="timeTotal" :cardData="{
+          icon: 'fa-solid fa-clock',
+          count: timeTotal.toFixed(2),
+          text: $t('trends.time_total') + ' (' + $t('units.hrs') + ')',
+        }" />
       </div>
     </div>
 
     <div class="row">
       <div class="col-12 p-3" v-if="workoutCount > 1">
-        <apexchart
-          class="card"
-          v-if="chartOptions.series.length"
-          :options="chartOptions"
-          :series="chartOptions.series"
-          type="line"
-          height="600"
-        />
+        <apexchart class="card" v-if="chartOptions.series.length"
+          :options="chartOptions" :series="chartOptions.series"
+          type="line" height="600" />
         <div v-else class="spinner-border" role="status"></div>
       </div>
       <div class="col-12 p-3 shadow" v-else>{{ $t('errorsMsg.invalndChartData') }}</div>
@@ -85,42 +66,35 @@
 
     <div class="row">
       <div class="col-12 col-lg-4 p-3">
-        <card
-          v-if="avgDuration"
-          :cardData="{
-            icon: 'fa-solid fa-stopwatch-20',
-            count: avgDuration.toFixed(2),
-            text: $t('trends.avg_duration')  + ' (' + $t('units.min') + ')',
-          }"
-        />
+        <card v-if="avgDuration" :cardData="{
+          icon: 'fa-solid fa-stopwatch-20',
+          count: avgDuration.toFixed(2),
+          text: $t('trends.avg_duration') + ' (' + $t('units.min') + ')',
+        }" />
       </div>
 
       <div class="col-12 col-lg-4 p-3">
-        <card
-          v-if="avgSlept"
-          :cardData="{
-            icon: 'fa-solid fa-bed',
-            count: avgSlept.toFixed(2),
-            text: $t('trends.avg_slept') + ' (' + $t('units.hrs') + ')',
-          }"
-        />
+        <card v-if="avgSlept" :cardData="{
+          icon: 'fa-solid fa-bed',
+          count: avgSlept.toFixed(2),
+          text: $t('trends.avg_slept') + ' (' + $t('units.hrs') + ')',
+        }" />
       </div>
 
       <div class="col-12 col-lg-4 p-3">
-        <card
-          v-if="avgIntens"
-          :cardData="{
-            icon: 'fa-solid fa-battery-three-quarters',
-            count: avgIntens.toFixed(2) +'/10',
-            text: $t('trends.avg_intensity'),
-          }"
-        />
+        <card v-if="avgIntens" :cardData="{
+          icon: 'fa-solid fa-battery-three-quarters',
+          count: avgIntens.toFixed(2) + '/10',
+          text: $t('trends.avg_intensity'),
+        }" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
+import { useI18n } from 'vue-i18n';
 import {
   getTop5, getTrends,
 } from '@/api/api';
@@ -137,6 +111,7 @@ export default defineComponent({
   },
 
   setup() {
+    const { t } = useI18n();
     const chartOptionsPie = ref({
       chart: {
         type: 'donut',
@@ -188,7 +163,8 @@ export default defineComponent({
       series: [],
     });
 
-    const selectedPeriod = ref('all');
+    const selectedPeriod = ref('month-6');
+    document.title = `${t('trends.title')}: ${t(`periodTitles.${selectedPeriod.value}`)}`;
     const workoutCount = ref(0);
     const coachCount = ref(0);
     const avgDuration = ref(0);
@@ -204,6 +180,7 @@ export default defineComponent({
       if (selectedPeriod.value !== period) {
         selectedPeriod.value = period;
       }
+      document.title = `${t('trends.title')}: ${t(`periodTitles.${selectedPeriod.value}`)}`;
     };
 
     const fetchTrendsData = async () => {

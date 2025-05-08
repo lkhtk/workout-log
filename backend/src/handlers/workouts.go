@@ -45,48 +45,63 @@ func (handler *MongoConnectionHandler) ListWorkouts(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
-	page, err := strconv.ParseInt(c.Query("page"), 10, 64)
+	page, err := strconv.ParseInt(c.DefaultQuery("page", "1"), 10, 64)
 	if err != nil || page <= 0 {
 		page = 1
 	}
-
-	size, err := strconv.ParseInt(c.Query("size"), 10, 64)
+	size, err := strconv.ParseInt(c.DefaultQuery("size", fmt.Sprintf("%d", pageSize)), 10, 64)
 	if err != nil || size <= 0 {
 		size = pageSize
 	}
+	muscles := c.DefaultQuery("muscle", "")
+	gymType := c.DefaultQuery("gymType", "")
+	dateStr := c.DefaultQuery("date", "")
+	if muscles != "" {
+		userIdAsFilter["workout.muscleGroups.muscles"] = bson.M{"$in": strings.Split(muscles, ",")}
+	}
+	if gymType != "" {
+		userIdAsFilter["workout.muscleGroups.type"] = gymType
+	}
+	if dateStr != "" {
+		const layout = "2006-01-02"
+		date, err := time.Parse(layout, dateStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date format, expected YYYY-MM-DD"})
+			return
+		}
 
+		start := date
+		end := date.Add(24 * time.Hour)
+		userIdAsFilter["publishedat"] = bson.M{
+			"$gte": start,
+			"$lt":  end,
+		}
+	}
 	var total int64
-
 	total, err = handler.collection.CountDocuments(handler.ctx, userIdAsFilter)
 	if err != nil {
 		handleDBError(c, err, "error counting documents")
 		return
 	}
-
 	findOptions := options.Find().
 		SetSkip((page - 1) * size).
 		SetLimit(size).
 		SetSort(bson.D{{Key: "publishedat", Value: -1}})
-
 	cur, err := handler.collection.Find(handler.ctx, userIdAsFilter, findOptions)
 	if err != nil {
 		handleDBError(c, err, "error fetching workouts")
 		return
 	}
 	defer cur.Close(handler.ctx)
-
 	workouts := make([]models.Workout, 0, size)
 	if err := cur.All(handler.ctx, &workouts); err != nil {
 		handleDBError(c, err, "error decoding workouts")
 		return
 	}
-
 	lastPage := int64(1)
 	if total > 0 {
 		lastPage = (total + size - 1) / size
 	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"data":      workouts,
 		"total":     total,

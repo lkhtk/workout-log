@@ -8,6 +8,7 @@
     </div>
   <div>
     <CreateButton :label="$t('workout.newButtonTitle')" @action="changeComponent('create', {})"/>
+    <filters v-model:filters="filters"/>
     <div v-if="workoutsList && workoutsList.length>0">
       <div class="container-lg p-3 bg-body-tertiary rounded shadow mb-5"
         v-for="workoutItem in workoutsList" v-bind:key="workoutItem.id">
@@ -82,11 +83,13 @@ import { getAllWorkouts } from '@/api/api';
 import changeComponent from '@/mixin/changeComponent';
 import workoutComponent from './workoutPage.vue';
 import CreateButton from '../common/addWorkoutButton.vue';
+import filters from './components/filtersBar.vue';
 
 export default {
   name: 'ListWorkouts',
   mixins: [changeComponent],
   components: {
+    filters,
     workoutComponent,
     CreateButton,
   },
@@ -112,7 +115,20 @@ export default {
       code: '',
       msg: '',
     },
+    filters: {
+      muscles: '',
+      gymType: '',
+      date: '',
+    },
   }),
+  watch: {
+    filters: {
+      handler() {
+        this.loadAllWorkouts();
+      },
+      deep: true,
+    },
+  },
   computed: {
     visiblePages() {
       const { last: total, current } = this.pagination;
@@ -157,7 +173,11 @@ export default {
     async loadAllWorkouts(pageId) {
       this.loading = true;
       try {
-        const data = await getAllWorkouts(pageId);
+        const queryParams = {
+          page: pageId,
+          ...this.filters,
+        };
+        const data = await getAllWorkouts(queryParams);
         this.workoutsList = data.data.data;
         this.pagination = {
           last: data.data.last_page,

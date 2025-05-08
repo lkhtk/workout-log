@@ -126,6 +126,7 @@ import {
   ref, reactive, computed, watch,
 } from 'vue';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { useI18n } from 'vue-i18n';
 import {
   updateWorkout,
@@ -152,6 +153,8 @@ const isExercisesValid = ref(true);
 
 const localWorkoutData = reactive(JSON.parse(JSON.stringify(props.workoutData)));
 
+dayjs.extend(utc);
+
 watch(
   () => props.workoutData,
   (newVal) => {
@@ -163,18 +166,18 @@ watch(
 const publishedAtInput = computed({
   get() {
     return localWorkoutData.PublishedAt
-      ? dayjs(localWorkoutData.PublishedAt).format('YYYY-MM-DD')
+      ? dayjs.utc(localWorkoutData.PublishedAt).format('YYYY-MM-DD')
       : '';
   },
   set(val) {
     localWorkoutData.PublishedAt = val
-      ? dayjs(val, 'YYYY-MM-DD').toISOString()
+      ? dayjs.utc(val, 'YYYY-MM-DD').toISOString()
       : '';
   },
 });
 
 function formatDate(date) {
-  return dayjs(date).format('DD.MM.YYYY');
+  return dayjs.utc(date).format('DD.MM.YYYY');
 }
 
 const isFormValid = computed(() => isReviewValid.value

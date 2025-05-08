@@ -36,7 +36,8 @@
         "logout": "Logout",
         "go": "Let's go!",
         "clone": "Clone",
-        "back": "Back"
+        "back": "Back",
+        "cleanFilters": "Clean filters"
     },
     "links": {
         "profile": "Profile",
@@ -182,9 +183,9 @@
         "all": "All",
         "day": "Day",
         "week": "Week",
-        "month": "Month",
+        "month-1": "Month",
         "month-3": "3 Month",
         "month-6": "6 Month",
-        "year": "Year"
+        "month-12": "Year"
     }
 }

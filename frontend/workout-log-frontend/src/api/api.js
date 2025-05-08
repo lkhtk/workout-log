@@ -1,11 +1,25 @@
 import api from '@/lib/libAxios';
 
 const base = '/api';
-export function getAllWorkouts(page) {
-  let url = `${base}/workouts`;
-  if (page !== undefined && page > 0) {
-    url += `?page=${page}`;
+export function getAllWorkouts(params = {}) {
+  const baseUrl = '/api/workouts';
+  const query = new URLSearchParams();
+
+  query.set('page', params.page && params.page > 0 ? params.page : 1);
+
+  if (params.date) {
+    query.set('date', params.date);
   }
+
+  if (params.gymType) {
+    query.set('gymType', params.gymType);
+  }
+
+  if (params.muscle) {
+    query.set('muscle', params.muscle);
+  }
+
+  const url = `${baseUrl}?${query.toString()}`;
   return api.get(url);
 }
 
